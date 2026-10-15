@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="death_stranding_2D/death_stranding_2D.vcxproj" Id="c9c5b35f-e6da-40a1-8b42-ee151f5e3be6" />
+</Solution>

@@ -149,10 +149,23 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Entities\Hero.cpp" />
+    <ClCompile Include="Entities\Viewport.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Constants.h" />
+    <ClInclude Include="include\DoublyLinkedList.h" />
+    <ClInclude Include="include\Entity.h" />
     <ClInclude Include="include\GamesEngineeringBase.h" />
+    <ClInclude Include="include\Hero.h" />
+    <ClInclude Include="include\Layer.h" />
+    <ClInclude Include="include\Map.h" />
+    <ClInclude Include="include\Math.h" />
+    <ClInclude Include="include\Types.h" />
+    <ClInclude Include="include\Viewport.h" />
+    <ClInclude Include="include\World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

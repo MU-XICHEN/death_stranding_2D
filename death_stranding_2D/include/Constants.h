@@ -1,0 +1,12 @@
+#pragma once
+
+#define WINDOW_WIDTH 800
+#define WINDOW_HEIGHT 600
+#define MAP_RATIO 1.5
+#define MAP_WIDTH (WINDOW_WIDTH * MAP_RATIO)
+#define MAP_HEIGHT (WINDOW_HEIGHT * MAP_RATIO)
+#define MAP_BORDER_SIZE 20
+#define STEP_STRIDE 10
+
+#define MAX_LAYERS 10
+#define MAX_ENTITIES 100

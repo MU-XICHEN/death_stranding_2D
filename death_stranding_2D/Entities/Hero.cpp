@@ -8,25 +8,46 @@ void Hero::handleEvents(World &world)
     const auto &map = world.gameInfo().map();
     auto &canvas = world.canvas();
 
-    if (canvas.keyPressed('W'))
+    float dt = world.timer().dt();
+
+    float distance = dt * PIXEL_PER_SEC;
+
+    // Handle movement
+    if (canvas.keyPressed('W') && canvas.keyPressed('A'))
     {
-        int resPos = y_ - STEP_STRIDE;
-        y_ = GEB::Math::max(resPos, map.topBoundary());
+        moveUp(distance, static_cast<float>(map.topBoundary()));
+        moveLeft(distance, static_cast<float>(map.leftBoundary()));
     }
-    if (canvas.keyPressed('S'))
+    else if (canvas.keyPressed('W') && canvas.keyPressed('D'))
     {
-        int resPos = y_ + STEP_STRIDE;
-        y_ = GEB::Math::min(resPos, map.bottomBoundary() - height_);
+        moveUp(distance, static_cast<float>(map.topBoundary()));
+        moveRight(distance, static_cast<float>(map.rightBoundary() - width_));
     }
-    if (canvas.keyPressed('A'))
+    else if (canvas.keyPressed('S') && canvas.keyPressed('A'))
     {
-        int resPos = x_ - STEP_STRIDE;
-        x_ = GEB::Math::max(resPos, map.leftBoundary());
+        moveDown(distance, static_cast<float>(map.bottomBoundary() - height_));
+        moveLeft(distance, static_cast<float>(map.leftBoundary()));
     }
-    if (canvas.keyPressed('D'))
+    else if (canvas.keyPressed('S') && canvas.keyPressed('D'))
     {
-        int resPos = x_ + STEP_STRIDE;
-        x_ = GEB::Math::min(resPos, map.rightBoundary() - width_);
+        moveDown(distance, static_cast<float>(map.bottomBoundary() - height_));
+        moveRight(distance, static_cast<float>(map.rightBoundary() - width_));
+    }
+    else if (canvas.keyPressed('W'))
+    {
+        moveUp(distance, static_cast<float>(map.topBoundary()));
+    }
+    else if (canvas.keyPressed('S'))
+    {
+        moveDown(distance, static_cast<float>(map.bottomBoundary() - height_));
+    }
+    else if (canvas.keyPressed('A'))
+    {
+        moveLeft(distance, static_cast<float>(map.leftBoundary()));
+    }
+    else if (canvas.keyPressed('D'))
+    {
+        moveRight(distance, static_cast<float>(map.rightBoundary() - width_));
     }
 }
 
@@ -40,8 +61,8 @@ void Hero::render(World &world)
 {
     const Viewport &viewport = world.gameInfo().viewport();
 
-    int transX = x_ - viewport.x();
-    int transY = y_ - viewport.y();
+    float transX = x_ - viewport.x();
+    float transY = y_ - viewport.y();
 
     // [todo: remove]
     if (transX < 0 || transY < 0)
@@ -53,9 +74,13 @@ void Hero::render(World &world)
     {
         for (int j = 0; j < height_; j++)
         {
-            int targetX = transX + i;
-            int targetY = transY + j;
-            world.canvas().draw(transX + i, transY + j, color_.r, color_.g, color_.b);
+            float targetX = transX + i;
+            float targetY = transY + j;
+            world.canvas().draw(static_cast<int>(transX + i),
+                                static_cast<int>(transY + j),
+                                color_.r,
+                                color_.g,
+                                color_.b);
         }
     }
 }

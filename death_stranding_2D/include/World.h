@@ -54,6 +54,8 @@ public:
     };
 
     GEB::Window &canvas() { return canvas_; }
+    GEB::Timer &timer() { return timer_; }
+    
     GameInfo &gameInfo() { return gameInfo_; }
     void setRunning(bool val) { running_ = val; }
 
@@ -63,6 +65,7 @@ private:
 
     bool running_ = true;
     GEB::Window canvas_;
+    GEB::Timer timer_;
 
     GameInfo gameInfo_;
     GEB::Structures::DoublylinkedList<Layer *> layerList_;

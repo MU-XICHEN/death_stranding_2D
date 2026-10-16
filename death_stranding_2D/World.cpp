@@ -17,8 +17,8 @@ World::World()
           Hero{MAP_BORDER_SIZE, MAP_BORDER_SIZE, 20, 20},
           Viewport{0, 0, WINDOW_WIDTH, WINDOW_HEIGHT},
       },
-      layerList_()
-
+      layerList_(),
+      timer_()
 {
     // initialize canvas
     canvas_.create(WINDOW_WIDTH, WINDOW_HEIGHT, "Tiles");
@@ -44,6 +44,9 @@ void World::pushMainLayer()
 
 void World::renderLayers()
 {
+    // Clear the window for the next frame rendering
+    canvas_.clear();
+
     // render layers from bottom to top
     if (layerList_.empty())
         return;
@@ -60,10 +63,16 @@ void World::renderLayers()
         // render this layer
         layer->renderEntities(*this);
     }
+
+    // Events like mouse/keyboard are saved in present() by pumpLoop().
+    canvas_.present();
 }
 
 void World::gameLoop()
 {
+
+    timer_.reset();
+
     while (running_)
     {
 
@@ -71,16 +80,10 @@ void World::gameLoop()
         if (canvas_.keyPressed(VK_ESCAPE) || canvas_.checkCloseRequested())
             running_ = false;
 
-        // Clear the window for the next frame rendering
-        canvas_.clear();
-
         // render layers
         renderLayers();
 
-        // Events like mouse/keyboard are saved in present() by pumpLoop().
-        canvas_.present();
-
-        // Exit here rather than at the top of loop because the events come from last frame, which should be consumed and presented
+        // Exit here rather than at the top of loop because the events come from last frame, which should be consumed and presented in current frame.
         if (!running_)
             break; // Exit the loop if running is false
     }

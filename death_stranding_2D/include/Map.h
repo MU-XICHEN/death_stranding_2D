@@ -1,5 +1,5 @@
 #pragma once
-#include "Types.h"
+#include "GameBase.h"
 
 struct Map
 {
@@ -7,7 +7,7 @@ public:
     int width;
     int height;
     int borderSize;
-    Color borderColor;
+    GEB::Color borderColor;
 
     inline int topBoundary() const { return borderSize; }
     inline int bottomBoundary() const { return height - borderSize; }

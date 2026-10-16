@@ -2,7 +2,7 @@
 
 /**
  * DoublylinkedList
- * Note, User need to recycle memory if data is a pointer.
+ * Note: Users are responsible for recycling memory of nodes' data.
  */
 namespace GamesEngineeringBase::Structures
 {
@@ -21,20 +21,9 @@ namespace GamesEngineeringBase::Structures
     {
     public:
         DoublylinkedList() : head_(nullptr), tail_(nullptr), size_(0) {}
-        ~DoublylinkedList()
-        {
-            ListNode<T> *current = head_;
-            while (current)
-            {
-                ListNode<T> *nextNode = current->next;
-                // Note: only delete node, not node->data.
-                // So, if data is a pointer, boom! Memory--!
-                delete current;
-                current = nextNode;
-            }
-        }
+        virtual ~DoublylinkedList() = default;
 
-        // Avoid copying the list to prevent shallow copies and potential memory issues
+        // Avoid different lists' head_ or tail_ points to same memory.
         DoublylinkedList(const DoublylinkedList &) = delete;
         DoublylinkedList &operator=(const DoublylinkedList &) = delete;
 

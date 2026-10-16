@@ -98,6 +98,7 @@ namespace GamesEngineeringBase
 		unsigned int width = 0;                  // Window width
 		unsigned int height = 0;                 // Window height
 		unsigned int paddedDataSize = 0;         // Padding for backbuffer memory allocation
+		bool closeRequested = false;
 
 		// Static window procedure to handle window messages
 		static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -142,7 +143,11 @@ namespace GamesEngineeringBase
 			{
 				// Handle window close/destroy messages
 				PostQuitMessage(0);
-				exit(0);
+				// Comment out this line because it close current process directly,
+				// without executing deconstruction, and so on.
+				// Maybe, in the future, there might be some features about saving game.
+				// So... comment out for now.
+				// exit(0);
 				return 0;
 			}
 			case WM_KEYDOWN:
@@ -227,6 +232,11 @@ namespace GamesEngineeringBase
 			ZeroMemory(&msg, sizeof(MSG));
 			while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 			{
+				if (msg.message == WM_QUIT)
+				{
+					closeRequested = true;
+					break;
+				}
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
@@ -489,6 +499,12 @@ namespace GamesEngineeringBase
 			// Initialize COM library for image loading
 			HRESULT comResult;
 			comResult = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+		}
+
+		// Check close
+		bool checkCloseRequested()
+		{
+			return closeRequested;
 		}
 
 		// Processes input messages

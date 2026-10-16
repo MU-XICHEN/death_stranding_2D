@@ -1,14 +1,17 @@
 #pragma once
 
-struct Color
+namespace GamesEngineeringBase
 {
-    int r;
-    int g;
-    int b;
-};
+    struct Color
+    {
+        int r;
+        int g;
+        int b;
+    };
 
-struct Position
-{
-    int x;
-    int y;
-};
+    struct Position
+    {
+        int x;
+        int y;
+    };
+}

@@ -1,14 +1,12 @@
 #pragma once
 
 #include "GamesEngineeringBase.h"
-#include "types.h"
+#include "GameBase.h"
 #include "Layer.h"
 #include "Hero.h"
 #include "Viewport.h"
 #include "DoublyLinkedList.h"
 #include "Map.h"
-
-namespace GEB = GamesEngineeringBase;
 
 class GameInfo
 {
@@ -32,23 +30,43 @@ class World
 {
 public:
     World();
-    ~World() = default;
+    virtual ~World()
+    {
+        if (layerList_.empty())
+            return;
+
+        auto *headPointer = layerList_.front();
+        while (headPointer)
+        {
+            // delete list nodes
+            auto *temp = headPointer->next;
+
+            headPointer->next = nullptr;
+            headPointer->prev = nullptr;
+
+            if (headPointer->data)
+                delete headPointer->data;
+
+            delete headPointer;
+
+            headPointer = temp;
+        }
+    };
 
     GEB::Window &canvas() { return canvas_; }
     GameInfo &gameInfo() { return gameInfo_; }
+    void setRunning(bool val) { running_ = val; }
 
 private:
     void gameLoop();
     void pushMainLayer();
 
-    GEB::Structures::DoublylinkedList<Layer> layerList_;
-
     bool running_ = true;
     GEB::Window canvas_;
 
     GameInfo gameInfo_;
+    GEB::Structures::DoublylinkedList<Layer *> layerList_;
 
     // renderer
-    void render();
     void renderLayers();
 };

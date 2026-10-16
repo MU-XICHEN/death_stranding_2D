@@ -1,6 +1,7 @@
 // Reference: "Game Programming Patterns"
 #pragma once
-#include "Types.h"
+
+#include "GameBase.h"
 
 class World;
 
@@ -14,9 +15,9 @@ public:
     virtual void update(World &world) = 0;
     virtual void render(World &world) = 0;
 
-    inline Position center() const
+    inline GEB::Position center() const
     {
-        return Position{
+        return GEB::Position{
             x_ + width_ / 2,
             y_ + height_ / 2,
         };
@@ -34,7 +35,7 @@ public:
     }
 
 protected:
-    Color color_{0, 0, 0};
+    GEB::Color color_{0, 0, 0};
 
     int x_;
     int y_;

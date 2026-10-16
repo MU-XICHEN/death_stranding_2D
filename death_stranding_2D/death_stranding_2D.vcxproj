@@ -156,13 +156,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Constants.h" />
+    <ClInclude Include="include\DebugUtils.h" />
     <ClInclude Include="include\DoublyLinkedList.h" />
     <ClInclude Include="include\Entity.h" />
+    <ClInclude Include="include\GameBase.h" />
+    <ClInclude Include="include\GameMath.h" />
     <ClInclude Include="include\GamesEngineeringBase.h" />
     <ClInclude Include="include\Hero.h" />
     <ClInclude Include="include\Layer.h" />
     <ClInclude Include="include\Map.h" />
-    <ClInclude Include="include\Math.h" />
     <ClInclude Include="include\Types.h" />
     <ClInclude Include="include\Viewport.h" />
     <ClInclude Include="include\World.h" />

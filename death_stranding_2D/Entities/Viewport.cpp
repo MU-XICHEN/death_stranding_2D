@@ -18,25 +18,24 @@ int checkPixelInMapBorder(int x, int y, int mapWidth, int mapHeight, int borderS
 
 void Viewport::update(World &world)
 {
-    int windowX, windowY;
     const Hero &hero = world.gameInfo().hero();
 
-    int halfWidth = WINDOW_WIDTH / 2;
-    int halfHeight = WINDOW_HEIGHT / 2;
+    int halfWidth = VIEWPORT_WIDTH / 2;
+    int halfHeight = VIEWPORT_HEIGHT / 2;
     GEB::Position heroCenter = hero.center();
 
-    int idealWindowX = heroCenter.x - halfWidth;
-    int idealWindowY = heroCenter.y - halfHeight;
+    float idealWindowX = heroCenter.x - halfWidth;
+    float idealWindowY = heroCenter.y - halfHeight;
 
     // control top and left
-    int targetX = GEB::Math::max(idealWindowX, 0);
-    int targetY = GEB::Math::max(idealWindowY, 0);
+    float targetX = GEB::Math::max(idealWindowX, 0.0f);
+    float targetY = GEB::Math::max(idealWindowY, 0.0f);
 
     // control bottom and right
-    int minX = MAP_WIDTH - WINDOW_WIDTH;
-    int minY = MAP_HEIGHT - WINDOW_HEIGHT;
-    int finalX = GEB::Math::min(targetX, minX);
-    int finalY = GEB::Math::min(targetY, minY);
+    float minX = static_cast<float>(MAP_WIDTH - VIEWPORT_WIDTH);
+    float minY = static_cast<float>(MAP_HEIGHT - VIEWPORT_HEIGHT);
+    float finalX = GEB::Math::min(targetX, minX);
+    float finalY = GEB::Math::min(targetY, minY);
 
     x_ = finalX;
     y_ = finalY;
@@ -54,8 +53,8 @@ void Viewport::render(World &world)
             bool inBorder = checkPixelInMapBorder(i, j, map.width, map.height, map.borderSize);
             if (inBorder)
             {
-                int windowStartXInMap = i - x_;
-                int windowStartYInMap = j - y_;
+                int windowStartXInMap = i - static_cast<int>(x_);
+                int windowStartYInMap = j - static_cast<int>(y_);
                 world.canvas().draw(windowStartXInMap, windowStartYInMap, map.borderColor.r, map.borderColor.g, map.borderColor.b);
             }
         }

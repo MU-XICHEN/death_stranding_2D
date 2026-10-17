@@ -18,8 +18,8 @@ public:
     inline GEB::Position center() const
     {
         return GEB::Position{
-            static_cast<int>(x_) + width_ / 2,
-            static_cast<int>(y_) + height_ / 2,
+            static_cast<float>(x_) + width_ / 2,
+            static_cast<float>(y_) + height_ / 2,
         };
     }
     inline float x() const { return x_; }
@@ -37,6 +37,7 @@ public:
 protected:
     GEB::Color color_{0, 0, 0};
 
+    // Position in map
     float x_;
     float y_;
 

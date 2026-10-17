@@ -33,11 +33,11 @@ void World::pushMainLayer()
 {
     Layer *mainLayer = new Layer();
 
-    Hero *heroPointer = new Hero(MAP_BORDER_SIZE, MAP_BORDER_SIZE, 20, 20);
+    Hero *heroPointer = new Hero(MAP_BORDER_SIZE, MAP_BORDER_SIZE, ROLE_SIZE, ROLE_SIZE);
     heroPointer->setColor(255, 0, 0);
     mainLayer->pushEntity(heroPointer);
 
-    mainLayer->pushEntity(new Viewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT));
+    mainLayer->pushEntity(new Viewport(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT));
 
     layerList_.push_back(mainLayer);
 }

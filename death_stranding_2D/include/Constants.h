@@ -1,17 +1,25 @@
 #pragma once
 
 // Window
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 600
+#define WINDOW_WIDTH 1024
+#define WINDOW_HEIGHT 728
+
+// Information Panel
+#define INFORMATION_PANEL_HEIGHT 100
+
+// Viewport
+#define VIEWPORT_WIDTH WINDOW_WIDTH
+#define VIEWPORT_HEIGHT (WINDOW_HEIGHT - INFORMATION_PANEL_HEIGHT)
 
 // Map
 #define MAP_RATIO 1.5
 #define MAP_WIDTH (WINDOW_WIDTH * MAP_RATIO)
 #define MAP_HEIGHT (WINDOW_HEIGHT * MAP_RATIO)
-#define MAP_BORDER_SIZE 20
+#define MAP_BORDER_SIZE 40
 
-// Hero
+// Role
 #define PIXEL_PER_SEC 200
+#define ROLE_SIZE 60
 
 // World
 #define MAX_LAYERS 10

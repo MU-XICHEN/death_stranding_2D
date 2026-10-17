@@ -32,5 +32,5 @@ private:
         x_ = GEB::Math::min(resPos, boundary);
     }
 
-    void handleEvents(World &world);
+    void handleEvents(World &world) override;
 };

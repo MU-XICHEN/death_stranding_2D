@@ -16,13 +16,28 @@
     <Filter Include="Source Files\Entities">
       <UniqueIdentifier>{8D86E330-A335-4B03-9D74-FA8860D72867}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Layers">
+      <UniqueIdentifier>{A4EB9EA3-E182-4941-896D-0B34D7F08494}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Entities\Hero.cpp">
       <Filter>Source Files\Entities</Filter>
     </ClCompile>
+    <ClCompile Include="Entities\Intro.cpp">
+      <Filter>Source Files\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities\Menu.cpp">
+      <Filter>Source Files\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Entities\Tally.cpp">
+      <Filter>Source Files\Entities</Filter>
+    </ClCompile>
     <ClCompile Include="Entities\Viewport.cpp">
       <Filter>Source Files\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Layers\Layer.cpp">
+      <Filter>Source Files\Layers</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
@@ -56,10 +71,22 @@
     <ClInclude Include="include\Hero.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Intro.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\Layer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\MainLayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\Map.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Menu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Tally.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Types.h">

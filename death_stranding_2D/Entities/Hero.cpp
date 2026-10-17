@@ -5,10 +5,11 @@
 
 void Hero::handleEvents(World &world)
 {
-    const auto &map = world.gameInfo().map();
     auto &canvas = world.canvas();
 
-    float dt = world.timer().dt();
+    const auto &map = world.gameInfo().map();
+
+    float dt = world.gameInfo().dt();
 
     float distance = dt * PIXEL_PER_SEC;
 

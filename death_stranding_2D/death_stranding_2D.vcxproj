@@ -150,7 +150,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Entities\Hero.cpp" />
+    <ClCompile Include="Entities\Intro.cpp" />
+    <ClCompile Include="Entities\Menu.cpp" />
+    <ClCompile Include="Entities\Tally.cpp" />
     <ClCompile Include="Entities\Viewport.cpp" />
+    <ClCompile Include="Layers\Layer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
@@ -163,8 +167,12 @@
     <ClInclude Include="include\GameMath.h" />
     <ClInclude Include="include\GamesEngineeringBase.h" />
     <ClInclude Include="include\Hero.h" />
+    <ClInclude Include="include\Intro.h" />
     <ClInclude Include="include\Layer.h" />
+    <ClInclude Include="include\MainLayer.h" />
     <ClInclude Include="include\Map.h" />
+    <ClInclude Include="include\Menu.h" />
+    <ClInclude Include="include\Tally.h" />
     <ClInclude Include="include\Types.h" />
     <ClInclude Include="include\Viewport.h" />
     <ClInclude Include="include\World.h" />

@@ -1,6 +1,7 @@
 #pragma once
 
 // Keep this in sync with GamesEngineeringBase.h.
+// Todo: remove this utils.h when finishing this project
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif

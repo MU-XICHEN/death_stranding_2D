@@ -52,13 +52,14 @@ void Hero::handleEvents(World &world)
     }
 }
 
-void Hero::update(World &world)
+void Hero::update(World &world, Layer &layer)
 {
+    // handle keyboard events for hero
     handleEvents(world);
     world.gameInfo().updateHero(*this);
 }
 
-void Hero::render(World &world)
+void Hero::render(World &world, Layer &layer)
 {
     const Viewport &viewport = world.gameInfo().viewport();
 

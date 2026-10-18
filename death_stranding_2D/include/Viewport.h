@@ -8,6 +8,6 @@ class Viewport : public Entity
 public:
     using Entity::Entity;
 
-    void update(World &world) override;
-    void render(World &world) override;
+    void update(World &world, Layer &layer) override;
+    void render(World &world, Layer &layer) override;
 };

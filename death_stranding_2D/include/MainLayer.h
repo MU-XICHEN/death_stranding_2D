@@ -57,7 +57,8 @@ public:
     ~TallyStage() = default;
 };
 
-const StageCreator mainLayerStageCreator[] = {
+// Only use in this file.
+static const StageCreator mainLayerStageCreator[] = {
     []() -> Stage *
     { return new IntroStage(); },
     []() -> Stage *
@@ -67,8 +68,10 @@ const StageCreator mainLayerStageCreator[] = {
     []() -> Stage *
     { return new TallyStage(); }};
 
+static const int stageCreatorSize = sizeof(mainLayerStageCreator) / sizeof(mainLayerStageCreator[0]);
+
 class MainLayer : public Layer
 {
 public:
-    MainLayer() : Layer(mainLayerStageCreator) {};
+    MainLayer() : Layer(mainLayerStageCreator, stageCreatorSize) {};
 };

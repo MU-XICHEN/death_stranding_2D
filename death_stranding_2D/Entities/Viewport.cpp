@@ -16,7 +16,7 @@ int checkPixelInMapBorder(int x, int y, int mapWidth, int mapHeight, int borderS
     return inVerticalBorder || inHorizontalBorder;
 }
 
-void Viewport::update(World &world)
+void Viewport::update(World &world, Layer &layer)
 {
     const Hero &hero = world.gameInfo().hero();
 
@@ -43,7 +43,7 @@ void Viewport::update(World &world)
     world.gameInfo().updateViewport(*this);
 }
 
-void Viewport::render(World &world)
+void Viewport::render(World &world, Layer &layer)
 {
     const auto &map = world.gameInfo().map();
     for (int i = x_; i < x_ + width_; i++)

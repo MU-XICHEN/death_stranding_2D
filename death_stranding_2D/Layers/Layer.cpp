@@ -1,4 +1,5 @@
 #include "Layer.h"
+#include "GameBase.h"
 
 Stage::~Stage()
 {
@@ -29,7 +30,7 @@ void Stage::pushEntity(Entity *entity)
 }
 
 // Iterate over the list in insertion order, which means the entity added first is updated first.
-void Stage::updateEntities(World &world)
+void Stage::updateEntities(World &world, Layer &layer)
 {
     if (entityList_.empty())
         return;
@@ -38,14 +39,14 @@ void Stage::updateEntities(World &world)
     while (head)
     {
         auto &entity = head->data;
-        entity->update(world);
+        entity->update(world, layer);
 
         head = head->next;
     }
 }
 
 // Iterate over the list in reverse order, which means the entity pushed last is rendered first.
-void Stage::renderEntities(World &world)
+void Stage::renderEntities(World &world, Layer &layer)
 {
     if (entityList_.empty())
         return;
@@ -54,7 +55,7 @@ void Stage::renderEntities(World &world)
     while (tail)
     {
         auto &entity = tail->data;
-        entity->render(world);
+        entity->render(world, layer);
 
         tail = tail->prev;
     }
@@ -62,9 +63,17 @@ void Stage::renderEntities(World &world)
 
 // ------------------------------------------ Layer ------------------------------------------
 
-Layer::Layer(const StageCreator *stageCreator)
+Layer::Layer(const StageCreator *stageCreator, unsigned int size, unsigned int initialIndex) : stageCreator_(stageCreator), size_(size), currentIndex_(initialIndex)
 {
-    currentStage_ = stageCreator[0]();
+    size_ = size_;
+    currentIndex_ = initialIndex;
+
+    currentStage_ = stageCreator[initialIndex]();
+
+    if (!currentStage_)
+    {
+        GamesEngineeringBase::Debugger::showAlert();
+    }
 }
 
 Layer::~Layer()
@@ -73,5 +82,29 @@ Layer::~Layer()
     {
         delete currentStage_;
         currentStage_ = nullptr;
+    }
+}
+
+void Layer::checkGoToNextStage()
+{
+    if (!nextFrameFlag_)
+        return;
+
+    // delete current stage
+    if (currentStage_)
+    {
+        delete currentStage_;
+        currentStage_ = nullptr;
+    }
+
+    // create next stage
+    unsigned int index = (++currentIndex_) % size_;
+    currentStage_ = stageCreator_[index]();
+    nextFrameFlag_ = false;
+
+    if (!currentStage_)
+    {
+        GamesEngineeringBase::Debugger::showAlert();
+        return;
     }
 }

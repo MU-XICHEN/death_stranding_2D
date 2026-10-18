@@ -1,4 +1,3 @@
-
 #include "Tally.h"
 #include "World.h"
 
@@ -6,11 +5,11 @@ void Tally::handleEvents(World &world)
 {
 }
 
-void Tally::update(World &world)
+void Tally::update(World &world, Layer &layer)
 {
 }
 
-void Tally::render(World &world)
+void Tally::render(World &world, Layer &layer)
 {
     auto &canvas = world.canvas();
 

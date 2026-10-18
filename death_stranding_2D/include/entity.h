@@ -1,9 +1,11 @@
 // Reference: "Game Programming Patterns"
+
 #pragma once
 
 #include "GameBase.h"
 
 class World;
+class Layer;
 
 class Entity
 {
@@ -12,8 +14,8 @@ public:
         : x_(x), y_(y), width_(width), height_(height) {}
     virtual ~Entity() = default;
 
-    virtual void update(World &world) = 0;
-    virtual void render(World &world) = 0;
+    virtual void update(World &world, Layer &layer) = 0;
+    virtual void render(World &world, Layer &layer) = 0;
 
     inline GEB::Position center() const
     {
@@ -42,7 +44,4 @@ protected:
 
     int width_;
     int height_;
-
-private:
-    virtual void handleEvents(World &world) {};
 };

@@ -44,8 +44,7 @@ public:
 private:
     void gameLoop();
     void refreshTimer();
-
-    void pushMainLayer();
+    void initLayers();
 
     bool running_ = true;
     GEB::Window canvas_;
@@ -54,6 +53,8 @@ private:
     GameInfo gameInfo_;
     GEB::Structures::DoublylinkedList<Layer *> layerList_;
 
-    // renderer
-    void renderLayers();
+    // Life Cycle
+    void frameStart();
+    void frameDraw();
+    bool frameFinished();
 };

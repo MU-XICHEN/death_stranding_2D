@@ -6,11 +6,11 @@ void Menu::handleEvents(World &world)
 {
 }
 
-void Menu::update(World &world)
+void Menu::update(World &world, Layer &layer)
 {
 }
 
-void Menu::render(World &world)
+void Menu::render(World &world, Layer &layer)
 {
     auto &canvas = world.canvas();
     for (int i = 0; i < 50; i++)

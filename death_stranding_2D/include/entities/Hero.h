@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Entity.h"
+#include "entities/Entity.h"
 
-class Tally : public Entity
+class Hero : public Entity
 {
 public:
     using Entity::Entity;

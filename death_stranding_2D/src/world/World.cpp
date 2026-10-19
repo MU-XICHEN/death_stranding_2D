@@ -1,10 +1,10 @@
 #include <iostream> // todo: remove
 
-#include "World.h"
-#include "GameBase.h"
-#include "Hero.h"
-#include "Viewport.h"
-#include "MainLayer.h"
+#include "world/World.h"
+#include "core/GameBase.h"
+#include "entities/Hero.h"
+#include "entities/Viewport.h"
+#include "layers/MainLayer.h"
 
 GameInfo::GameInfo(Map map, Hero hero, Viewport viewport)
     : map_(map), hero_(hero), viewport_(viewport) {}

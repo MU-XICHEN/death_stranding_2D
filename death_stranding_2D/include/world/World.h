@@ -1,12 +1,12 @@
 #pragma once
 
 #include "GamesEngineeringBase.h"
-#include "GameBase.h"
-#include "Layer.h"
-#include "Hero.h"
-#include "Viewport.h"
-#include "DoublyLinkedList.h"
-#include "Map.h"
+#include "core/GameBase.h"
+#include "layers/Layer.h"
+#include "entities/Hero.h"
+#include "entities/Viewport.h"
+#include "utils/DoublyLinkedList.h"
+#include "world/Map.h"
 
 class GameInfo
 {

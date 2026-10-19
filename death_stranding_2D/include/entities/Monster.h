@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Entity.h"
-#include "GameBase.h"
+#include "entities/Entity.h"
+#include "core/GameBase.h"
 
 class Monster : public Entity
 {

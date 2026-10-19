@@ -1,23 +1,10 @@
 #pragma once
 
-#include "Entity.h"
-#include "DoublyLinkedList.h"
-#include "GameBase.h"
+#include "entities/Entity.h"
+#include "utils/DoublyLinkedList.h"
+#include "core/GameBase.h"
 #include "GamesEngineeringBase.h"
-
-class Stage
-{
-public:
-    Stage() = default;
-    virtual ~Stage();
-    void pushEntity(Entity *entity);
-    void updateEntities(World &world, Layer &layer);
-    void renderEntities(World &world, Layer &layer);
-
-private:
-    // List includes various types of Entity, so pass <Entity *>
-    GEB::Structures::DoublylinkedList<Entity *> entityList_;
-};
+#include "stages/Stage.h"
 
 using StageCreator = Stage *(*)();
 

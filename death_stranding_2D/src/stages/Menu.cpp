@@ -1,6 +1,6 @@
 
-#include "Menu.h"
-#include "World.h"
+#include "stages/Menu.h"
+#include "world/World.h"
 
 void Menu::handleEvents(World &world)
 {

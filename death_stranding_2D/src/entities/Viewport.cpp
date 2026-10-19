@@ -1,6 +1,6 @@
-#include "Viewport.h"
-#include "GameBase.h"
-#include "World.h"
+#include "entities/Viewport.h"
+#include "core/GameBase.h"
+#include "world/World.h"
 #include "GamesEngineeringBase.h"
 
 int checkPixelInMapBorder(int x, int y, int mapWidth, int mapHeight, int borderSize)

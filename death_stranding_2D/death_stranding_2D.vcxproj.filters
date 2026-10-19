@@ -13,90 +13,123 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Entities">
+    <Filter Include="Source Files\entities">
       <UniqueIdentifier>{8D86E330-A335-4B03-9D74-FA8860D72867}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Layers">
+    <Filter Include="Source Files\layers">
       <UniqueIdentifier>{A4EB9EA3-E182-4941-896D-0B34D7F08494}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\stages">
+      <UniqueIdentifier>{6BD794BA-F7F2-4A03-8651-11B8215F9102}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\world">
+      <UniqueIdentifier>{456C367A-8156-4C85-A19F-119CEF242882}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\core">
+      <UniqueIdentifier>{DD6BB71A-84D4-48D9-BDF5-3CF825F80FCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\world">
+      <UniqueIdentifier>{5322D4BF-C8E2-42E5-B47E-37469B01688E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\entities">
+      <UniqueIdentifier>{196F5616-C012-46FD-8062-9E7A983E1636}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\layers">
+      <UniqueIdentifier>{C0E22448-53D3-438B-B81A-D42F8C7021A7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\stages">
+      <UniqueIdentifier>{86D38E53-4ECE-42DC-B972-01284DD04EBE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\utils">
+      <UniqueIdentifier>{A41E2A94-0479-44A1-B75B-0858BA1DFE2F}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Entities\Hero.cpp">
-      <Filter>Source Files\Entities</Filter>
+    <ClCompile Include="src\entities\Hero.cpp">
+      <Filter>Source Files\entities</Filter>
     </ClCompile>
-    <ClCompile Include="Entities\Intro.cpp">
-      <Filter>Source Files\Entities</Filter>
+    <ClCompile Include="src\stages\Intro.cpp">
+      <Filter>Source Files\stages</Filter>
     </ClCompile>
-    <ClCompile Include="Entities\Menu.cpp">
-      <Filter>Source Files\Entities</Filter>
+    <ClCompile Include="src\stages\Menu.cpp">
+      <Filter>Source Files\stages</Filter>
     </ClCompile>
-    <ClCompile Include="Entities\Tally.cpp">
-      <Filter>Source Files\Entities</Filter>
+    <ClCompile Include="src\stages\Tally.cpp">
+      <Filter>Source Files\stages</Filter>
     </ClCompile>
-    <ClCompile Include="Entities\Viewport.cpp">
-      <Filter>Source Files\Entities</Filter>
+    <ClCompile Include="src\entities\Viewport.cpp">
+      <Filter>Source Files\entities</Filter>
     </ClCompile>
-    <ClCompile Include="Layers\Layer.cpp">
-      <Filter>Source Files\Layers</Filter>
+    <ClCompile Include="src\layers\Layer.cpp">
+      <Filter>Source Files\layers</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="World.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\world\World.cpp">
+      <Filter>Source Files\world</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Constants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\DebugUtils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\DoublyLinkedList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Entity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GameBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\GameMath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\GamesEngineeringBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Hero.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\core\Constants.h">
+      <Filter>Header Files\core</Filter>
     </ClInclude>
-    <ClInclude Include="include\Intro.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\core\GameBase.h">
+      <Filter>Header Files\core</Filter>
     </ClInclude>
-    <ClInclude Include="include\Layer.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\core\Types.h">
+      <Filter>Header Files\core</Filter>
     </ClInclude>
-    <ClInclude Include="include\MainLayer.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\entities\Entity.h">
+      <Filter>Header Files\entities</Filter>
     </ClInclude>
-    <ClInclude Include="include\Map.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\entities\Hero.h">
+      <Filter>Header Files\entities</Filter>
     </ClInclude>
-    <ClInclude Include="include\Menu.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\entities\Monster.h">
+      <Filter>Header Files\entities</Filter>
     </ClInclude>
-    <ClInclude Include="include\Tally.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\entities\Viewport.h">
+      <Filter>Header Files\entities</Filter>
     </ClInclude>
-    <ClInclude Include="include\Types.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\layers\Layer.h">
+      <Filter>Header Files\layers</Filter>
     </ClInclude>
-    <ClInclude Include="include\Viewport.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\layers\MainLayer.h">
+      <Filter>Header Files\layers</Filter>
     </ClInclude>
-    <ClInclude Include="include\World.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\stages\Intro.h">
+      <Filter>Header Files\stages</Filter>
+    </ClInclude>
+    <ClInclude Include="include\stages\Menu.h">
+      <Filter>Header Files\stages</Filter>
+    </ClInclude>
+    <ClInclude Include="include\stages\Play.h">
+      <Filter>Header Files\stages</Filter>
+    </ClInclude>
+    <ClInclude Include="include\stages\Stage.h">
+      <Filter>Header Files\stages</Filter>
+    </ClInclude>
+    <ClInclude Include="include\stages\Tally.h">
+      <Filter>Header Files\stages</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utils\DebugUtils.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utils\DoublyLinkedList.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utils\GameMath.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\world\Map.h">
+      <Filter>Header Files\world</Filter>
+    </ClInclude>
+    <ClInclude Include="include\world\World.h">
+      <Filter>Header Files\world</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

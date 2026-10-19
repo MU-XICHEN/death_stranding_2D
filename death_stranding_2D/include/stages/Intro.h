@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Entity.h"
+#include "entities/Entity.h"
+#include "stages/Stage.h"
 
 class Intro : public Entity
 {
@@ -14,4 +15,15 @@ private:
     bool started_ = false;
 
     void handleEvents(World &world);
+};
+
+class IntroStage : public Stage
+{
+public:
+    IntroStage()
+    {
+        Intro *intro = new Intro(0, 0, 50, 50);
+        pushEntity(intro);
+    };
+    ~IntroStage() = default;
 };

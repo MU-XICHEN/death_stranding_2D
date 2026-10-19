@@ -1,6 +1,6 @@
-#include "Hero.h"
-#include "World.h"
-#include "GameBase.h"
+#include "entities/Hero.h"
+#include "world/World.h"
+#include "core/GameBase.h"
 #include "GamesEngineeringBase.h"
 
 void Hero::handleEvents(World &world)
@@ -16,23 +16,19 @@ void Hero::handleEvents(World &world)
     // Handle movement
     if (canvas.keyPressed('W') && canvas.keyPressed('A'))
     {
-        moveUp(distance, static_cast<float>(map.topBoundary()));
-        moveLeft(distance, static_cast<float>(map.leftBoundary()));
+        moveUpLeft(distance, static_cast<float>(map.leftBoundary()), static_cast<float>(map.topBoundary()));
     }
     else if (canvas.keyPressed('W') && canvas.keyPressed('D'))
     {
-        moveUp(distance, static_cast<float>(map.topBoundary()));
-        moveRight(distance, static_cast<float>(map.rightBoundary() - width_));
+        moveUpRight(distance, static_cast<float>(map.rightBoundary() - width_), static_cast<float>(map.topBoundary()));
     }
     else if (canvas.keyPressed('S') && canvas.keyPressed('A'))
     {
-        moveDown(distance, static_cast<float>(map.bottomBoundary() - height_));
-        moveLeft(distance, static_cast<float>(map.leftBoundary()));
+        moveDownLeft(distance, static_cast<float>(map.leftBoundary()), static_cast<float>(map.bottomBoundary() - height_));
     }
     else if (canvas.keyPressed('S') && canvas.keyPressed('D'))
     {
-        moveDown(distance, static_cast<float>(map.bottomBoundary() - height_));
-        moveRight(distance, static_cast<float>(map.rightBoundary() - width_));
+        moveDownRight(distance, static_cast<float>(map.rightBoundary() - width_), static_cast<float>(map.bottomBoundary() - height_));
     }
     else if (canvas.keyPressed('W'))
     {

@@ -149,33 +149,36 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Entities\Hero.cpp" />
-    <ClCompile Include="Entities\Intro.cpp" />
-    <ClCompile Include="Entities\Menu.cpp" />
-    <ClCompile Include="Entities\Tally.cpp" />
-    <ClCompile Include="Entities\Viewport.cpp" />
-    <ClCompile Include="Layers\Layer.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="World.cpp" />
+    <ClCompile Include="src\entities\Hero.cpp" />
+    <ClCompile Include="src\stages\Intro.cpp" />
+    <ClCompile Include="src\stages\Menu.cpp" />
+    <ClCompile Include="src\stages\Tally.cpp" />
+    <ClCompile Include="src\entities\Viewport.cpp" />
+    <ClCompile Include="src\layers\Layer.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\world\World.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Constants.h" />
-    <ClInclude Include="include\DebugUtils.h" />
-    <ClInclude Include="include\DoublyLinkedList.h" />
-    <ClInclude Include="include\Entity.h" />
-    <ClInclude Include="include\GameBase.h" />
-    <ClInclude Include="include\GameMath.h" />
     <ClInclude Include="include\GamesEngineeringBase.h" />
-    <ClInclude Include="include\Hero.h" />
-    <ClInclude Include="include\Intro.h" />
-    <ClInclude Include="include\Layer.h" />
-    <ClInclude Include="include\MainLayer.h" />
-    <ClInclude Include="include\Map.h" />
-    <ClInclude Include="include\Menu.h" />
-    <ClInclude Include="include\Tally.h" />
-    <ClInclude Include="include\Types.h" />
-    <ClInclude Include="include\Viewport.h" />
-    <ClInclude Include="include\World.h" />
+    <ClInclude Include="include\core\Constants.h" />
+    <ClInclude Include="include\core\GameBase.h" />
+    <ClInclude Include="include\core\Types.h" />
+    <ClInclude Include="include\entities\Entity.h" />
+    <ClInclude Include="include\entities\Hero.h" />
+    <ClInclude Include="include\entities\Monster.h" />
+    <ClInclude Include="include\entities\Viewport.h" />
+    <ClInclude Include="include\layers\Layer.h" />
+    <ClInclude Include="include\layers\MainLayer.h" />
+    <ClInclude Include="include\stages\Intro.h" />
+    <ClInclude Include="include\stages\Menu.h" />
+    <ClInclude Include="include\stages\Play.h" />
+    <ClInclude Include="include\stages\Stage.h" />
+    <ClInclude Include="include\stages\Tally.h" />
+    <ClInclude Include="include\utils\DebugUtils.h" />
+    <ClInclude Include="include\utils\DoublyLinkedList.h" />
+    <ClInclude Include="include\utils\GameMath.h" />
+    <ClInclude Include="include\world\Map.h" />
+    <ClInclude Include="include\world\World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

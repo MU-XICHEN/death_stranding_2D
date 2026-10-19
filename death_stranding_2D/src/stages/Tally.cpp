@@ -1,5 +1,5 @@
-#include "Tally.h"
-#include "World.h"
+#include "stages/Tally.h"
+#include "world/World.h"
 
 void Tally::handleEvents(World &world)
 {

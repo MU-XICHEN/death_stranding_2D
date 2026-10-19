@@ -1,5 +1,5 @@
 #pragma once
-#include "GameBase.h"
+#include "core/GameBase.h"
 
 struct Map
 {

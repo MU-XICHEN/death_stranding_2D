@@ -1,5 +1,5 @@
-#include "Layer.h"
-#include "GameBase.h"
+#include "layers/Layer.h"
+#include "core/GameBase.h"
 
 Stage::~Stage()
 {

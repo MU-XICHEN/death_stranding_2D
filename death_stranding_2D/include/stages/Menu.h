@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Entity.h"
+#include "entities/Entity.h"
+#include "stages/Stage.h"
 
 class Menu : public Entity
 {
@@ -14,4 +15,15 @@ private:
     bool started_ = false;
 
     void handleEvents(World &world);
+};
+
+class MenuStage : public Stage
+{
+public:
+    MenuStage()
+    {
+        Menu *menu = new Menu(0, 0, 50, 50);
+        pushEntity(menu);
+    };
+    ~MenuStage() = default;
 };

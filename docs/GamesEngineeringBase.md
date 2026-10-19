@@ -57,7 +57,7 @@ namespace GEB = GamesEngineeringBase;
 
 The header uses Win32, Direct3D 11, WIC, XAudio2, and XInput. It requests `D3D11.lib`, `D3DCompiler.lib`, `WindowsCodecs.lib`, and `xinput.lib` through linker pragmas. The audio example additionally requests `xaudio2.lib`. Keep the normal Windows system libraries supplied by the existing Visual Studio project.
 
-Each complete example below is a **separate program**. To try one, use it as the contents of `main.cpp`; do not combine multiple `main()` functions. Build and run using the existing Visual Studio solution or the VS Code tasks.
+Each complete example below is a **separate program**. To try one, use it as the contents of `death_stranding_2D/src/main.cpp`; do not combine multiple `main()` functions. Build and run using the existing Visual Studio solution or the VS Code tasks.
 
 Relative asset paths are resolved from the **process working directory**. In this project, that is the inner `death_stranding_2D` directory. For example, `assets/click.wav` means `death_stranding_2D/assets/click.wav`.
 

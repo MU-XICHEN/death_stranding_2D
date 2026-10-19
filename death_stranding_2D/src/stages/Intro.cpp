@@ -1,6 +1,6 @@
 
-#include "Intro.h"
-#include "World.h"
+#include "stages/Intro.h"
+#include "world/World.h"
 
 void Intro::handleEvents(World &world)
 {

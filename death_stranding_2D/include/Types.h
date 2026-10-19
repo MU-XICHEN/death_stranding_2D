@@ -14,4 +14,16 @@ namespace GamesEngineeringBase
         float x;
         float y;
     };
+
+    enum Direction
+    {
+        Down,
+        Up,
+        Left,
+        Right,
+        DownLeft,
+        DownRight,
+        UpLeft,
+        UpRight
+    };
 }

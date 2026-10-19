@@ -1,15 +1,15 @@
 #pragma once
 
-#include <Entity.h>
+#include "Entity.h"
+#include "GameBase.h"
 
 class Monster : public Entity
 {
 public:
-    using Entity::Entity;
-    virtual ~Monster() = default;
+    Monster(float x, float y, int width, int height, float awareDistance)
+        : Entity(x, y, width, height), awareDistance_(awareDistance) {}
 
-    void update(World &world, Layer &layer) override;
-    void render(World &world, Layer &layer) override;
+    virtual ~Monster() = default;
 
 private:
     void directToHero(World &world, Layer &layer);
@@ -17,13 +17,13 @@ private:
     float awareDistance_;
 };
 
+class Beast : public Monster
+{
+};
+
 class Ghost : public Monster
 {
 public:
 private:
     bool visible_;
-};
-
-class Beast : public Monster
-{
 };

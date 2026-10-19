@@ -4,6 +4,9 @@
  * DoublylinkedList
  * Note: Users are responsible for recycling memory of nodes' data.
  */
+
+
+ // Todo: change to arr, without jumping
 namespace GamesEngineeringBase::Structures
 {
     template <typename T>

@@ -89,11 +89,11 @@ void World::frameStart()
 void World::frameDraw()
 {
     // render layers from bottom to top
-    // which means layers pushed in last will be the first to render
+    // which means layers pushed in last will be the last to render
     if (layerList_.empty())
         return;
 
-    for (auto *layerNode = layerList_.back(); layerNode != nullptr; layerNode = layerNode->prev)
+    for (auto *layerNode = layerList_.front(); layerNode != nullptr; layerNode = layerNode->next)
     {
 
         auto *layer = layerNode->data;

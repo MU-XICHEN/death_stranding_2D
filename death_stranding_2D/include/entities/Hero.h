@@ -1,11 +1,12 @@
 #pragma once
 
 #include "entities/Entity.h"
+#include "entities/Entity.h"
 
-class Hero : public Entity
+class Hero : public Character
 {
 public:
-    using Entity::Entity;
+    using Character::Character;
 
     void update(World &world, Layer &layer) override;
     void render(World &world, Layer &layer) override;

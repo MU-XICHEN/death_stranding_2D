@@ -9,10 +9,9 @@ public:
     Stage() = default;
     virtual ~Stage();
     void pushEntity(Entity *entity);
-    void updateEntities(World &world, Layer &layer);
-    void renderEntities(World &world, Layer &layer);
+    virtual void updateEntities(World &world, Layer &layer);
+    virtual void renderEntities(World &world, Layer &layer);
 
 private:
-    // List includes various types of Entity, so pass <Entity *>
-    GEB::Structures::DoublylinkedList<Entity *> entityList_;
+    GEB::Structures::DoublyLinkedList<Entity *> entityList_;
 };

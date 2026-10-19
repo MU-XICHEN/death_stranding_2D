@@ -7,15 +7,12 @@
 class PlayStage : public Stage
 {
 public:
-    PlayStage()
-    {
-        // Hero Entity
-        Hero *heroPointer = new Hero(MAP_BORDER_SIZE, MAP_BORDER_SIZE, ROLE_SIZE, ROLE_SIZE);
-        heroPointer->setColor(255, 0, 0);
-        pushEntity(heroPointer);
+    PlayStage();
+    virtual ~PlayStage() override;
+    void pushEntityToCharacterList(Character *character);
+    void updateEntities(World &world, Layer &layer) override;
+    void renderEntities(World &world, Layer &layer) override;
 
-        // Viewport Entity
-        pushEntity(new Viewport(0, 0, VIEWPORT_WIDTH, VIEWPORT_HEIGHT));
-    };
-    ~PlayStage() = default;
+private:
+    GEB::Structures::DoublyLinkedList<Character *> characterList_;
 };

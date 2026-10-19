@@ -150,8 +150,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\entities\Hero.cpp" />
+    <ClCompile Include="src\entities\Monster.cpp" />
     <ClCompile Include="src\stages\Intro.cpp" />
     <ClCompile Include="src\stages\Menu.cpp" />
+    <ClCompile Include="src\stages\Play.cpp" />
+    <ClCompile Include="src\stages\Stage.cpp" />
     <ClCompile Include="src\stages\Tally.cpp" />
     <ClCompile Include="src\entities\Viewport.cpp" />
     <ClCompile Include="src\layers\Layer.cpp" />

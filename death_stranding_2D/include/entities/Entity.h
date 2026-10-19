@@ -44,7 +44,16 @@ protected:
 
     int width_;
     int height_;
+};
 
+class Character : public Entity
+{
+public:
+    Character(float x, float y, int width, int height)
+        : Entity(x, y, width, height) {}
+    virtual ~Character() = default;
+
+protected:
     void moveUp(float distance, float boundary)
     {
         float resPos = y_ - distance;

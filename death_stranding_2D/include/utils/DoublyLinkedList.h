@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * DoublylinkedList
+ * DoublyLinkedList
  * Note: Users are responsible for recycling memory of nodes' data.
  */
 
@@ -20,15 +20,15 @@ namespace GamesEngineeringBase::Structures
     };
 
     template <typename T>
-    class DoublylinkedList
+    class DoublyLinkedList
     {
     public:
-        DoublylinkedList() : head_(nullptr), tail_(nullptr), size_(0) {}
-        virtual ~DoublylinkedList() = default;
+        DoublyLinkedList() : head_(nullptr), tail_(nullptr), size_(0) {}
+        virtual ~DoublyLinkedList() = default;
 
         // Avoid different lists' head_ or tail_ points to same memory.
-        DoublylinkedList(const DoublylinkedList &) = delete;
-        DoublylinkedList &operator=(const DoublylinkedList &) = delete;
+        DoublyLinkedList(const DoublyLinkedList &) = delete;
+        DoublyLinkedList &operator=(const DoublyLinkedList &) = delete;
 
         ListNode<T> *back() { return tail_; }
         ListNode<T> *front() { return head_; }

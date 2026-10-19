@@ -17,6 +17,7 @@ namespace GamesEngineeringBase
 
     enum Direction
     {
+        None,
         Down,
         Up,
         Left,

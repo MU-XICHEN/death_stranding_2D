@@ -51,7 +51,7 @@ private:
     GEB::Timer timer_;
 
     GameInfo gameInfo_;
-    GEB::Structures::DoublylinkedList<Layer *> layerList_;
+    GEB::Structures::DoublyLinkedList<Layer *> layerList_;
 
     // Life Cycle
     void frameStart();

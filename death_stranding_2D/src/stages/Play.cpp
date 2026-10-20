@@ -1,8 +1,23 @@
 #include "stages/Play.h"
+#include "entities/Hero.h"
+#include "entities/Viewport.h"
 
 PlayStage::PlayStage()
 {
-    // todo: add NPCS, hero...
+    auto hero = new Hero(
+        START_POSITION_X,
+        START_POSITION_Y,
+        ROLE_SIZE,
+        ROLE_SIZE,
+        PIXEL_PER_SEC);
+    hero->setColor(255, 0, 0);
+    pushEntityToCharacterList(hero);
+
+    Stage::pushEntity(new Viewport(
+        0,
+        0,
+        VIEWPORT_WIDTH,
+        VIEWPORT_HEIGHT));
 }
 
 PlayStage::~PlayStage()

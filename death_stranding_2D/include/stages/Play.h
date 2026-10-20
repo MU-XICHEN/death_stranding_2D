@@ -1,8 +1,7 @@
 #pragma once
 
 #include "stages/Stage.h"
-#include "entities/Hero.h"
-#include "entities/Viewport.h"
+#include "entities/Character.h"
 
 class PlayStage : public Stage
 {

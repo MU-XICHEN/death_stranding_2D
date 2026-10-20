@@ -20,6 +20,8 @@
 // Role
 #define PIXEL_PER_SEC 200
 #define ROLE_SIZE 60
+#define START_POSITION_X MAP_BORDER_SIZE
+#define START_POSITION_Y MAP_BORDER_SIZE
 
 // World
 #define MAX_LAYERS 10

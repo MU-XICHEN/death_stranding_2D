@@ -1,13 +1,13 @@
 #pragma once
 
-#include "entities/Entity.h"
 #include "core/GameBase.h"
+#include "entities/Character.h"
 
 class Monster : public Character
 {
 public:
     Monster(float x, float y, int width, int height, float distance, float speed = PIXEL_PER_SEC)
-        : Character(x, y, width, height), dangerDistance_(distance), speed_(speed) {}
+        : Character(x, y, width, height, speed), dangerDistance_(distance) {}
 
     virtual ~Monster() = default;
 
@@ -19,7 +19,6 @@ protected:
 
     bool awakened_ = false;
     float dangerDistance_;
-    float speed_;
 };
 
 class Beast : public Monster

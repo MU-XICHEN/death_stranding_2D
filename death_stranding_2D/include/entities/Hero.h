@@ -1,7 +1,6 @@
 #pragma once
 
-#include "entities/Entity.h"
-#include "entities/Entity.h"
+#include "entities/Character.h"
 
 class Hero : public Character
 {

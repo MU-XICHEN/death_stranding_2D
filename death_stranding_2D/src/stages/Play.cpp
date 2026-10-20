@@ -1,6 +1,7 @@
 #include "stages/Play.h"
 #include "entities/Hero.h"
 #include "entities/Environment.h"
+#include "entities/Monster.h"
 
 PlayStage::PlayStage()
 {
@@ -13,6 +14,16 @@ PlayStage::PlayStage()
         PIXEL_PER_SEC);
     hero->setColor(255, 0, 0);
     pushEntityToCharacterList(hero);
+
+    auto beast1 = new Beast(
+        100,
+        200,
+        ROLE_SIZE,
+        ROLE_SIZE,
+        M_PIXEL_PER_SEC,
+        M_DANGER_DISTANCE);
+    beast1->setColor(0, 0, 255);
+    pushEntityToCharacterList(beast1);
 
     // environment initialization
     Stage::pushEntity(new Environment(

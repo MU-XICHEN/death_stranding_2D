@@ -149,6 +149,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\entities\Character.cpp" />
     <ClCompile Include="src\entities\Hero.cpp" />
     <ClCompile Include="src\entities\Monster.cpp" />
     <ClCompile Include="src\stages\Intro.cpp" />

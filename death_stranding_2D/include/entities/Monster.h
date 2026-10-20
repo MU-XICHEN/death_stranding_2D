@@ -6,28 +6,41 @@
 class Monster : public Character
 {
 public:
-    Monster(float x, float y, int width, int height, float distance, float speed = PIXEL_PER_SEC)
+    Monster(float x, float y, int width, int height,
+            float speed = M_PIXEL_PER_SEC,
+            float distance = M_DANGER_DISTANCE)
         : Character(x, y, width, height, speed), dangerDistance_(distance) {}
 
     virtual ~Monster() = default;
 
+    virtual void move(World &world, Layer &layer) = 0;
+
 protected:
-    static GEB::Direction calculateDirectionToHero(GEB::Position monsterCenter, GEB::Position heroCenter);
+    static GEB::DirectionVec calculateDirVecToHero(GEB::Position monsterCenter, GEB::Position heroCenter, float moveDistance);
 
     void awaken() { awakened_ = true; }
-    void directToHero(World &world, Layer &layer);
 
-    bool awakened_ = false;
+    bool awakened_ = true;
     float dangerDistance_;
 };
 
 class Beast : public Monster
 {
+public:
+    using Monster::Monster;
+
+    void move(World &world, Layer &layer) override;
+    void update(World &world, Layer &layer) override;
 };
 
 class Ghost : public Monster
 {
 public:
+    using Monster::Monster;
+
+    void move(World &world, Layer &layer) override;
+    void update(World &world, Layer &layer) override;
+
 private:
-    bool visible_;
+    bool visible_ = false;
 };

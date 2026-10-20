@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Entity.h"
+#include "entities/Entity.h"
+#include "world/Map.h"
 
 class Character : public Entity
 {
@@ -9,47 +10,29 @@ public:
         : Entity(x, y, width, height), speed_(speed) {}
     virtual ~Character() = default;
 
-protected:
-    float speed_;
+    // update needs to be implemented by derived classes
+    virtual void update(World &world, Layer &layer) = 0;
 
-    void moveUp(float distance, float boundary)
+    // render is implemented here and can be used by derived classes
+    void render(World &world, Layer &layer) override;
+
+    void setColor(unsigned int r, unsigned int g, unsigned int b)
     {
-        float resPos = y_ - distance;
-        y_ = GEB::Math::max(resPos, boundary);
+        color_.r = r;
+        color_.g = g;
+        color_.b = b;
     }
-    void moveDown(float distance, float boundary)
-    {
-        float resPos = y_ + distance;
-        y_ = GEB::Math::min(resPos, boundary);
-    }
-    void moveLeft(float distance, float boundary)
-    {
-        float resPos = x_ - distance;
-        x_ = GEB::Math::max(resPos, boundary);
-    }
-    void moveRight(float distance, float boundary)
-    {
-        float resPos = x_ + distance;
-        x_ = GEB::Math::min(resPos, boundary);
-    }
-    void moveUpLeft(float distance, float boundaryX, float boundaryY)
-    {
-        moveUp(distance, boundaryY);
-        moveLeft(distance, boundaryX);
-    }
-    void moveUpRight(float distance, float boundaryX, float boundaryY)
-    {
-        moveUp(distance, boundaryY);
-        moveRight(distance, boundaryX);
-    }
-    void moveDownLeft(float distance, float boundaryX, float boundaryY)
-    {
-        moveDown(distance, boundaryY);
-        moveLeft(distance, boundaryX);
-    }
-    void moveDownRight(float distance, float boundaryX, float boundaryY)
-    {
-        moveDown(distance, boundaryY);
-        moveRight(distance, boundaryX);
-    }
+
+    void moveUp(float distance, const Map &map);
+    void moveDown(float distance, const Map &map);
+    void moveLeft(float distance, const Map &map);
+    void moveRight(float distance, const Map &map);
+    void moveUpLeft(float distance, const Map &map);
+    void moveUpRight(float distance, const Map &map);
+    void moveDownLeft(float distance, const Map &map);
+    void moveDownRight(float distance, const Map &map);
+
+protected:
+    GEB::Color color_{0, 0, 0};
+    float speed_;
 };

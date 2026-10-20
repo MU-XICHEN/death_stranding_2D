@@ -27,4 +27,10 @@ namespace GamesEngineeringBase
         UpLeft,
         UpRight
     };
+
+    struct DirectionVec
+    {
+        float dx;
+        float dy;
+    };
 }

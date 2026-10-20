@@ -29,16 +29,7 @@ public:
     inline int width() const { return width_; }
     inline int height() const { return height_; }
 
-    inline void setColor(unsigned int r, unsigned int g, unsigned int b)
-    {
-        color_.r = r;
-        color_.g = g;
-        color_.b = b;
-    }
-
 protected:
-    GEB::Color color_{0, 0, 0};
-
     float x_;
     float y_;
 

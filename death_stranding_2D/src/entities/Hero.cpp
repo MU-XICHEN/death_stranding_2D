@@ -11,40 +11,40 @@ void Hero::handleEvents(World &world)
 
     float dt = world.gameInfo().dt();
 
-    float distance = dt * PIXEL_PER_SEC;
+    float distance = dt * speed_;
 
     // Handle movement
     if (canvas.keyPressed('W') && canvas.keyPressed('A'))
     {
-        moveUpLeft(distance, static_cast<float>(map.leftBoundary()), static_cast<float>(map.topBoundary()));
+        moveUpLeft(distance, map);
     }
     else if (canvas.keyPressed('W') && canvas.keyPressed('D'))
     {
-        moveUpRight(distance, static_cast<float>(map.rightBoundary() - width_), static_cast<float>(map.topBoundary()));
+        moveUpRight(distance, map);
     }
     else if (canvas.keyPressed('S') && canvas.keyPressed('A'))
     {
-        moveDownLeft(distance, static_cast<float>(map.leftBoundary()), static_cast<float>(map.bottomBoundary() - height_));
+        moveDownLeft(distance, map);
     }
     else if (canvas.keyPressed('S') && canvas.keyPressed('D'))
     {
-        moveDownRight(distance, static_cast<float>(map.rightBoundary() - width_), static_cast<float>(map.bottomBoundary() - height_));
+        moveDownRight(distance, map);
     }
     else if (canvas.keyPressed('W'))
     {
-        moveUp(distance, static_cast<float>(map.topBoundary()));
+        moveUp(distance, map);
     }
     else if (canvas.keyPressed('S'))
     {
-        moveDown(distance, static_cast<float>(map.bottomBoundary() - height_));
+        moveDown(distance, map);
     }
     else if (canvas.keyPressed('A'))
     {
-        moveLeft(distance, static_cast<float>(map.leftBoundary()));
+        moveLeft(distance, map);
     }
     else if (canvas.keyPressed('D'))
     {
-        moveRight(distance, static_cast<float>(map.rightBoundary() - width_));
+        moveRight(distance, map);
     }
 }
 
@@ -52,33 +52,6 @@ void Hero::update(World &world, Layer &layer)
 {
     // handle keyboard events for hero
     handleEvents(world);
+
     world.gameInfo().updateHero(*this);
-}
-
-void Hero::render(World &world, Layer &layer)
-{
-    const Environment &environment = world.gameInfo().environment();
-
-    float transX = x_ - environment.x();
-    float transY = y_ - environment.y();
-
-    // [todo: remove]
-    if (transX < 0 || transY < 0)
-    {
-        GEB::Debugger::showAlert();
-    }
-
-    for (int i = 0; i < width_; i++)
-    {
-        for (int j = 0; j < height_; j++)
-        {
-            float targetX = transX + i;
-            float targetY = transY + j;
-            world.canvas().draw(static_cast<int>(transX + i),
-                                static_cast<int>(transY + j),
-                                color_.r,
-                                color_.g,
-                                color_.b);
-        }
-    }
 }

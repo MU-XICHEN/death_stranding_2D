@@ -14,4 +14,10 @@ namespace GamesEngineeringBase::Math
     {
         return lhs >= rhs ? lhs : rhs;
     }
+
+    template <typename T>
+    inline T abs(const T &value)
+    {
+        return value >= 0 ? value : -value;
+    }
 }

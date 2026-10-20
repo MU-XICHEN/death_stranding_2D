@@ -1,4 +1,4 @@
-#include "entities/Viewport.h"
+#include "entities/Environment.h"
 #include "core/GameBase.h"
 #include "world/World.h"
 #include "GamesEngineeringBase.h"
@@ -16,12 +16,12 @@ int checkPixelInMapBorder(int x, int y, int mapWidth, int mapHeight, int borderS
     return inVerticalBorder || inHorizontalBorder;
 }
 
-void Viewport::update(World &world, Layer &layer)
+void Environment::update(World &world, Layer &layer)
 {
     const Hero &hero = world.gameInfo().hero();
 
-    int halfWidth = VIEWPORT_WIDTH / 2;
-    int halfHeight = VIEWPORT_HEIGHT / 2;
+    int halfWidth = ENVIRONMENT_WIDTH / 2;
+    int halfHeight = ENVIRONMENT_HEIGHT / 2;
     GEB::Position heroCenter = hero.center();
 
     float idealWindowX = heroCenter.x - halfWidth;
@@ -32,20 +32,21 @@ void Viewport::update(World &world, Layer &layer)
     float targetY = GEB::Math::max(idealWindowY, 0.0f);
 
     // control bottom and right
-    float minX = static_cast<float>(MAP_WIDTH - VIEWPORT_WIDTH);
-    float minY = static_cast<float>(MAP_HEIGHT - VIEWPORT_HEIGHT);
+    float minX = static_cast<float>(MAP_WIDTH - ENVIRONMENT_WIDTH);
+    float minY = static_cast<float>(MAP_HEIGHT - ENVIRONMENT_HEIGHT);
     float finalX = GEB::Math::min(targetX, minX);
     float finalY = GEB::Math::min(targetY, minY);
 
     x_ = finalX;
     y_ = finalY;
 
-    world.gameInfo().updateViewport(*this);
+    world.gameInfo().updateEnvironment(*this);
 }
 
-void Viewport::render(World &world, Layer &layer)
+void Environment::render(World &world, Layer &layer)
 {
     const auto &map = world.gameInfo().map();
+    
     for (int i = x_; i < x_ + width_; i++)
     {
         for (int j = y_; j < y_ + height_; j++)

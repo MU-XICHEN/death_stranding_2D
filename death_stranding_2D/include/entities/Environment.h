@@ -2,7 +2,9 @@
 
 #include "entities/Entity.h"
 
-class Viewport : public Entity
+// function as viewport for the game world
+// render environment while updating the viewport
+class Environment : public Entity
 {
 
 public:

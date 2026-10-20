@@ -4,7 +4,7 @@
 #include "core/GameBase.h"
 #include "layers/Layer.h"
 #include "entities/Hero.h"
-#include "entities/Viewport.h"
+#include "entities/Environment.h"
 #include "utils/DoublyLinkedList.h"
 #include "world/Map.h"
 
@@ -12,21 +12,21 @@ class GameInfo
 {
 
 public:
-    GameInfo(Map map, Hero hero, Viewport viewport);
+    GameInfo(Map map, Hero hero, Environment environment);
     const Hero &hero() const { return hero_; }
     const Map &map() const { return map_; }
-    const Viewport &viewport() const { return viewport_; }
+    const Environment &environment() const { return environment_; }
     float dt() { return dt_; }
 
     void updateDt(float dt) { dt_ = dt; };
     void updateHero(const Hero &hero) { hero_ = hero; }
-    void updateViewport(const Viewport &viewport) { viewport_ = viewport; }
+    void updateEnvironment(const Environment &environment) { environment_ = environment; }
 
 private:
     float dt_ = 0;
     Map map_;
     Hero hero_;
-    Viewport viewport_;
+    Environment environment_;
 };
 
 class World

@@ -57,10 +57,10 @@ void Hero::update(World &world, Layer &layer)
 
 void Hero::render(World &world, Layer &layer)
 {
-    const Viewport &viewport = world.gameInfo().viewport();
+    const Environment &environment = world.gameInfo().environment();
 
-    float transX = x_ - viewport.x();
-    float transY = y_ - viewport.y();
+    float transX = x_ - environment.x();
+    float transY = y_ - environment.y();
 
     // [todo: remove]
     if (transX < 0 || transY < 0)

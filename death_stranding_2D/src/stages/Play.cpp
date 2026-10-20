@@ -1,9 +1,10 @@
 #include "stages/Play.h"
 #include "entities/Hero.h"
-#include "entities/Viewport.h"
+#include "entities/Environment.h"
 
 PlayStage::PlayStage()
 {
+    // character initialization
     auto hero = new Hero(
         START_POSITION_X,
         START_POSITION_Y,
@@ -13,11 +14,12 @@ PlayStage::PlayStage()
     hero->setColor(255, 0, 0);
     pushEntityToCharacterList(hero);
 
-    Stage::pushEntity(new Viewport(
+    // environment initialization
+    Stage::pushEntity(new Environment(
         0,
         0,
-        VIEWPORT_WIDTH,
-        VIEWPORT_HEIGHT));
+        ENVIRONMENT_WIDTH,
+        ENVIRONMENT_HEIGHT));
 }
 
 PlayStage::~PlayStage()

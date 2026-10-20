@@ -66,7 +66,7 @@
     <ClCompile Include="src\stages\Tally.cpp">
       <Filter>Source Files\stages</Filter>
     </ClCompile>
-    <ClCompile Include="src\entities\Viewport.cpp">
+    <ClCompile Include="src\entities\Environment.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
     <ClCompile Include="src\layers\Layer.cpp">
@@ -92,6 +92,9 @@
     <ClInclude Include="include\core\Types.h">
       <Filter>Header Files\core</Filter>
     </ClInclude>
+    <ClInclude Include="include\entities\Character.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
     <ClInclude Include="include\entities\Entity.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
@@ -101,7 +104,7 @@
     <ClInclude Include="include\entities\Monster.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
-    <ClInclude Include="include\entities\Viewport.h">
+    <ClInclude Include="include\entities\Environment.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
     <ClInclude Include="include\layers\Layer.h">

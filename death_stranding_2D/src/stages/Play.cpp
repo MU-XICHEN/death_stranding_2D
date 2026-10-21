@@ -24,13 +24,13 @@ PlayStage::PlayStage()
     beast1->setColor(0, 0, 255);
     pushEntityToItemEntityList(beast1);
 
-    // auto beast2 = new Beast(
-    //     500,
-    //     START_POSITION_Y,
-    //     ROLE_SIZE,
-    //     ROLE_SIZE);
-    // beast2->setColor(0, 0, 255);
-    // pushEntityToItemEntityList(beast2);
+    auto beast2 = new Beast(
+        500,
+        START_POSITION_Y,
+        ROLE_SIZE,
+        ROLE_SIZE);
+    beast2->setColor(0, 0, 255);
+    pushEntityToItemEntityList(beast2);
 
     // auto ghost1 = new Ghost(
     //     300,

@@ -6,6 +6,8 @@
 #include "layers/Layer.h"
 #include "stages/Play.h"
 
+void ItemEntity::update(World &world, Layer &layer) {}
+
 void ItemEntity::render(World &world, Layer &layer)
 {
     const Viewport &viewport = world.gameInfo().viewport();
@@ -21,9 +23,7 @@ void ItemEntity::render(World &world, Layer &layer)
             float targetY = transY + j;
 
             if (targetX < 0 || targetY < 0)
-            {
                 continue;
-            }
 
             world.canvas().draw(static_cast<int>(targetX),
                                 static_cast<int>(targetY),
@@ -157,6 +157,26 @@ void ItemEntity::calculateBoundaryImpl(GEB::Boundary &boundary, const ItemEntity
     default:
         break;
     }
+}
+
+GEB::Boundary ItemEntity::calculateBoundaryFocusHero(World &world, Layer &layer, GEB::Direction diretion)
+{
+    const Map &map = world.gameInfo().map();
+    const HeroInfo &heroInfo = world.gameInfo().heroInfo();
+
+    GEB::Boundary boundary{
+        .top = static_cast<float>(map.topBoundary()),
+        .bottom = static_cast<float>(map.bottomBoundary()),
+        .left = static_cast<float>(map.leftBoundary()),
+        .right = static_cast<float>(map.rightBoundary())};
+
+    ItemEntity tempItem(heroInfo.x,
+                        heroInfo.y,
+                        heroInfo.width, heroInfo.height);
+
+    calculateBoundaryImpl(boundary, &tempItem, diretion);
+
+    return boundary;
 }
 
 GEB::Boundary ItemEntity::calculateBoundary(World &world, Layer &layer, GEB::Direction diretion)

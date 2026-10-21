@@ -11,7 +11,7 @@ public:
     virtual ~ItemEntity() = default;
 
     // update needs to be implemented by derived classes
-    virtual void update(World &world, Layer &layer) = 0;
+    virtual void update(World &world, Layer &layer);
 
     // render is implemented here and can be used by derived classes
     virtual void render(World &world, Layer &layer) override;
@@ -29,6 +29,7 @@ public:
     void calculateBoundaryRight(GEB::Boundary &boundary, const ItemEntity *barrierItem);
     void calculateBoundaryImpl(GEB::Boundary &boundary, const ItemEntity *barrierItem, GEB::Direction direction);
     GEB::Boundary calculateBoundary(World &world, Layer &layer, GEB::Direction diretion);
+    GEB::Boundary calculateBoundaryFocusHero(World &world, Layer &layer, GEB::Direction diretion);
 
     void moveUp(float distance, float topBoundary);
     void moveDown(float distance, float bottomBoundary);

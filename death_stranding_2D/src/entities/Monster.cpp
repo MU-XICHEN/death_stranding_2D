@@ -8,6 +8,27 @@ float CopySign(float value, float signSource)
     return signSource < 0.0f ? -magnitude : magnitude;
 }
 
+GEB::Direction transDirVecToDiretion(const GEB::DirectionVec &dirVec)
+{
+    if (dirVec.dx > 0 && dirVec.dy > 0)
+        return GEB::Direction::DownRight;
+    if (dirVec.dx > 0 && dirVec.dy < 0)
+        return GEB::Direction::UpRight;
+    if (dirVec.dx < 0 && dirVec.dy > 0)
+        return GEB::Direction::DownLeft;
+    if (dirVec.dx < 0 && dirVec.dy < 0)
+        return GEB::Direction::UpLeft;
+    if (dirVec.dx > 0)
+        return GEB::Direction::Right;
+    if (dirVec.dx < 0)
+        return GEB::Direction::Left;
+    if (dirVec.dy > 0)
+        return GEB::Direction::Down;
+    if (dirVec.dy < 0)
+        return GEB::Direction::Up;
+    return GEB::Direction::None;
+}
+
 // Monster
 
 GEB::DirectionVec Monster::calculateDirVecToHero(GEB::Position monsterCenter, GEB::Position heroCenter, float moveDistance)
@@ -28,8 +49,6 @@ GEB::DirectionVec Monster::calculateDirVecToHero(GEB::Position monsterCenter, GE
 
 void Monster::checkDangerDistance(World &world, Layer &layer)
 {
-    return; // todo: uncomment
-
     if (awakened_)
         return;
     GEB::Position heroCenter = world.gameInfo().heroInfo().center();
@@ -53,8 +72,39 @@ void Beast::move(World &world, Layer &layer)
 
     auto dirVec = calculateDirVecToHero(center(), world.gameInfo().heroInfo().center(), distance);
 
-    x_ += dirVec.dx;
-    y_ += dirVec.dy;
+    auto direction = transDirVecToDiretion(dirVec);
+
+    switch (direction)
+    { 
+    case GEB::Direction::Up:
+    case GEB::Direction::UpLeft:
+    case GEB::Direction::UpRight:
+        moveUp(distance, calculateBoundaryFocusHero(world, layer, GEB::Direction::Up).top);
+        break;
+    case GEB::Direction::Down:
+    case GEB::Direction::DownLeft:
+    case GEB::Direction::DownRight:
+        moveDown(distance, calculateBoundaryFocusHero(world, layer, GEB::Direction::Down).bottom);
+        break;
+    default:
+        break;
+    }
+
+    switch (direction)
+    {
+    case GEB::Direction::Left:
+    case GEB::Direction::UpLeft:
+    case GEB::Direction::DownLeft:
+        moveLeft(distance, calculateBoundaryFocusHero(world, layer, GEB::Direction::Left).left);
+        break;
+    case GEB::Direction::Right:
+    case GEB::Direction::UpRight:
+    case GEB::Direction::DownRight:
+        moveRight(distance, calculateBoundaryFocusHero(world, layer, GEB::Direction::Right).right);
+        break;
+    default:
+        break;
+    }
 }
 
 void Beast::update(World &world, Layer &layer)
@@ -81,8 +131,6 @@ void Ghost::move(World &world, Layer &layer)
 
 void Ghost::checkDangerDistance(World &world, Layer &layer)
 {
-    return; // todo: uncomment
-
     if (awakened_)
         return;
 

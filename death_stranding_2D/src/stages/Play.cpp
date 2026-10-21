@@ -19,11 +19,17 @@ PlayStage::PlayStage()
         500,
         500,
         ROLE_SIZE,
-        ROLE_SIZE,
-        M_PIXEL_PER_SEC,
-        M_DANGER_DISTANCE);
+        ROLE_SIZE);
     beast1->setColor(0, 0, 255);
     pushEntityToCharacterList(beast1);
+
+    auto ghost1 = new Ghost(
+        300,
+        300,
+        ROLE_SIZE,
+        ROLE_SIZE);
+    ghost1->setColor(0, 255, 0);
+    pushEntityToCharacterList(ghost1);
 
     // environment initialization
     Stage::pushEntity(new Environment(

@@ -14,7 +14,7 @@ public:
     virtual void update(World &world, Layer &layer) = 0;
 
     // render is implemented here and can be used by derived classes
-    void render(World &world, Layer &layer) override;
+    virtual void render(World &world, Layer &layer) override;
 
     void setColor(unsigned int r, unsigned int g, unsigned int b)
     {

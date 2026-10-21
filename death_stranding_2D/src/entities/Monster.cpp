@@ -26,8 +26,8 @@ GEB::DirectionVec Monster::calculateDirVecToHero(GEB::Position monsterCenter, GE
 
 void Monster::checkDangerDistance(World &world, Layer &layer)
 {
-	if (awakened_)
-		return;
+    if (awakened_)
+        return;
     GEB::Position heroCenter = world.gameInfo().hero().center();
     float dx = GEB::Math::abs(heroCenter.x - center().x);
     float dy = GEB::Math::abs(heroCenter.y - center().y);
@@ -56,4 +56,49 @@ void Beast::update(World &world, Layer &layer)
 {
     checkDangerDistance(world, layer);
     move(world, layer);
+}
+
+void Ghost::move(World &world, Layer &layer)
+{
+    // Todo: ghosts have their own movement manner.
+    if (!awakened_)
+        return;
+
+    float dt = world.gameInfo().dt();
+    float distance = dt * speed_;
+
+    auto dirVec = calculateDirVecToHero(center(), world.gameInfo().hero().center(), distance);
+
+    x_ += dirVec.dx;
+    y_ += dirVec.dy;
+}
+
+void Ghost::checkDangerDistance(World &world, Layer &layer)
+{
+    if (awakened_)
+        return;
+
+    GEB::Position heroCenter = world.gameInfo().hero().center();
+    float dx = GEB::Math::abs(heroCenter.x - center().x);
+    float dy = GEB::Math::abs(heroCenter.y - center().y);
+
+    if (dx <= dangerDistance_ && dy <= dangerDistance_)
+    {
+        appear();
+        awaken();
+    }
+}
+
+void Ghost::update(World &world, Layer &layer)
+{
+    checkDangerDistance(world, layer);
+    move(world, layer);
+}
+
+void Ghost::render(World &world, Layer &layer)
+{
+    if (!visible_)
+        return;
+
+    Monster::render(world, layer);
 }

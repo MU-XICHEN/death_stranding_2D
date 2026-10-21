@@ -8,18 +8,11 @@ Stage::~Stage()
     auto *headPointer = entityList_.front();
     while (headPointer)
     {
-        // delete list nodes
-        auto *temp = headPointer->next;
-
-        headPointer->next = nullptr;
-        headPointer->prev = nullptr;
 
         if (headPointer->data)
             delete headPointer->data;
 
-        delete headPointer;
-
-        headPointer = temp;
+        headPointer = headPointer->next;
     }
 }
 

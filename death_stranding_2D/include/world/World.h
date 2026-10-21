@@ -3,34 +3,9 @@
 #include "GamesEngineeringBase.h"
 #include "core/GameBase.h"
 #include "layers/Layer.h"
-#include "entities/Hero.h"
-#include "entities/Viewport.h"
 #include "utils/DoublyLinkedList.h"
 #include "world/Map.h"
-
-class GameInfo
-{
-
-public:
-    GameInfo(Map map, Hero hero, Viewport viewport);
-    const Hero &hero() const { return hero_; }
-    const Map &map() const { return map_; }
-    const Viewport &viewport() const { return viewport_; }
-    float dt() { return dt_; }
-
-    void updateDt(float dt) { dt_ = dt; };
-    void updateHero(const Hero &hero) { hero_ = hero; }
-    void updateViewport(const Viewport &viewport) { viewport_ = viewport; }
-
-    // Map
-    void loadNewMap();
-
-private:
-    float dt_ = 0;
-    Map map_;
-    Hero hero_;
-    Viewport viewport_;
-};
+#include "world/GameInfo.h"
 
 class World
 {
@@ -39,7 +14,6 @@ public:
     virtual ~World();
 
     GEB::Window &canvas() { return canvas_; }
-    GEB::Timer &timer() { return timer_; }
     GameInfo &gameInfo() { return gameInfo_; }
 
 private:
@@ -49,8 +23,8 @@ private:
 
     bool running_ = true;
     GEB::Window canvas_;
-    GEB::Timer timer_;
 
+    GEB::Timer timer_;
     GameInfo gameInfo_;
     GEB::Structures::DoublyLinkedList<Layer *> layerList_;
 

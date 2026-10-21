@@ -54,4 +54,5 @@ void Hero::update(World &world, Layer &layer)
     handleEvents(world);
 
     world.gameInfo().updateHero(*this);
+    world.gameInfo().updateViewport(*this);
 }

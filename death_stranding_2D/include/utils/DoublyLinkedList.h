@@ -2,11 +2,12 @@
 
 /**
  * DoublyLinkedList
- * Note: Users are responsible for recycling memory of nodes' data.
+ * Note: 
+ *      ListNode<T> will be recycled automatically,
+ *      but Users are responsible for recycling memory of nodes' data.
  */
 
-
- // Todo: change to arr, without jumping
+// Todo: change to arr, without jumping
 namespace GamesEngineeringBase::Structures
 {
     template <typename T>
@@ -24,7 +25,13 @@ namespace GamesEngineeringBase::Structures
     {
     public:
         DoublyLinkedList() : head_(nullptr), tail_(nullptr), size_(0) {}
-        virtual ~DoublyLinkedList() = default;
+        virtual ~DoublyLinkedList()
+        {
+            while (!empty())
+            {
+                pop_front();
+            }
+        }
 
         // Avoid different lists' head_ or tail_ points to same memory.
         DoublyLinkedList(const DoublyLinkedList &) = delete;

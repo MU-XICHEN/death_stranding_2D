@@ -1,6 +1,6 @@
 #include "stages/Play.h"
 #include "entities/Hero.h"
-#include "entities/Viewport.h"
+#include "world/Viewport.h"
 #include "entities/Monster.h"
 
 PlayStage::PlayStage()
@@ -30,13 +30,6 @@ PlayStage::PlayStage()
         ROLE_SIZE);
     ghost1->setColor(0, 255, 0);
     pushEntityToCharacterList(ghost1);
-
-    // viewport initialization
-    Stage::pushEntity(new Viewport(
-        0,
-        0,
-        VIEWPORT_WIDTH,
-        VIEWPORT_HEIGHT));
 }
 
 PlayStage::~PlayStage()
@@ -47,18 +40,10 @@ PlayStage::~PlayStage()
     auto *headPointer = characterList_.front();
     while (headPointer)
     {
-        // delete list nodes
-        auto *temp = headPointer->next;
-
-        headPointer->next = nullptr;
-        headPointer->prev = nullptr;
-
         if (headPointer->data)
             delete headPointer->data;
 
-        delete headPointer;
-
-        headPointer = temp;
+        headPointer = headPointer->next;
     }
 }
 
@@ -90,14 +75,14 @@ void PlayStage::renderEntities(World &world, Layer &layer)
 {
     if (characterList_.empty())
         return;
-    auto *tail = characterList_.back();
+    auto *head = characterList_.front();
 
-    while (tail)
+    while (head)
     {
-        auto &character = tail->data;
+        auto &character = head->data;
         character->render(world, layer);
 
-        tail = tail->prev;
+        head = head->next;
     }
 
     Stage::renderEntities(world, layer);

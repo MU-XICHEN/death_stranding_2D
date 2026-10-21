@@ -3,30 +3,18 @@
 #include "world/World.h"
 #include "core/GameBase.h"
 #include "entities/Hero.h"
-#include "entities/Viewport.h"
 #include "layers/MainLayer.h"
-
-GameInfo::GameInfo(Map map, Hero hero, Viewport viewport)
-    : map_(map), hero_(hero), viewport_(viewport) {}
 
 World::World()
     : canvas_(),
-      gameInfo_{
-          Map{
-              static_cast<int>(MAP_WIDTH),
-              static_cast<int>(MAP_HEIGHT),
-              MAP_BORDER_SIZE,
-              GEB::Color{255, 255, 255}},
-          Hero{MAP_BORDER_SIZE, MAP_BORDER_SIZE, 20, 20},
-          Viewport{0, 0, WINDOW_WIDTH, WINDOW_HEIGHT},
-      },
-      layerList_(),
-      timer_()
+      gameInfo_(),
+      layerList_()
 {
     // initialize canvas
     canvas_.create(WINDOW_WIDTH, WINDOW_HEIGHT, "Tiles");
 
-    // todo: push debug layer, showing information like FPS
+    // initialize game info
+    gameInfo_.initialize();
 
     // Main Layer which handle main game process: Intro - Menu - Gameplay - Tally - Then, again!
     initLayers();
@@ -43,17 +31,10 @@ World::~World()
     while (headPointer)
     {
         // delete list nodes
-        auto *temp = headPointer->next;
-
-        headPointer->next = nullptr;
-        headPointer->prev = nullptr;
-
         if (headPointer->data)
             delete headPointer->data;
 
-        delete headPointer;
-
-        headPointer = temp;
+        headPointer = headPointer->next;
     }
 }
 

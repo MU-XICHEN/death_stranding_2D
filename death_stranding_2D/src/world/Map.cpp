@@ -28,10 +28,12 @@ void Map::render(World &world, Layer &layer)
 
     auto viewportX = viewport.x();
     auto viewPortY = viewport.y();
+    auto viewPortBoundaryX = viewportX + viewport.width();
+    auto viewPortBoundaryY = viewPortY + viewport.height();
 
-    for (int i = viewportX; i < viewportX + viewport.width(); i++)
+    for (int i = viewportX; i < viewPortBoundaryX; i++)
     {
-        for (int j = viewPortY; j < viewPortY + viewport.height(); j++)
+        for (int j = viewPortY; j < viewPortBoundaryY; j++)
         {
             bool inBorder = checkPixelInMapBorder(i, j, width_, height_, borderSize_);
             if (inBorder)

@@ -157,7 +157,7 @@
     <ClCompile Include="src\stages\Play.cpp" />
     <ClCompile Include="src\stages\Stage.cpp" />
     <ClCompile Include="src\stages\Tally.cpp" />
-    <ClCompile Include="src\entities\Environment.cpp" />
+    <ClCompile Include="src\entities\Viewport.cpp" />
     <ClCompile Include="src\layers\Layer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\world\World.cpp" />
@@ -171,7 +171,7 @@
     <ClInclude Include="include\entities\Entity.h" />
     <ClInclude Include="include\entities\Hero.h" />
     <ClInclude Include="include\entities\Monster.h" />
-    <ClInclude Include="include\entities\Environment.h" />
+    <ClInclude Include="include\entities\Viewport.h" />
     <ClInclude Include="include\layers\Layer.h" />
     <ClInclude Include="include\layers\MainLayer.h" />
     <ClInclude Include="include\stages\Intro.h" />

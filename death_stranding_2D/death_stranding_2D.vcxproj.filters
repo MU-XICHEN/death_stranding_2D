@@ -69,7 +69,7 @@
     <ClCompile Include="src\stages\Tally.cpp">
       <Filter>Source Files\stages</Filter>
     </ClCompile>
-    <ClCompile Include="src\entities\Environment.cpp">
+    <ClCompile Include="src\entities\Viewport.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
     <ClCompile Include="src\layers\Layer.cpp">
@@ -107,7 +107,7 @@
     <ClInclude Include="include\entities\Monster.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
-    <ClInclude Include="include\entities\Environment.h">
+    <ClInclude Include="include\entities\Viewport.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
     <ClInclude Include="include\layers\Layer.h">

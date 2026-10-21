@@ -1,6 +1,6 @@
 #include "stages/Play.h"
 #include "entities/Hero.h"
-#include "entities/Environment.h"
+#include "entities/Viewport.h"
 #include "entities/Monster.h"
 
 PlayStage::PlayStage()
@@ -31,12 +31,12 @@ PlayStage::PlayStage()
     ghost1->setColor(0, 255, 0);
     pushEntityToCharacterList(ghost1);
 
-    // environment initialization
-    Stage::pushEntity(new Environment(
+    // viewport initialization
+    Stage::pushEntity(new Viewport(
         0,
         0,
-        ENVIRONMENT_WIDTH,
-        ENVIRONMENT_HEIGHT));
+        VIEWPORT_WIDTH,
+        VIEWPORT_HEIGHT));
 }
 
 PlayStage::~PlayStage()

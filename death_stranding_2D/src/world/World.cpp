@@ -3,11 +3,11 @@
 #include "world/World.h"
 #include "core/GameBase.h"
 #include "entities/Hero.h"
-#include "entities/Environment.h"
+#include "entities/Viewport.h"
 #include "layers/MainLayer.h"
 
-GameInfo::GameInfo(Map map, Hero hero, Environment environment)
-    : map_(map), hero_(hero), environment_(environment) {}
+GameInfo::GameInfo(Map map, Hero hero, Viewport viewport)
+    : map_(map), hero_(hero), viewport_(viewport) {}
 
 World::World()
     : canvas_(),
@@ -18,7 +18,7 @@ World::World()
               MAP_BORDER_SIZE,
               GEB::Color{255, 255, 255}},
           Hero{MAP_BORDER_SIZE, MAP_BORDER_SIZE, 20, 20},
-          Environment{0, 0, WINDOW_WIDTH, WINDOW_HEIGHT},
+          Viewport{0, 0, WINDOW_WIDTH, WINDOW_HEIGHT},
       },
       layerList_(),
       timer_()

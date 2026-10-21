@@ -3,8 +3,8 @@
 #include "entities/Entity.h"
 
 // function as viewport for the game world
-// render environment while updating the viewport
-class Environment : public Entity
+// render viewport while updating the viewport
+class Viewport : public Entity
 {
 
 public:

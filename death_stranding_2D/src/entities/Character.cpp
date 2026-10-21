@@ -1,15 +1,15 @@
 #include "entities/Character.h"
-#include "entities/Environment.h"
+#include "entities/Viewport.h"
 #include "world/World.h"
 #include "world/Map.h"
 #include "layers/Layer.h"
 
 void Character::render(World &world, Layer &layer)
 {
-    const Environment &environment = world.gameInfo().environment();
+    const Viewport &viewport = world.gameInfo().viewport();
 
-    float transX = x_ - environment.x();
-    float transY = y_ - environment.y();
+    float transX = x_ - viewport.x();
+    float transY = y_ - viewport.y();
 
     for (int i = 0; i < width_; i++)
     {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "entities/Character.h"
+#include "entities/ItemEntity.h"
 
 struct HeroInfo
 {
@@ -12,17 +12,17 @@ struct HeroInfo
     GEB::Position center() const { return {x + width / 2, y + height / 2}; }
 };
 
-class Hero : public Character
+class Hero : public ItemEntity
 {
 public:
     explicit Hero()
-        : Character(0, 0, ROLE_SIZE, ROLE_SIZE) {}
-    using Character::Character;
+        : ItemEntity(0, 0, ROLE_SIZE, ROLE_SIZE) {}
+    using ItemEntity::ItemEntity;
 
     void update(World &world, Layer &layer) override;
 
 private:
-    void handleEvents(World &world);
+    void handleEvents(World &world, Layer &layer);
 
     HeroInfo heroInfo_;
 };

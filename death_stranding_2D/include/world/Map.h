@@ -3,10 +3,6 @@
 #include "entities/Entity.h"
 #include "structure/Array.h"
 
-class Barrier : public Entity
-{
-};
-
 struct MapInfo
 {
     float x;
@@ -42,8 +38,6 @@ public:
     void render(World &world, Layer &layer) override;
 
 private:
-    // GEB::Structures::Array<Barrier> barriers_;
-
     GEB::Color borderColor_ = GEB::Color(255, 255, 255);
     int borderSize_ = MAP_BORDER_SIZE;
 

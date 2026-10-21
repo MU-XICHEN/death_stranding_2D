@@ -48,7 +48,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\entities\Character.cpp">
+    <ClCompile Include="src\entities\ItemEntity.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
     <ClCompile Include="src\entities\Hero.cpp">
@@ -101,7 +101,7 @@
     <ClInclude Include="include\core\Types.h">
       <Filter>Header Files\core</Filter>
     </ClInclude>
-    <ClInclude Include="include\entities\Character.h">
+    <ClInclude Include="include\entities\ItemEntity.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
     <ClInclude Include="include\entities\Entity.h">

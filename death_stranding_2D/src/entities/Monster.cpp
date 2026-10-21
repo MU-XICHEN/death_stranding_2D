@@ -28,6 +28,8 @@ GEB::DirectionVec Monster::calculateDirVecToHero(GEB::Position monsterCenter, GE
 
 void Monster::checkDangerDistance(World &world, Layer &layer)
 {
+    return; // todo: uncomment
+
     if (awakened_)
         return;
     GEB::Position heroCenter = world.gameInfo().heroInfo().center();
@@ -41,7 +43,6 @@ void Monster::checkDangerDistance(World &world, Layer &layer)
 }
 
 // Beast
-
 void Beast::move(World &world, Layer &layer)
 {
     if (!awakened_)
@@ -63,7 +64,6 @@ void Beast::update(World &world, Layer &layer)
 }
 
 // Ghost
-
 void Ghost::move(World &world, Layer &layer)
 {
     // Todo: ghosts have their own movement manner.
@@ -81,6 +81,8 @@ void Ghost::move(World &world, Layer &layer)
 
 void Ghost::checkDangerDistance(World &world, Layer &layer)
 {
+    return; // todo: uncomment
+
     if (awakened_)
         return;
 

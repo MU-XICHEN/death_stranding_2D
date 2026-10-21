@@ -149,7 +149,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\entities\Character.cpp" />
+    <ClCompile Include="src\entities\ItemEntity.cpp" />
     <ClCompile Include="src\entities\Hero.cpp" />
     <ClCompile Include="src\entities\Monster.cpp" />
     <ClCompile Include="src\stages\Intro.cpp" />
@@ -168,7 +168,7 @@
     <ClInclude Include="include\core\Constants.h" />
     <ClInclude Include="include\core\GameBase.h" />
     <ClInclude Include="include\core\Types.h" />
-    <ClInclude Include="include\entities\Character.h" />
+    <ClInclude Include="include\entities\ItemEntity.h" />
     <ClInclude Include="include\entities\Entity.h" />
     <ClInclude Include="include\entities\Hero.h" />
     <ClInclude Include="include\entities\Monster.h" />

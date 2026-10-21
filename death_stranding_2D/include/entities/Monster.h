@@ -1,15 +1,15 @@
 #pragma once
 
 #include "core/GameBase.h"
-#include "entities/Character.h"
+#include "entities/ItemEntity.h"
 
-class Monster : public Character
+class Monster : public ItemEntity
 {
 public:
     Monster(float x, float y, int width, int height,
             float speed,
             float distance)
-        : Character(x, y, width, height, speed), dangerDistance_(distance) {}
+        : ItemEntity(x, y, width, height, speed), dangerDistance_(distance) {}
 
     virtual ~Monster() = default;
 

@@ -33,4 +33,12 @@ namespace GamesEngineeringBase
         float dx;
         float dy;
     };
+
+    struct Boundary
+    {
+        float top;
+        float bottom;
+        float left;
+        float right;
+    };
 }

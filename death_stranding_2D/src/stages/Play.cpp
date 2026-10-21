@@ -2,10 +2,11 @@
 #include "entities/Hero.h"
 #include "world/Viewport.h"
 #include "entities/Monster.h"
+#include "world/Map.h"
 
 PlayStage::PlayStage()
 {
-    // character initialization
+    // ItemEntity initialization
     auto hero = new Hero(
         START_POSITION_X,
         START_POSITION_Y,
@@ -13,23 +14,31 @@ PlayStage::PlayStage()
         ROLE_SIZE,
         PIXEL_PER_SEC);
     hero->setColor(255, 0, 0);
-    pushEntityToCharacterList(hero);
+    pushEntityToItemEntityList(hero);
 
     auto beast1 = new Beast(
-        500,
+        START_POSITION_X,
         500,
         ROLE_SIZE,
         ROLE_SIZE);
     beast1->setColor(0, 0, 255);
-    pushEntityToCharacterList(beast1);
+    pushEntityToItemEntityList(beast1);
 
-    auto ghost1 = new Ghost(
-        300,
-        300,
-        ROLE_SIZE,
-        ROLE_SIZE);
-    ghost1->setColor(0, 255, 0);
-    pushEntityToCharacterList(ghost1);
+    // auto beast2 = new Beast(
+    //     500,
+    //     START_POSITION_Y,
+    //     ROLE_SIZE,
+    //     ROLE_SIZE);
+    // beast2->setColor(0, 0, 255);
+    // pushEntityToItemEntityList(beast2);
+
+    // auto ghost1 = new Ghost(
+    //     300,
+    //     300,
+    //     ROLE_SIZE,
+    //     ROLE_SIZE);
+    // ghost1->setColor(0, 255, 0);
+    // pushEntityToItemEntityList(ghost1);
 
     // add map
     auto map = new Map(
@@ -44,48 +53,48 @@ PlayStage::PlayStage()
 
 PlayStage::~PlayStage()
 {
-    if (characterList_.size() == 0)
+    if (itemEntityList_.size() == 0)
         return;
 
-    for (int i = 0; i < characterList_.size(); ++i)
+    for (int i = 0; i < itemEntityList_.size(); ++i)
     {
-        if (characterList_[i] == nullptr)
+        if (itemEntityList_[i] == nullptr)
             continue;
-        delete characterList_[i];
-        characterList_[i] = nullptr;
+        delete itemEntityList_[i];
+        itemEntityList_[i] = nullptr;
     }
 }
 
-void PlayStage::pushEntityToCharacterList(Character *character)
+void PlayStage::pushEntityToItemEntityList(ItemEntity *itemEntity)
 {
-    characterList_.push_back(character);
+    itemEntityList_.push_back(itemEntity);
 }
 
 // updateEntities
 void PlayStage::updateEntities(World &world, Layer &layer)
 {
-    if (characterList_.size() == 0)
+    Stage::updateEntities(world, layer);
+
+    if (itemEntityList_.size() == 0)
         return;
 
-    for (int i = 0; i < characterList_.size(); ++i)
+    for (int i = 0; i < itemEntityList_.size(); ++i)
     {
-        if (characterList_[i])
-            characterList_[i]->update(world, layer);
+        if (itemEntityList_[i])
+            itemEntityList_[i]->update(world, layer);
     }
-
-    Stage::updateEntities(world, layer);
 }
 
 // renderEntities
 void PlayStage::renderEntities(World &world, Layer &layer)
 {
-    if (characterList_.size() == 0)
+    if (itemEntityList_.size() == 0)
         return;
 
-    for (int i = 0; i < characterList_.size(); ++i)
+    for (int i = 0; i < itemEntityList_.size(); ++i)
     {
-        if (characterList_[i])
-            characterList_[i]->render(world, layer);
+        if (itemEntityList_[i])
+            itemEntityList_[i]->render(world, layer);
     }
 
     Stage::renderEntities(world, layer);

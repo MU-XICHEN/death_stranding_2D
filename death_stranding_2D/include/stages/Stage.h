@@ -1,7 +1,7 @@
 #pragma once
 
 #include "entities/Entity.h"
-#include "utils/DoublyLinkedList.h"
+#include "structure/Array.h"
 
 class Stage
 {
@@ -13,5 +13,5 @@ public:
     virtual void renderEntities(World &world, Layer &layer);
 
 private:
-    GEB::Structures::DoublyLinkedList<Entity *> entityList_;
+    GEB::Structures::Array<Entity *> entityList_;
 };

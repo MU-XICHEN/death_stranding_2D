@@ -53,6 +53,14 @@ void Hero::update(World &world, Layer &layer)
     // handle keyboard events for hero
     handleEvents(world);
 
-    world.gameInfo().updateHero(*this);
-    world.gameInfo().updateViewport(*this);
+    HeroInfo heroInfo{
+        .x = x_,
+        .y = y_,
+        .width = width_,
+        .height = height_};
+
+    world.gameInfo()
+        .updateHeroInfo(heroInfo);
+        
+    world.gameInfo().updateViewport(heroInfo);
 }

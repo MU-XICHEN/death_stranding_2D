@@ -43,6 +43,9 @@
     <Filter Include="Header Files\utils">
       <UniqueIdentifier>{A41E2A94-0479-44A1-B75B-0858BA1DFE2F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\structure">
+      <UniqueIdentifier>{6D3A4CC7-B9B0-4EB9-903B-4EFB42E4F72D}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\entities\Character.cpp">
@@ -69,9 +72,6 @@
     <ClCompile Include="src\stages\Tally.cpp">
       <Filter>Source Files\stages</Filter>
     </ClCompile>
-    <ClCompile Include="src\entities\Viewport.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
     <ClCompile Include="src\layers\Layer.cpp">
       <Filter>Source Files\layers</Filter>
     </ClCompile>
@@ -79,6 +79,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\world\World.cpp">
+      <Filter>Source Files\world</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world\GameInfo.cpp">
+      <Filter>Source Files\world</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world\Map.cpp">
       <Filter>Source Files\world</Filter>
     </ClCompile>
   </ItemGroup>
@@ -107,9 +113,6 @@
     <ClInclude Include="include\entities\Monster.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
-    <ClInclude Include="include\entities\Viewport.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
     <ClInclude Include="include\layers\Layer.h">
       <Filter>Header Files\layers</Filter>
     </ClInclude>
@@ -134,13 +137,22 @@
     <ClInclude Include="include\utils\DebugUtils.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
-    <ClInclude Include="include\utils\DoublyLinkedList.h">
-      <Filter>Header Files\utils</Filter>
+    <ClInclude Include="include\structure\Array.h">
+      <Filter>Header Files\structure</Filter>
+    </ClInclude>
+    <ClInclude Include="include\structure\DoublyLinkedList.h">
+      <Filter>Header Files\structure</Filter>
     </ClInclude>
     <ClInclude Include="include\utils\GameMath.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
     <ClInclude Include="include\world\Map.h">
+      <Filter>Header Files\world</Filter>
+    </ClInclude>
+    <ClInclude Include="include\world\GameInfo.h">
+      <Filter>Header Files\world</Filter>
+    </ClInclude>
+    <ClInclude Include="include\world\Viewport.h">
       <Filter>Header Files\world</Filter>
     </ClInclude>
     <ClInclude Include="include\world\World.h">

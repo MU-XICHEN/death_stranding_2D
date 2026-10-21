@@ -3,7 +3,6 @@
 #include "GamesEngineeringBase.h"
 #include "core/GameBase.h"
 #include "layers/Layer.h"
-#include "utils/DoublyLinkedList.h"
 #include "world/Map.h"
 #include "world/GameInfo.h"
 
@@ -26,7 +25,7 @@ private:
 
     GEB::Timer timer_;
     GameInfo gameInfo_;
-    GEB::Structures::DoublyLinkedList<Layer *> layerList_;
+    GEB::Structures::Array<Layer *> layerList_;
 
     // Life Cycle
     void frameStart();

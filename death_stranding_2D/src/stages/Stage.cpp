@@ -2,17 +2,15 @@
 
 Stage::~Stage()
 {
-    if (entityList_.empty())
+    if (entityList_.size() == 0)
         return;
 
-    auto *headPointer = entityList_.front();
-    while (headPointer)
+    for (int i = 0; i < entityList_.size(); ++i)
     {
-
-        if (headPointer->data)
-            delete headPointer->data;
-
-        headPointer = headPointer->next;
+        if (entityList_[i] == nullptr)
+            continue;
+        delete entityList_[i];
+        entityList_[i] = nullptr;
     }
 }
 
@@ -24,31 +22,25 @@ void Stage::pushEntity(Entity *entity)
 // Iterate over the list in insertion order, which means the entity added first is updated first.
 void Stage::updateEntities(World &world, Layer &layer)
 {
-    if (entityList_.empty())
+    if (entityList_.size() == 0)
         return;
 
-    auto *head = entityList_.front();
-    while (head)
+    for (int i = 0; i < entityList_.size(); ++i)
     {
-        auto &entity = head->data;
-        entity->update(world, layer);
-
-        head = head->next;
+        if (entityList_[i])
+            entityList_[i]->update(world, layer);
     }
 }
 
 // Iterate over the list in reverse order, which means the entity pushed last is rendered first.
 void Stage::renderEntities(World &world, Layer &layer)
 {
-    if (entityList_.empty())
+    if (entityList_.size() == 0)
         return;
-    auto *tail = entityList_.back();
 
-    while (tail)
+    for (int i = entityList_.size() - 1; i >= 0; --i)
     {
-        auto &entity = tail->data;
-        entity->render(world, layer);
-
-        tail = tail->prev;
+        if (entityList_[i])
+            entityList_[i]->render(world, layer);
     }
 }

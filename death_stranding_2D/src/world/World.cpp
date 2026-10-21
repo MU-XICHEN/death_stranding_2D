@@ -13,9 +13,6 @@ World::World()
     // initialize canvas
     canvas_.create(WINDOW_WIDTH, WINDOW_HEIGHT, "Tiles");
 
-    // initialize game info
-    gameInfo_.initialize();
-
     // Main Layer which handle main game process: Intro - Menu - Gameplay - Tally - Then, again!
     initLayers();
 
@@ -24,26 +21,19 @@ World::World()
 
 World::~World()
 {
-    if (layerList_.empty())
-        return;
-
-    auto *headPointer = layerList_.front();
-    while (headPointer)
+    for (int i = 0; i < layerList_.size(); ++i)
     {
-        // delete list nodes
-        if (headPointer->data)
-            delete headPointer->data;
-
-        headPointer = headPointer->next;
+        if (layerList_[i] == nullptr)
+            continue;
+        delete layerList_[i];
+        layerList_[i] = nullptr;
     }
 }
 
 void World::initLayers()
 {
     // Game main layer
-    Layer *mainLayer = new MainLayer();
-
-    layerList_.push_back(mainLayer);
+    layerList_.push_back(new MainLayer());
 }
 
 void World::refreshTimer()
@@ -71,18 +61,12 @@ void World::frameDraw()
 {
     // render layers from bottom to top
     // which means layers pushed in last will be the last to render
-    if (layerList_.empty())
+    if (layerList_.size() == 0)
         return;
 
-    for (auto *layerNode = layerList_.front(); layerNode != nullptr; layerNode = layerNode->next)
+    for (int i = 0; i < layerList_.size(); ++i)
     {
-
-        auto *layer = layerNode->data;
-        if (!layer)
-        {
-            GamesEngineeringBase::Debugger::showAlert();
-            return;
-        }
+        auto *layer = layerList_[i];
 
         auto &stage = layer->currentStage();
         // update states of nodes in current Layer
@@ -99,14 +83,13 @@ bool World::frameFinished()
 {
     bool result = !running_;
     // Manage layers/stages here.
-    if (layerList_.empty())
+    if (layerList_.size() == 0)
         return result;
 
     // Handle Stages
-    for (auto *layerNode = layerList_.back(); layerNode != nullptr; layerNode = layerNode->prev)
+    for (int i = layerList_.size() - 1; i >= 0; --i)
     {
-
-        auto *layer = layerNode->data;
+        auto *layer = layerList_[i];
 
         layer->checkGoToNextStage();
     }

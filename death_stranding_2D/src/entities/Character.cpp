@@ -1,5 +1,4 @@
 #include "entities/Character.h"
-#include "entities/Viewport.h"
 #include "world/World.h"
 #include "world/Map.h"
 #include "layers/Layer.h"

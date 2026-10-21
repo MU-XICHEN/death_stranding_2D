@@ -13,5 +13,5 @@ public:
     void renderEntities(World &world, Layer &layer) override;
 
 private:
-    GEB::Structures::DoublyLinkedList<Character *> characterList_;
+    GEB::Structures::Array<Character *> characterList_;
 };

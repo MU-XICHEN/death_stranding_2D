@@ -30,20 +30,29 @@ PlayStage::PlayStage()
         ROLE_SIZE);
     ghost1->setColor(0, 255, 0);
     pushEntityToCharacterList(ghost1);
+
+    // add map
+    auto map = new Map(
+        0,
+        0,
+        MAP_WIDTH,
+        MAP_HEIGHT,
+        MAP_BORDER_SIZE,
+        GEB::Color(255, 255, 255));
+    pushEntity(map);
 }
 
 PlayStage::~PlayStage()
 {
-    if (characterList_.empty())
+    if (characterList_.size() == 0)
         return;
 
-    auto *headPointer = characterList_.front();
-    while (headPointer)
+    for (int i = 0; i < characterList_.size(); ++i)
     {
-        if (headPointer->data)
-            delete headPointer->data;
-
-        headPointer = headPointer->next;
+        if (characterList_[i] == nullptr)
+            continue;
+        delete characterList_[i];
+        characterList_[i] = nullptr;
     }
 }
 
@@ -55,16 +64,13 @@ void PlayStage::pushEntityToCharacterList(Character *character)
 // updateEntities
 void PlayStage::updateEntities(World &world, Layer &layer)
 {
-    if (characterList_.empty())
+    if (characterList_.size() == 0)
         return;
 
-    auto *head = characterList_.front();
-    while (head)
+    for (int i = 0; i < characterList_.size(); ++i)
     {
-        auto &character = head->data;
-        character->update(world, layer);
-
-        head = head->next;
+        if (characterList_[i])
+            characterList_[i]->update(world, layer);
     }
 
     Stage::updateEntities(world, layer);
@@ -73,16 +79,13 @@ void PlayStage::updateEntities(World &world, Layer &layer)
 // renderEntities
 void PlayStage::renderEntities(World &world, Layer &layer)
 {
-    if (characterList_.empty())
+    if (characterList_.size() == 0)
         return;
-    auto *head = characterList_.front();
 
-    while (head)
+    for (int i = 0; i < characterList_.size(); ++i)
     {
-        auto &character = head->data;
-        character->render(world, layer);
-
-        head = head->next;
+        if (characterList_[i])
+            characterList_[i]->render(world, layer);
     }
 
     Stage::renderEntities(world, layer);

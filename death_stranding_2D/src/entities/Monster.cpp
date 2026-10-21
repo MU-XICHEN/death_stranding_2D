@@ -8,6 +8,8 @@ float CopySign(float value, float signSource)
     return signSource < 0.0f ? -magnitude : magnitude;
 }
 
+// Monster
+
 GEB::DirectionVec Monster::calculateDirVecToHero(GEB::Position monsterCenter, GEB::Position heroCenter, float moveDistance)
 {
     float dx = heroCenter.x - monsterCenter.x;
@@ -28,7 +30,7 @@ void Monster::checkDangerDistance(World &world, Layer &layer)
 {
     if (awakened_)
         return;
-    GEB::Position heroCenter = world.gameInfo().hero().center();
+    GEB::Position heroCenter = world.gameInfo().heroInfo().center();
     float dx = GEB::Math::abs(heroCenter.x - center().x);
     float dy = GEB::Math::abs(heroCenter.y - center().y);
 
@@ -38,6 +40,8 @@ void Monster::checkDangerDistance(World &world, Layer &layer)
     }
 }
 
+// Beast
+
 void Beast::move(World &world, Layer &layer)
 {
     if (!awakened_)
@@ -46,7 +50,7 @@ void Beast::move(World &world, Layer &layer)
     float dt = world.gameInfo().dt();
     float distance = dt * speed_;
 
-    auto dirVec = calculateDirVecToHero(center(), world.gameInfo().hero().center(), distance);
+    auto dirVec = calculateDirVecToHero(center(), world.gameInfo().heroInfo().center(), distance);
 
     x_ += dirVec.dx;
     y_ += dirVec.dy;
@@ -58,6 +62,8 @@ void Beast::update(World &world, Layer &layer)
     move(world, layer);
 }
 
+// Ghost
+
 void Ghost::move(World &world, Layer &layer)
 {
     // Todo: ghosts have their own movement manner.
@@ -67,7 +73,7 @@ void Ghost::move(World &world, Layer &layer)
     float dt = world.gameInfo().dt();
     float distance = dt * speed_;
 
-    auto dirVec = calculateDirVecToHero(center(), world.gameInfo().hero().center(), distance);
+    auto dirVec = calculateDirVecToHero(center(), world.gameInfo().heroInfo().center(), distance);
 
     x_ += dirVec.dx;
     y_ += dirVec.dy;
@@ -78,7 +84,7 @@ void Ghost::checkDangerDistance(World &world, Layer &layer)
     if (awakened_)
         return;
 
-    GEB::Position heroCenter = world.gameInfo().hero().center();
+    GEB::Position heroCenter = world.gameInfo().heroInfo().center();
     float dx = GEB::Math::abs(heroCenter.x - center().x);
     float dy = GEB::Math::abs(heroCenter.y - center().y);
 

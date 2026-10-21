@@ -1,23 +1,7 @@
 #include "world/GameInfo.h"
 
-void GameInfo::initialize()
+void GameInfo::updateViewport(const HeroInfo &hero)
 {
-    hero_ = Hero(
-        START_POSITION_X,
-        START_POSITION_Y,
-        ROLE_SIZE,
-        ROLE_SIZE);
-
-    map_ = Map(
-        MAP_WIDTH,
-        MAP_HEIGHT,
-        MAP_BORDER_SIZE,
-        GEB::Color(255, 255, 255));
-}
-
-void GameInfo::updateViewport(const Hero &hero)
-{
-
     int halfWidth = VIEWPORT_WIDTH / 2;
     int halfHeight = VIEWPORT_HEIGHT / 2;
     GEB::Position heroCenter = hero.center();

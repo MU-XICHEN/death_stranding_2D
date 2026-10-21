@@ -11,19 +11,20 @@ void Character::render(World &world, Layer &layer)
     float transX = x_ - environment.x();
     float transY = y_ - environment.y();
 
-    if (transX < 0 || transY < 0)
-    {
-        GEB::Debugger::showAlert();
-    }
-
     for (int i = 0; i < width_; i++)
     {
         for (int j = 0; j < height_; j++)
         {
             float targetX = transX + i;
             float targetY = transY + j;
-            world.canvas().draw(static_cast<int>(transX + i),
-                                static_cast<int>(transY + j),
+
+            if (targetX < 0 || targetY < 0)
+            {
+                continue;
+            }
+
+            world.canvas().draw(static_cast<int>(targetX),
+                                static_cast<int>(targetY),
                                 color_.r,
                                 color_.g,
                                 color_.b);

@@ -24,6 +24,20 @@ GEB::DirectionVec Monster::calculateDirVecToHero(GEB::Position monsterCenter, GE
         CopySign(moveDistance * yPercent, dy)};
 }
 
+void Monster::checkDangerDistance(World &world, Layer &layer)
+{
+	if (awakened_)
+		return;
+    GEB::Position heroCenter = world.gameInfo().hero().center();
+    float dx = GEB::Math::abs(heroCenter.x - center().x);
+    float dy = GEB::Math::abs(heroCenter.y - center().y);
+
+    if (dx <= dangerDistance_ && dy <= dangerDistance_)
+    {
+        awaken();
+    }
+}
+
 void Beast::move(World &world, Layer &layer)
 {
     if (!awakened_)
@@ -40,5 +54,6 @@ void Beast::move(World &world, Layer &layer)
 
 void Beast::update(World &world, Layer &layer)
 {
+    checkDangerDistance(world, layer);
     move(world, layer);
 }

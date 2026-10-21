@@ -15,12 +15,14 @@ public:
 
     virtual void move(World &world, Layer &layer) = 0;
 
+    virtual void checkDangerDistance(World &world, Layer &layer);
+
 protected:
     static GEB::DirectionVec calculateDirVecToHero(GEB::Position monsterCenter, GEB::Position heroCenter, float moveDistance);
 
     void awaken() { awakened_ = true; }
 
-    bool awakened_ = true;
+    bool awakened_ = false;
     float dangerDistance_;
 };
 

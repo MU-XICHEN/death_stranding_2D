@@ -16,8 +16,8 @@ PlayStage::PlayStage()
     pushEntityToCharacterList(hero);
 
     auto beast1 = new Beast(
-        100,
-        200,
+        500,
+        500,
         ROLE_SIZE,
         ROLE_SIZE,
         M_PIXEL_PER_SEC,

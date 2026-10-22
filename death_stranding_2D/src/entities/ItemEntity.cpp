@@ -11,9 +11,16 @@ void ItemEntity::update(World &world, Layer &layer) {}
 void ItemEntity::render(World &world, Layer &layer)
 {
     const Viewport &viewport = world.gameInfo().viewport();
+    auto &canvas = world.canvas();
+    const int visibleWidth = GEB::Math::min(viewport.width(), static_cast<int>(viewport.width()));
+    const int visibleHeight = GEB::Math::min(viewport.height(), static_cast<int>(viewport.height()));
 
     float transX = x_ - viewport.x();
     float transY = y_ - viewport.y();
+
+    if (transX >= visibleWidth || transY >= visibleHeight ||
+        transX + width_ <= 0 || transY + height_ <= 0)
+        return;
 
     for (int i = 0; i < width_; i++)
     {
@@ -22,14 +29,15 @@ void ItemEntity::render(World &world, Layer &layer)
             float targetX = transX + i;
             float targetY = transY + j;
 
-            if (targetX < 0 || targetY < 0)
+            if (targetX < 0 || targetY < 0 ||
+                targetX >= visibleWidth || targetY >= visibleHeight)
                 continue;
 
-            world.canvas().draw(static_cast<int>(targetX),
-                                static_cast<int>(targetY),
-                                color_.r,
-                                color_.g,
-                                color_.b);
+            canvas.draw(static_cast<int>(targetX),
+                        static_cast<int>(targetY),
+                        color_.r,
+                        color_.g,
+                        color_.b);
         }
     }
 }
@@ -54,26 +62,6 @@ void ItemEntity::moveRight(float distance, float rightBoundary)
 {
     float resPos = x_ + distance;
     x_ = GEB::Math::max(x_, GEB::Math::min(resPos, rightBoundary - width_));
-}
-void ItemEntity::moveUpLeft(float distance, float topBoundary, float leftBoundary)
-{
-    moveUp(distance, topBoundary);
-    moveLeft(distance, leftBoundary);
-}
-void ItemEntity::moveUpRight(float distance, float topBoundary, float rightBoundary)
-{
-    moveUp(distance, topBoundary);
-    moveRight(distance, rightBoundary);
-}
-void ItemEntity::moveDownLeft(float distance, float bottomBoundary, float leftBoundary)
-{
-    moveDown(distance, bottomBoundary);
-    moveLeft(distance, leftBoundary);
-}
-void ItemEntity::moveDownRight(float distance, float bottomBoundary, float rightBoundary)
-{
-    moveDown(distance, bottomBoundary);
-    moveRight(distance, rightBoundary);
 }
 
 void ItemEntity::calculateBoundaryTop(GEB::Boundary &boundary, const ItemEntity *barrierItem)
@@ -136,22 +124,6 @@ void ItemEntity::calculateBoundaryImpl(GEB::Boundary &boundary, const ItemEntity
     case GEB::Direction::Right:
         calculateBoundaryRight(boundary, barrierItem);
         break;
-    case GEB::Direction::DownLeft:
-        calculateBoundaryBottom(boundary, barrierItem);
-        calculateBoundaryLeft(boundary, barrierItem);
-        break;
-    case GEB::Direction::DownRight:
-        calculateBoundaryBottom(boundary, barrierItem);
-        calculateBoundaryRight(boundary, barrierItem);
-        break;
-    case GEB::Direction::UpLeft:
-        calculateBoundaryTop(boundary, barrierItem);
-        calculateBoundaryLeft(boundary, barrierItem);
-        break;
-    case GEB::Direction::UpRight:
-        calculateBoundaryTop(boundary, barrierItem);
-        calculateBoundaryRight(boundary, barrierItem);
-        break;
     case GEB::Direction::None:
         break;
     default:
@@ -159,27 +131,7 @@ void ItemEntity::calculateBoundaryImpl(GEB::Boundary &boundary, const ItemEntity
     }
 }
 
-GEB::Boundary ItemEntity::calculateBoundaryFocusHero(World &world, Layer &layer, GEB::Direction diretion)
-{
-    const Map &map = world.gameInfo().map();
-    const HeroInfo &heroInfo = world.gameInfo().heroInfo();
-
-    GEB::Boundary boundary{
-        .top = static_cast<float>(map.topBoundary()),
-        .bottom = static_cast<float>(map.bottomBoundary()),
-        .left = static_cast<float>(map.leftBoundary()),
-        .right = static_cast<float>(map.rightBoundary())};
-
-    ItemEntity tempItem(heroInfo.x,
-                        heroInfo.y,
-                        heroInfo.width, heroInfo.height);
-
-    calculateBoundaryImpl(boundary, &tempItem, diretion);
-
-    return boundary;
-}
-
-GEB::Boundary ItemEntity::calculateBoundary(World &world, Layer &layer, GEB::Direction diretion)
+GEB::Boundary ItemEntity::calculateBoundary(World &world, Layer &layer, GEB::Direction diretion, ItemEntity **candidateItemHead, int size)
 {
     const Map &map = world.gameInfo().map();
 
@@ -189,16 +141,11 @@ GEB::Boundary ItemEntity::calculateBoundary(World &world, Layer &layer, GEB::Dir
         .left = static_cast<float>(map.leftBoundary()),
         .right = static_cast<float>(map.rightBoundary())};
 
-    if (PlayStage *playStage = dynamic_cast<PlayStage *>(&(layer.currentStage())))
+    for (int i = 0; i < size; i++)
     {
-        const auto &list = playStage->itemEntityList();
-        int size = list.size();
-        for (int i = 0; i < size; i++)
-        {
-            if (!list[i] || list[i] == this)
-                continue;
-            calculateBoundaryImpl(boundary, list[i], diretion);
-        }
+        if (!(*(candidateItemHead + i)) || *(candidateItemHead + i) == this)
+            continue;
+        calculateBoundaryImpl(boundary, *(candidateItemHead + i), diretion);
     }
 
     return boundary;

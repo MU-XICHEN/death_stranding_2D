@@ -4,15 +4,15 @@ namespace GamesEngineeringBase
 {
     struct Color
     {
-        int r;
-        int g;
-        int b;
+        int r = 0;
+        int g = 0;
+        int b = 0;
     };
 
     struct Position
     {
-        float x;
-        float y;
+        float x = 0;
+        float y = 0;
     };
 
     enum Direction
@@ -30,15 +30,22 @@ namespace GamesEngineeringBase
 
     struct DirectionVec
     {
-        float dx;
-        float dy;
+        float dx = 0;
+        float dy = 0;
+    };
+
+    template <typename T, typename U>
+    struct Pair
+    {
+        T first = 0;
+        U second = 0;
     };
 
     struct Boundary
     {
-        float top;
-        float bottom;
-        float left;
-        float right;
+        float top = 0;
+        float bottom = 0;
+        float left = 0;
+        float right = 0;
     };
 }

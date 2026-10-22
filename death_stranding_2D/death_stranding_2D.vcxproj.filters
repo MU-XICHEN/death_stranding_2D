@@ -152,6 +152,9 @@
     <ClInclude Include="include\world\GameInfo.h">
       <Filter>Header Files\world</Filter>
     </ClInclude>
+    <ClInclude Include="include\world\Grid.h">
+      <Filter>Header Files\world</Filter>
+    </ClInclude>
     <ClInclude Include="include\world\Viewport.h">
       <Filter>Header Files\world</Filter>
     </ClInclude>

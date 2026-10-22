@@ -16,7 +16,7 @@ Stage::~Stage()
 
 void Stage::pushEntity(Entity *entity)
 {
-    entityList_.push_back(entity);
+    entityList_.pushBack(entity);
 }
 
 // Iterate over the list in insertion order, which means the entity added first is updated first.

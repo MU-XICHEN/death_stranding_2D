@@ -6,16 +6,16 @@ void GameInfo::updateViewport(const HeroInfo &hero)
     int halfHeight = VIEWPORT_HEIGHT / 2;
     GEB::Position heroCenter = hero.center();
 
-    float idealWindowX = heroCenter.x - halfWidth;
-    float idealWindowY = heroCenter.y - halfHeight;
+    float viewportIdealX = heroCenter.x - halfWidth;
+    float viewportIdealY = heroCenter.y - halfHeight;
 
     // control top and left
-    float targetX = GEB::Math::max(idealWindowX, 0.0f);
-    float targetY = GEB::Math::max(idealWindowY, 0.0f);
+    float targetX = GEB::Math::max(viewportIdealX, 0.0f);
+    float targetY = GEB::Math::max(viewportIdealY, 0.0f);
 
     // control bottom and right
-    float minX = static_cast<float>(MAP_WIDTH - VIEWPORT_WIDTH);
-    float minY = static_cast<float>(MAP_HEIGHT - VIEWPORT_HEIGHT);
+    float minX = GEB::Math::max(static_cast<float>(MAP_WIDTH - VIEWPORT_WIDTH), 0.0f);
+    float minY = GEB::Math::max(static_cast<float>(MAP_HEIGHT - VIEWPORT_HEIGHT), 0.0f);
     float finalX = GEB::Math::min(targetX, minX);
     float finalY = GEB::Math::min(targetY, minY);
 

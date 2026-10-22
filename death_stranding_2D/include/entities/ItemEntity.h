@@ -28,17 +28,12 @@ public:
     void calculateBoundaryLeft(GEB::Boundary &boundary, const ItemEntity *barrierItem);
     void calculateBoundaryRight(GEB::Boundary &boundary, const ItemEntity *barrierItem);
     void calculateBoundaryImpl(GEB::Boundary &boundary, const ItemEntity *barrierItem, GEB::Direction direction);
-    GEB::Boundary calculateBoundary(World &world, Layer &layer, GEB::Direction diretion);
-    GEB::Boundary calculateBoundaryFocusHero(World &world, Layer &layer, GEB::Direction diretion);
+    GEB::Boundary calculateBoundary(World &world, Layer &layer, GEB::Direction diretion, ItemEntity **candidateItemList, int size);
 
     void moveUp(float distance, float topBoundary);
     void moveDown(float distance, float bottomBoundary);
     void moveLeft(float distance, float leftBoundary);
     void moveRight(float distance, float rightBoundary);
-    void moveUpLeft(float distance, float topBoundary, float leftBoundary);
-    void moveUpRight(float distance, float topBoundary, float rightBoundary);
-    void moveDownLeft(float distance, float bottomBoundary, float leftBoundary);
-    void moveDownRight(float distance, float bottomBoundary, float rightBoundary);
 
 protected:
     GEB::Color color_{0, 0, 0};

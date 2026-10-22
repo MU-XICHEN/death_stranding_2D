@@ -49,6 +49,8 @@ GEB::DirectionVec Monster::calculateDirVecToHero(GEB::Position monsterCenter, GE
 
 void Monster::checkDangerDistance(World &world, Layer &layer)
 {
+    return;
+    
     if (awakened_)
         return;
     GEB::Position heroCenter = world.gameInfo().heroInfo().center();
@@ -74,37 +76,7 @@ void Beast::move(World &world, Layer &layer)
 
     auto direction = transDirVecToDiretion(dirVec);
 
-    switch (direction)
-    { 
-    case GEB::Direction::Up:
-    case GEB::Direction::UpLeft:
-    case GEB::Direction::UpRight:
-        moveUp(distance, calculateBoundaryFocusHero(world, layer, GEB::Direction::Up).top);
-        break;
-    case GEB::Direction::Down:
-    case GEB::Direction::DownLeft:
-    case GEB::Direction::DownRight:
-        moveDown(distance, calculateBoundaryFocusHero(world, layer, GEB::Direction::Down).bottom);
-        break;
-    default:
-        break;
-    }
-
-    switch (direction)
-    {
-    case GEB::Direction::Left:
-    case GEB::Direction::UpLeft:
-    case GEB::Direction::DownLeft:
-        moveLeft(distance, calculateBoundaryFocusHero(world, layer, GEB::Direction::Left).left);
-        break;
-    case GEB::Direction::Right:
-    case GEB::Direction::UpRight:
-    case GEB::Direction::DownRight:
-        moveRight(distance, calculateBoundaryFocusHero(world, layer, GEB::Direction::Right).right);
-        break;
-    default:
-        break;
-    }
+    // todo: handle monsters' collision
 }
 
 void Beast::update(World &world, Layer &layer)

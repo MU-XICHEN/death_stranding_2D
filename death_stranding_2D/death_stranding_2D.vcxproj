@@ -184,6 +184,7 @@
     <ClInclude Include="include\utils\DebugUtils.h" />
     <ClInclude Include="include\utils\GameMath.h" />
     <ClInclude Include="include\world\GameInfo.h" />
+    <ClInclude Include="include\world\Grid.h" />
     <ClInclude Include="include\world\Map.h" />
     <ClInclude Include="include\world\Viewport.h" />
     <ClInclude Include="include\world\World.h" />

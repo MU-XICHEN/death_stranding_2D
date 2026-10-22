@@ -33,7 +33,7 @@ World::~World()
 void World::initLayers()
 {
     // Game main layer
-    layerList_.push_back(new MainLayer());
+    layerList_.pushBack(new MainLayer());
 }
 
 void World::refreshTimer()

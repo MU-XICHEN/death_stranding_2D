@@ -21,27 +21,4 @@ void Map::update(World &world, Layer &layer)
 
 void Map::render(World &world, Layer &layer)
 {
-    // render Barriers
-
-    // render Border
-    const auto &viewport = world.gameInfo().viewport();
-
-    auto viewportX = viewport.x();
-    auto viewPortY = viewport.y();
-    auto viewPortBoundaryX = viewportX + viewport.width();
-    auto viewPortBoundaryY = viewPortY + viewport.height();
-
-    for (int i = viewportX; i < viewPortBoundaryX; i++)
-    {
-        for (int j = viewPortY; j < viewPortBoundaryY; j++)
-        {
-            bool inBorder = checkPixelInMapBorder(i, j, width_, height_, borderSize_);
-            if (inBorder)
-            {
-                int windowStartXInMap = i - static_cast<int>(viewportX);
-                int windowStartYInMap = j - static_cast<int>(viewPortY);
-                world.canvas().draw(windowStartXInMap, windowStartYInMap, borderColor_.r, borderColor_.g, borderColor_.b);
-            }
-        }
-    }
 }

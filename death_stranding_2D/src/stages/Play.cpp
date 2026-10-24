@@ -26,44 +26,17 @@ PlayStage::PlayStage() : gridSystem_(GRID_ROWCNT, GRID_COLCNT, GRID_SIZE)
         ROLE_SIZE,
         PIXEL_PER_SEC);
     hero->setColor(255, 0, 0);
-    pushEntityToItemEntityList(hero);
+    addEntityToGridSystem(hero);
 
-    auto beast = new Beast(
-        400,
-        400,
-        ROLE_SIZE,
-        ROLE_SIZE);
-    beast->setColor(0, 255, 0);
-    pushEntityToItemEntityList(beast);
-    return;
-
-    constexpr int kMovementClearancePixels = 4;
-    const int monsterWidth = ROLE_SIZE;
-    const int monsterHeight = ROLE_SIZE;
-    const int horizontalGap = hero->width() + kMovementClearancePixels;
-    const int verticalGap = hero->height() + kMovementClearancePixels;
-
-    // Leave a full-width entrance corridor above the first row of beasts.
-    for (int y = map->topBoundary() + verticalGap;
-         y + monsterHeight <= map->bottomBoundary();
-         y += monsterHeight + verticalGap)
+    for (int i = 0; i < 10; ++i)
     {
-        for (int x = map->leftBoundary();
-             x + monsterWidth <= map->rightBoundary();
-             x += monsterWidth + horizontalGap)
-        {
-            const bool overlapsHero = x < hero->x() + hero->width() &&
-                                      x + monsterWidth > hero->x() &&
-                                      y < hero->y() + hero->height() &&
-                                      y + monsterHeight > hero->y();
-            if (overlapsHero)
-                continue;
-
-            auto beast = new Beast(static_cast<float>(x), static_cast<float>(y),
-                                   monsterWidth, monsterHeight);
-            beast->setColor(0, 255, 0);
-            pushEntityToItemEntityList(beast);
-        }
+        auto monster = new Beast(
+            200 + i * (ROLE_SIZE + 10),
+            200 + i * (ROLE_SIZE + 10),
+            ROLE_SIZE,
+            ROLE_SIZE);
+        monster->setColor(0, 255, 0);
+        addEntityToGridSystem(monster);
     }
 }
 
@@ -78,7 +51,7 @@ GEB::Pair<int, int> getGridIndex(float x, float y)
     return index;
 }
 
-void PlayStage::pushEntityToItemEntityList(ItemEntity *item)
+void PlayStage::addEntityToGridSystem(ItemEntity *item)
 {
     auto center = item->center();
     auto indexPair = getGridIndex(center.x, center.y);

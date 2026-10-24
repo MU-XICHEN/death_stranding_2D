@@ -10,7 +10,7 @@ public:
     PlayStage();
     virtual ~PlayStage() = default;
 
-    void pushEntityToItemEntityList(ItemEntity *itemEntity);
+    void addEntityToGridSystem(ItemEntity *itemEntity);
     void updateEntities(World &world, Layer &layer) override;
     void renderEntities(World &world, Layer &layer) override;
 

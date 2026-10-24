@@ -33,6 +33,6 @@
 
 // Monster
 #define M_Beast_PIXEL_PER_SEC 150
-#define M_Beast_DANGER_DISTANCE 300
+#define M_Beast_DANGER_DISTANCE 100
 #define M_Ghost_PIXEL_PER_SEC 175
-#define M_Ghost_DANGER_DISTANCE 200
+#define M_Ghost_DANGER_DISTANCE 50

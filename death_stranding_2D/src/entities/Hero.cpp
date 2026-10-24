@@ -5,6 +5,9 @@
 #include "core/Types.h"
 #include "stages/Play.h"
 
+template <typename T>
+using GEBArray = GEB::Structures::Array<T>;
+
 GEB::Direction translateEventsToDirection(const GamesEngineeringBase::Window &canvas)
 {
     if (canvas.keyPressed('W') && canvas.keyPressed('A'))
@@ -40,27 +43,6 @@ bool checkIsSingleDirection(GEB::Direction direction)
     }
 }
 
-void calculateCandidateGrids(float centerX, float centerY, GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids)
-{
-    const int centerRow = static_cast<int>(centerY) / GRID_SIZE;
-    const int centerCol = static_cast<int>(centerX) / GRID_SIZE;
-
-    // GridSystem takes (row, column): y selects the row, x selects the column.
-    for (int row = centerRow - 1; row <= centerRow + 1; ++row)
-    {
-        if (row < 0 || row >= GRID_ROWCNT)
-            continue;
-
-        for (int col = centerCol - 1; col <= centerCol + 1; ++col)
-        {
-            if (col < 0 || col >= GRID_COLCNT)
-                continue;
-
-            candidateGrids.pushBack({row, col});
-        }
-    }
-}
-
 void Hero::handleEvents(World &world, Layer &layer)
 {
     auto &canvas = world.canvas();
@@ -69,35 +51,15 @@ void Hero::handleEvents(World &world, Layer &layer)
 
     float distance = dt * speed_;
 
-    GEB::Structures::Array<ItemEntity *> candidateItemList;
-    GEB::Structures::Array<GEB::Pair<int, int>> candidateGrids;
+    GEBArray<ItemEntity *> candidateItemList;
     auto &playStage = dynamic_cast<PlayStage &>(layer.currentStage());
     auto &gridSystem = playStage.gridSystem();
 
     auto oldCenter = center();
-
-    calculateCandidateGrids(oldCenter.x, oldCenter.y, candidateGrids);
     int oldColIdx = oldCenter.x / GRID_SIZE;
     int oldRowIdx = oldCenter.y / GRID_SIZE;
-    // use nine grids(center grid and its eight neighbors) to detect potential collisions with items, as grid size is larger than role size.
-    // todo: prune branches in the furture.
-    int candidateGridSize = candidateGrids.size();
-    for (int i = 0; i < candidateGridSize; i++)
-    {
-        auto pos = candidateGrids[i];
-        auto *grid = gridSystem.grid(pos.first, pos.second);
-        if (!grid)
-            continue;
 
-        int len = grid->itemList().size();
-        auto &itemList = grid->itemList();
-        for (int j = 0; j < len; j++)
-        {
-            if (!itemList[j] || itemList[j] == this)
-                continue;
-            candidateItemList.pushBack(itemList[j]);
-        }
-    }
+    GridSystem::getCandidateItemList(this, gridSystem, candidateItemList);
 
     // calculate boundaries horizontally and vertically, respectively, in case of diagonal movement
     GEB::Direction direction = translateEventsToDirection(canvas);

@@ -2,6 +2,7 @@
 
 #include "entities/ItemEntity.h"
 #include "structure/Array.h"
+#include "core/Types.h"
 
 class Grid
 {
@@ -86,6 +87,55 @@ public:
             return nullptr;
 
         return &gridMap_[rowIdx * colCount_ + colIdx];
+    }
+
+    static void getCandidateGrids(float centerX, float centerY, GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids)
+    {
+        const int centerRow = static_cast<int>(centerY) / GRID_SIZE;
+        const int centerCol = static_cast<int>(centerX) / GRID_SIZE;
+
+        // GridSystem takes (row, column): y selects the row, x selects the column.
+        for (int row = centerRow - 1; row <= centerRow + 1; ++row)
+        {
+            if (row < 0 || row >= GRID_ROWCNT)
+                continue;
+
+            for (int col = centerCol - 1; col <= centerCol + 1; ++col)
+            {
+                if (col < 0 || col >= GRID_COLCNT)
+                    continue;
+
+                candidateGrids.pushBack({row, col});
+            }
+        }
+    }
+
+    static void getCandidateItemList(ItemEntity *detectedItem,
+                                     GridSystem &gridSystem,
+                                     GEB::Structures::Array<ItemEntity *> &candidateItemList)
+    {
+        auto center = detectedItem->center();
+        GEB::Structures::Array<GEB::Pair<int, int>> candidateGrids;
+        getCandidateGrids(center.x, center.y, candidateGrids);
+        // use nine grids(center grid and its eight neighbors) to detect potential collisions with items, as grid size is larger than role size.
+        // todo: prune branches in the furture.
+        int candidateGridSize = candidateGrids.size();
+        for (int i = 0; i < candidateGridSize; i++)
+        {
+            auto pos = candidateGrids[i];
+            auto *grid = gridSystem.grid(pos.first, pos.second);
+            if (!grid)
+                continue;
+
+            int len = grid->itemList().size();
+            auto &itemList = grid->itemList();
+            for (int j = 0; j < len; j++)
+            {
+                if (!itemList[j] || itemList[j] == detectedItem)
+                    continue;
+                candidateItemList.pushBack(itemList[j]);
+            }
+        }
     }
 
     inline int gridSize() const { return gridSize_; }

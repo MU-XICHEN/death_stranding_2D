@@ -57,6 +57,12 @@
     <ClCompile Include="src\entities\Monster.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
+    <ClCompile Include="src\entities\Beast.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\entities\Ghost.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
     <ClCompile Include="src\stages\Intro.cpp">
       <Filter>Source Files\stages</Filter>
     </ClCompile>

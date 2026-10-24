@@ -45,66 +45,28 @@ bool checkIsSingleDirection(GEB::Direction direction)
 
 void Hero::handleEvents(World &world, Layer &layer)
 {
+    const Map &map = world.gameInfo().map();
     auto &canvas = world.canvas();
-
     float dt = world.gameInfo().dt();
-
     float distance = dt * speed_;
 
-    GEBArray<ItemEntity *> candidateItemList;
     auto &playStage = dynamic_cast<PlayStage &>(layer.currentStage());
-    auto &gridSystem = playStage.gridSystem();
 
+    // get candidate items for collision detection
+    GEBArray<ItemEntity *> candidateItemList;
+    GridSystem::getCandidateItemList(playStage.gridSystem(), this, candidateItemList);
+
+    // get old position
     auto oldCenter = center();
-    int oldColIdx = oldCenter.x / GRID_SIZE;
-    int oldRowIdx = oldCenter.y / GRID_SIZE;
 
-    GridSystem::getCandidateItemList(this, gridSystem, candidateItemList);
-
-    // calculate boundaries horizontally and vertically, respectively, in case of diagonal movement
     GEB::Direction direction = translateEventsToDirection(canvas);
-    auto candidateItemHead = candidateItemList.head();
+    moveWithCollision(distance, direction, map, candidateItemList.head(), candidateItemList.size());
 
-    switch (direction)
-    {
-    case GEB::Direction::Up:
-    case GEB::Direction::UpLeft:
-    case GEB::Direction::UpRight:
-        moveUp(distance, calculateBoundary(world, layer, GEB::Direction::Up, candidateItemHead, candidateItemList.size()).top);
-        break;
-    case GEB::Direction::Down:
-    case GEB::Direction::DownLeft:
-    case GEB::Direction::DownRight:
-        moveDown(distance, calculateBoundary(world, layer, GEB::Direction::Down, candidateItemHead, candidateItemList.size()).bottom);
-        break;
-    default:
-        break;
-    }
-
-    switch (direction)
-    {
-    case GEB::Direction::Left:
-    case GEB::Direction::UpLeft:
-    case GEB::Direction::DownLeft:
-        moveLeft(distance, calculateBoundary(world, layer, GEB::Direction::Left, candidateItemHead, candidateItemList.size()).left);
-        break;
-    case GEB::Direction::Right:
-    case GEB::Direction::UpRight:
-    case GEB::Direction::DownRight:
-        moveRight(distance, calculateBoundary(world, layer, GEB::Direction::Right, candidateItemHead, candidateItemList.size()).right);
-        break;
-    default:
-        break;
-    }
-
+    // calculate new position
     auto newCenter = center();
-    int newRowIdx = newCenter.y / GRID_SIZE;
-    int newColIdx = newCenter.x / GRID_SIZE;
 
-    if (oldRowIdx != newRowIdx || oldColIdx != newColIdx)
-    {
-        gridSystem.updateEntityGrid(oldRowIdx, oldColIdx, newRowIdx, newColIdx, this);
-    }
+    // update grid system
+    playStage.gridSystem().updateEntityGridIfNeed(oldCenter, newCenter, this);
 }
 
 void Hero::update(World &world, Layer &layer)

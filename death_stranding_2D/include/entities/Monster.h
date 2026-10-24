@@ -14,12 +14,18 @@ public:
     virtual ~Monster() = default;
 
 protected:
-    static GEB::DirectionVec calculateDirVecToHero(GEB::Position monsterCenter, GEB::Position heroCenter, float moveDistance);
-    virtual void move(World &world, Layer &layer) = 0;
-
-    virtual void checkDangerDistance(World &world, Layer &layer);
+    static GEB::Direction transDirVecToDiretion(const GEB::Vec2 &dirVec);
+    static inline GEB::Vec2 calculateDirVecToHero(GEB::Position monsterCenter, GEB::Position heroCenter)
+    {
+        float dx = heroCenter.x - monsterCenter.x;
+        float dy = heroCenter.y - monsterCenter.y;
+        return GEB::Vec2{dx, dy};
+    }
 
     void awaken() { awakened_ = true; }
+    virtual void move(World &world, Layer &layer) = 0;
+    virtual void checkDangerDistance(World &world, Layer &layer);
+    virtual void handleMovement(World &world, Layer &layer);
 
     bool awakened_ = false;
     float dangerDistance_;

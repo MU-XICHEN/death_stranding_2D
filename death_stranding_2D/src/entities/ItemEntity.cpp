@@ -131,10 +131,8 @@ void ItemEntity::calculateBoundaryImpl(GEB::Boundary &boundary, const ItemEntity
     }
 }
 
-GEB::Boundary ItemEntity::calculateBoundary(World &world, Layer &layer, GEB::Direction diretion, ItemEntity **candidateItemHead, int size)
+GEB::Boundary ItemEntity::calculateBoundary(const Map &map, GEB::Direction diretion, ItemEntity **candidateItemHead, int size)
 {
-    const Map &map = world.gameInfo().map();
-
     GEB::Boundary boundary{
         .top = static_cast<float>(map.topBoundary()),
         .bottom = static_cast<float>(map.bottomBoundary()),
@@ -149,4 +147,45 @@ GEB::Boundary ItemEntity::calculateBoundary(World &world, Layer &layer, GEB::Dir
     }
 
     return boundary;
+}
+
+void ItemEntity::moveWithCollision(
+    float distance,
+    GEB::Direction direction,
+    const Map &map,
+    ItemEntity **candidateItemHead,
+    int size)
+{
+    // calculate boundaries horizontally and vertically, respectively, in case of diagonal movement
+    switch (direction)
+    {
+    case GEB::Direction::Up:
+    case GEB::Direction::UpLeft:
+    case GEB::Direction::UpRight:
+        moveUp(distance, calculateBoundary(map, GEB::Direction::Up, candidateItemHead, size).top);
+        break;
+    case GEB::Direction::Down:
+    case GEB::Direction::DownLeft:
+    case GEB::Direction::DownRight:
+        moveDown(distance, calculateBoundary(map, GEB::Direction::Down, candidateItemHead, size).bottom);
+        break;
+    default:
+        break;
+    }
+
+    switch (direction)
+    {
+    case GEB::Direction::Left:
+    case GEB::Direction::UpLeft:
+    case GEB::Direction::DownLeft:
+        moveLeft(distance, calculateBoundary(map, GEB::Direction::Left, candidateItemHead, size).left);
+        break;
+    case GEB::Direction::Right:
+    case GEB::Direction::UpRight:
+    case GEB::Direction::DownRight:
+        moveRight(distance, calculateBoundary(map, GEB::Direction::Right, candidateItemHead, size).right);
+        break;
+    default:
+        break;
+    }
 }

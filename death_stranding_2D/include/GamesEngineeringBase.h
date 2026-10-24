@@ -99,6 +99,7 @@ namespace GamesEngineeringBase
 		unsigned int height = 0;                 // Window height
 		unsigned int paddedDataSize = 0;         // Padding for backbuffer memory allocation
 		bool closeRequested = false;
+		bool moveResizeFinished_ = false;
 
 		// Static window procedure to handle window messages
 		static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -138,6 +139,11 @@ namespace GamesEngineeringBase
 			}
 			switch (msg)
 			{
+			case WM_EXITSIZEMOVE:
+			{
+				moveResizeFinished_ = true;
+				return 0;
+			}
 			case WM_DESTROY:
 			case WM_CLOSE:
 			{
@@ -505,6 +511,14 @@ namespace GamesEngineeringBase
 		bool checkCloseRequested()
 		{
 			return closeRequested;
+		}
+
+		// Consume once so only the first frame after a window drag resets its timer.
+		bool consumeMoveResizeFinished()
+		{
+			bool finished = moveResizeFinished_;
+			moveResizeFinished_ = false;
+			return finished;
 		}
 
 		// Processes input messages

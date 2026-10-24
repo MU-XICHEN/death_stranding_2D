@@ -53,8 +53,13 @@ public:
 
     virtual ~GridSystem() = default;
 
-    void updateEntityGrid(int oldRowIdx, int oldColIdx, int newRowIdx, int newColIdx, ItemEntity *item)
+    void updateEntityGridIfNeed(GEB::Position oldCenter, GEB::Position newCenter, ItemEntity *item)
     {
+        int oldRowIdx = oldCenter.y / GRID_SIZE;
+        int oldColIdx = oldCenter.x / GRID_SIZE;
+        int newRowIdx = newCenter.y / GRID_SIZE;
+        int newColIdx = newCenter.x / GRID_SIZE;
+
         if (!item || !grid(oldRowIdx, oldColIdx) || !grid(newRowIdx, newColIdx))
             return;
 
@@ -110,8 +115,8 @@ public:
         }
     }
 
-    static void getCandidateItemList(ItemEntity *detectedItem,
-                                     GridSystem &gridSystem,
+    static void getCandidateItemList(GridSystem &gridSystem,
+                                     ItemEntity *detectedItem,
                                      GEB::Structures::Array<ItemEntity *> &candidateItemList)
     {
         auto center = detectedItem->center();

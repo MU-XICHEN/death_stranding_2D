@@ -2,6 +2,8 @@
 
 #include "entities/Entity.h"
 
+class Map;
+
 // ItemEntity is used to anything which should consider collision.
 class ItemEntity : public Entity
 {
@@ -10,10 +12,10 @@ public:
         : Entity(x, y, width, height), speed_(speed) {}
     virtual ~ItemEntity() = default;
 
-    // update needs to be implemented by derived classes
+    // update method needs to be implemented by derived classes
     virtual void update(World &world, Layer &layer);
 
-    // render is implemented here and can be used by derived classes
+    // render mothod is implemented here and can be used by derived classes
     virtual void render(World &world, Layer &layer) override;
 
     void setColor(unsigned int r, unsigned int g, unsigned int b)
@@ -28,12 +30,19 @@ public:
     void calculateBoundaryLeft(GEB::Boundary &boundary, const ItemEntity *barrierItem);
     void calculateBoundaryRight(GEB::Boundary &boundary, const ItemEntity *barrierItem);
     void calculateBoundaryImpl(GEB::Boundary &boundary, const ItemEntity *barrierItem, GEB::Direction direction);
-    GEB::Boundary calculateBoundary(World &world, Layer &layer, GEB::Direction diretion, ItemEntity **candidateItemList, int size);
+    GEB::Boundary calculateBoundary(const Map &map, GEB::Direction diretion, ItemEntity **candidateItemHead, int size);
 
     void moveUp(float distance, float topBoundary);
     void moveDown(float distance, float bottomBoundary);
     void moveLeft(float distance, float leftBoundary);
     void moveRight(float distance, float rightBoundary);
+
+    void moveWithCollision(
+        float distance,
+        GEB::Direction direction,
+        const Map &map,
+        ItemEntity **candidateItemHead,
+        int size);
 
 protected:
     GEB::Color color_{0, 0, 0};

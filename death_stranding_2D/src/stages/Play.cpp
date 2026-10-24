@@ -7,7 +7,15 @@
 
 PlayStage::PlayStage() : gridSystem_(GRID_ROWCNT, GRID_COLCNT, GRID_SIZE)
 {
-    // initialize Grid Map
+    // add map
+    auto map = new Map(
+        0,
+        0,
+        MAP_WIDTH,
+        MAP_HEIGHT,
+        GEB::Color(255, 255, 255));
+
+    pushEntity(map);
 
     // add Items
     // [new] items will be recycled by the grid system
@@ -20,15 +28,14 @@ PlayStage::PlayStage() : gridSystem_(GRID_ROWCNT, GRID_COLCNT, GRID_SIZE)
     hero->setColor(255, 0, 0);
     pushEntityToItemEntityList(hero);
 
-    // add map
-    auto map = new Map(
-        0,
-        0,
-        MAP_WIDTH,
-        MAP_HEIGHT,
-        GEB::Color(255, 255, 255));
-
-    pushEntity(map);
+    auto beast = new Beast(
+        400,
+        400,
+        ROLE_SIZE,
+        ROLE_SIZE);
+    beast->setColor(0, 255, 0);
+    pushEntityToItemEntityList(beast);
+    return;
 
     constexpr int kMovementClearancePixels = 4;
     const int monsterWidth = ROLE_SIZE;

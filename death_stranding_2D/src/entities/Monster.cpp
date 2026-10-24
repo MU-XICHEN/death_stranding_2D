@@ -1,132 +1,98 @@
 #include "entities/Monster.h"
-#include "Core/GameBase.h"
+#include "core/GameBase.h"
 #include "world/World.h"
+#include "world/Grid.h"
+#include "stages/Play.h"
 
-float CopySign(float value, float signSource)
+template <GEB::Direction dir>
+void calculateDotAndDir(GEB::Direction &bestDir, float &dot, float newDot)
 {
-    float magnitude = value < 0.0f ? -value : value;
-    return signSource < 0.0f ? -magnitude : magnitude;
+    if (newDot > dot)
+    {
+        dot = newDot;
+        bestDir = dir;
+    }
 }
 
-GEB::Direction transDirVecToDiretion(const GEB::DirectionVec &dirVec)
+GEB::Direction Monster::transDirVecToDiretion(const GEB::Vec2 &dirVec)
 {
-    if (dirVec.dx > 0 && dirVec.dy > 0)
-        return GEB::Direction::DownRight;
-    if (dirVec.dx > 0 && dirVec.dy < 0)
-        return GEB::Direction::UpRight;
-    if (dirVec.dx < 0 && dirVec.dy > 0)
-        return GEB::Direction::DownLeft;
-    if (dirVec.dx < 0 && dirVec.dy < 0)
-        return GEB::Direction::UpLeft;
-    if (dirVec.dx > 0)
-        return GEB::Direction::Right;
-    if (dirVec.dx < 0)
-        return GEB::Direction::Left;
-    if (dirVec.dy > 0)
-        return GEB::Direction::Down;
-    if (dirVec.dy < 0)
-        return GEB::Direction::Up;
-    return GEB::Direction::None;
-}
+    if (dirVec.x == 0 && dirVec.y == 0)
+        return GEB::Direction::None;
 
-// Monster
+    auto normalizedDirVec = GEB::Math::normalize(dirVec);
 
-GEB::DirectionVec Monster::calculateDirVecToHero(GEB::Position monsterCenter, GEB::Position heroCenter, float moveDistance)
-{
-    float dx = heroCenter.x - monsterCenter.x;
-    float dy = heroCenter.y - monsterCenter.y;
+    float maxDot = 0;
+    float tempDot = 0;
 
-    float positiveDx = GEB::Math::abs(heroCenter.x - monsterCenter.x);
-    float positiveDy = GEB::Math::abs(heroCenter.y - monsterCenter.y);
+    GEB::Direction bestDirection = GEB::Direction::None;
 
-    float xPercent = positiveDx / (positiveDx + positiveDy);
-    float yPercent = positiveDy / (positiveDx + positiveDy);
+    // left
+    tempDot = GEB::Math::dotProduct(normalizedDirVec, GEB::Vec2{-1, 0});
+    calculateDotAndDir<GEB::Direction::Left>(bestDirection, maxDot, tempDot);
+    // right
+    tempDot = GEB::Math::dotProduct(normalizedDirVec, GEB::Vec2{1, 0});
+    calculateDotAndDir<GEB::Direction::Right>(bestDirection, maxDot, tempDot);
+    // up
+    tempDot = GEB::Math::dotProduct(normalizedDirVec, GEB::Vec2{0, -1});
+    calculateDotAndDir<GEB::Direction::Up>(bestDirection, maxDot, tempDot);
+    // down
+    tempDot = GEB::Math::dotProduct(normalizedDirVec, GEB::Vec2{0, 1});
+    calculateDotAndDir<GEB::Direction::Down>(bestDirection, maxDot, tempDot);
+    // left-up
+    tempDot = GEB::Math::dotProduct(normalizedDirVec, GEB::Math::normalize(GEB::Vec2{-1, -1}));
+    calculateDotAndDir<GEB::Direction::UpLeft>(bestDirection, maxDot, tempDot);
+    // left-down
+    tempDot = GEB::Math::dotProduct(normalizedDirVec, GEB::Math::normalize(GEB::Vec2{-1, 1}));
+    calculateDotAndDir<GEB::Direction::DownLeft>(bestDirection, maxDot, tempDot);
+    // right-up
+    tempDot = GEB::Math::dotProduct(normalizedDirVec, GEB::Math::normalize(GEB::Vec2{1, -1}));
+    calculateDotAndDir<GEB::Direction::UpRight>(bestDirection, maxDot, tempDot);
+    // right-down
+    tempDot = GEB::Math::dotProduct(normalizedDirVec, GEB::Math::normalize(GEB::Vec2{1, 1}));
+    calculateDotAndDir<GEB::Direction::DownRight>(bestDirection, maxDot, tempDot);
 
-    return GEB::DirectionVec{
-        CopySign(moveDistance * xPercent, dx),
-        CopySign(moveDistance * yPercent, dy)};
+    // Default direction if no match
+    return bestDirection;
 }
 
 void Monster::checkDangerDistance(World &world, Layer &layer)
 {
+
+    if (awakened_)
+        return;
+    GEB::Position heroCenter = world.gameInfo().heroInfo().center();
+    float dx = GEB::Math::abs(heroCenter.x - center().x);
+    float dy = GEB::Math::abs(heroCenter.y - center().y);
+
+    if (dx <= dangerDistance_ && dy <= dangerDistance_)
+    {
+        awaken();
+    }
+}
+
+void Monster::handleMovement(World &world, Layer &layer)
+{
+    const Map &map = world.gameInfo().map();
+    auto &canvas = world.canvas();
+    float dt = world.gameInfo().dt();
+    float distance = dt * speed_;
+
+    auto &playStage = dynamic_cast<PlayStage &>(layer.currentStage());
+
+    // get candidate items for collision detection
+    GEB::Structures::Array<ItemEntity *> candidateItemList;
+    GridSystem::getCandidateItemList(playStage.gridSystem(), this, candidateItemList);
+
+    // get old position
+    auto oldCenter = center();
+
+    auto dirVec = Monster::calculateDirVecToHero(center(), world.gameInfo().heroInfo().center());
+    auto direction = Monster::transDirVecToDiretion(dirVec);
+
+    moveWithCollision(distance, direction, map, candidateItemList.head(), candidateItemList.size());
+
+    // calculate new position
+    auto newCenter = center();
+    playStage.gridSystem().updateEntityGridIfNeed(oldCenter, newCenter, this);
     return;
-    
-    if (awakened_)
-        return;
-    GEB::Position heroCenter = world.gameInfo().heroInfo().center();
-    float dx = GEB::Math::abs(heroCenter.x - center().x);
-    float dy = GEB::Math::abs(heroCenter.y - center().y);
-
-    if (dx <= dangerDistance_ && dy <= dangerDistance_)
-    {
-        awaken();
-    }
-}
-
-// Beast
-void Beast::move(World &world, Layer &layer)
-{
-    if (!awakened_)
-        return;
-
-    float dt = world.gameInfo().dt();
-    float distance = dt * speed_;
-
-    auto dirVec = calculateDirVecToHero(center(), world.gameInfo().heroInfo().center(), distance);
-
-    auto direction = transDirVecToDiretion(dirVec);
-
-    // todo: handle monsters' collision
-}
-
-void Beast::update(World &world, Layer &layer)
-{
-    checkDangerDistance(world, layer);
-    move(world, layer);
-}
-
-// Ghost
-void Ghost::move(World &world, Layer &layer)
-{
-    // Todo: ghosts have their own movement manner.
-    if (!awakened_)
-        return;
-
-    float dt = world.gameInfo().dt();
-    float distance = dt * speed_;
-
-    auto dirVec = calculateDirVecToHero(center(), world.gameInfo().heroInfo().center(), distance);
-
-    x_ += dirVec.dx;
-    y_ += dirVec.dy;
-}
-
-void Ghost::checkDangerDistance(World &world, Layer &layer)
-{
-    if (awakened_)
-        return;
-
-    GEB::Position heroCenter = world.gameInfo().heroInfo().center();
-    float dx = GEB::Math::abs(heroCenter.x - center().x);
-    float dy = GEB::Math::abs(heroCenter.y - center().y);
-
-    if (dx <= dangerDistance_ && dy <= dangerDistance_)
-    {
-        appear();
-        awaken();
-    }
-}
-
-void Ghost::update(World &world, Layer &layer)
-{
-    checkDangerDistance(world, layer);
-    move(world, layer);
-}
-
-void Ghost::render(World &world, Layer &layer)
-{
-    if (!visible_)
-        return;
-
-    Monster::render(world, layer);
 }

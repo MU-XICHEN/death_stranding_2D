@@ -38,11 +38,19 @@ void World::initLayers()
 
 void World::refreshTimer()
 {
+    if (canvas_.consumeMoveResizeFinished())
+    {
+        // Discard time spent in the native move/resize event.
+        timer_.reset();
+        gameInfo_.updateDt(0.0f);
+        return;
+    }
+
     float dt = timer_.dt();
     gameInfo_.updateDt(dt);
 
-    float FPS = 1 / dt;
-    std::cout << "FPS: " << FPS << std::endl;
+    if (dt > 0.0f)
+        std::cout << "FPS: " << 1.0f / dt << std::endl;
 }
 
 void World::frameStart()

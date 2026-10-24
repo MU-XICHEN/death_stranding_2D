@@ -28,12 +28,6 @@ namespace GamesEngineeringBase
         UpRight
     };
 
-    struct DirectionVec
-    {
-        float dx = 0;
-        float dy = 0;
-    };
-
     template <typename T, typename U>
     struct Pair
     {
@@ -48,4 +42,11 @@ namespace GamesEngineeringBase
         float left = 0;
         float right = 0;
     };
+
+    struct Vec2
+    {
+        float x;
+        float y;
+    };
+
 }

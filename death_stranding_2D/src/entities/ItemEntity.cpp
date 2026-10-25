@@ -2,7 +2,7 @@
 
 #include "entities/ItemEntity.h"
 #include "world/World.h"
-#include "world/Map.h"
+#include "map/Map.h"
 #include "layers/Layer.h"
 #include "stages/Play.h"
 
@@ -12,22 +12,22 @@ void ItemEntity::render(World &world, Layer &layer)
 {
     const Viewport &viewport = world.gameInfo().viewport();
     auto &canvas = world.canvas();
-    const int visibleWidth = GEB::Math::min(viewport.width(), static_cast<int>(viewport.width()));
-    const int visibleHeight = GEB::Math::min(viewport.height(), static_cast<int>(viewport.height()));
+    const int visibleWidth = viewport.width();
+    const int visibleHeight = viewport.height();
 
-    float transX = x_ - viewport.x();
-    float transY = y_ - viewport.y();
+    float xRelativeToViewport = x_ - viewport.x();
+    float yRelativeToViewport = y_ - viewport.y();
 
-    if (transX >= visibleWidth || transY >= visibleHeight ||
-        transX + width_ <= 0 || transY + height_ <= 0)
+    if (xRelativeToViewport >= visibleWidth || yRelativeToViewport >= visibleHeight ||
+        xRelativeToViewport + width_ <= 0 || yRelativeToViewport + height_ <= 0)
         return;
 
     for (int i = 0; i < width_; i++)
     {
         for (int j = 0; j < height_; j++)
         {
-            float targetX = transX + i;
-            float targetY = transY + j;
+            float targetX = xRelativeToViewport + i;
+            float targetY = yRelativeToViewport + j;
 
             if (targetX < 0 || targetY < 0 ||
                 targetX >= visibleWidth || targetY >= visibleHeight)
@@ -64,7 +64,7 @@ void ItemEntity::moveRight(float distance, float rightBoundary)
     x_ = GEB::Math::max(x_, GEB::Math::min(resPos, rightBoundary - width_));
 }
 
-void ItemEntity::calculateBoundaryTop(GEB::Boundary &boundary, const ItemEntity *barrierItem)
+void ItemEntity::calculateBoundaryTop(GEB::Boundary &boundary, const Entity *barrierItem)
 {
     const float barrierRight = barrierItem->x() + barrierItem->width();
     const float barrierBottom = barrierItem->y() + barrierItem->height();
@@ -76,7 +76,7 @@ void ItemEntity::calculateBoundaryTop(GEB::Boundary &boundary, const ItemEntity 
         boundary.top = GEB::Math::max(boundary.top, barrierBottom);
 }
 
-void ItemEntity::calculateBoundaryBottom(GEB::Boundary &boundary, const ItemEntity *barrierItem)
+void ItemEntity::calculateBoundaryBottom(GEB::Boundary &boundary, const Entity *barrierItem)
 {
     const float barrierRight = barrierItem->x() + barrierItem->width();
 
@@ -87,7 +87,7 @@ void ItemEntity::calculateBoundaryBottom(GEB::Boundary &boundary, const ItemEnti
         boundary.bottom = GEB::Math::min(boundary.bottom, barrierItem->y());
 }
 
-void ItemEntity::calculateBoundaryLeft(GEB::Boundary &boundary, const ItemEntity *barrierItem)
+void ItemEntity::calculateBoundaryLeft(GEB::Boundary &boundary, const Entity *barrierItem)
 {
     const float barrierRight = barrierItem->x() + barrierItem->width();
     const float barrierBottom = barrierItem->y() + barrierItem->height();
@@ -98,7 +98,7 @@ void ItemEntity::calculateBoundaryLeft(GEB::Boundary &boundary, const ItemEntity
         boundary.left = GEB::Math::max(boundary.left, barrierRight);
 }
 
-void ItemEntity::calculateBoundaryRight(GEB::Boundary &boundary, const ItemEntity *barrierItem)
+void ItemEntity::calculateBoundaryRight(GEB::Boundary &boundary, const Entity *barrierItem)
 {
     const float barrierBottom = barrierItem->y() + barrierItem->height();
     if (barrierBottom <= y_ || barrierItem->y() >= y_ + height_)
@@ -108,7 +108,7 @@ void ItemEntity::calculateBoundaryRight(GEB::Boundary &boundary, const ItemEntit
         boundary.right = GEB::Math::min(boundary.right, barrierItem->x());
 }
 
-void ItemEntity::calculateBoundaryImpl(GEB::Boundary &boundary, const ItemEntity *barrierItem, GEB::Direction direction)
+void ItemEntity::calculateBoundaryImpl(GEB::Boundary &boundary, const Entity *barrierItem, GEB::Direction direction)
 {
     switch (direction)
     {
@@ -131,7 +131,7 @@ void ItemEntity::calculateBoundaryImpl(GEB::Boundary &boundary, const ItemEntity
     }
 }
 
-GEB::Boundary ItemEntity::calculateBoundary(const Map &map, GEB::Direction diretion, ItemEntity **candidateItemHead, int size)
+GEB::Boundary ItemEntity::calculateBoundary(const MapInfo &map, GEB::Direction diretion, Entity **candidateItemHead, int size)
 {
     GEB::Boundary boundary{
         .top = static_cast<float>(map.topBoundary()),
@@ -152,8 +152,8 @@ GEB::Boundary ItemEntity::calculateBoundary(const Map &map, GEB::Direction diret
 void ItemEntity::moveWithCollision(
     float distance,
     GEB::Direction direction,
-    const Map &map,
-    ItemEntity **candidateItemHead,
+    const MapInfo &map,
+    Entity **candidateItemHead,
     int size)
 {
     // calculate boundaries horizontally and vertically, respectively, in case of diagonal movement
@@ -188,4 +188,5 @@ void ItemEntity::moveWithCollision(
     default:
         break;
     }
+    
 }

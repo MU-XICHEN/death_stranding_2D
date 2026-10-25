@@ -23,7 +23,7 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{c9c5b35f-e6da-40a1-8b42-ee151f5e3be6}</ProjectGuid>
     <RootNamespace>deathstranding2D</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -73,7 +73,7 @@
   <PropertyGroup>
     <OutDir>$(ProjectDir)..\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)..\bin\intermediates\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <LocalDebuggerWorkingDirectory>$(ProjectDir)</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerWorkingDirectory>$(OutDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -162,7 +162,7 @@
     <ClCompile Include="src\layers\Layer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\world\GameInfo.cpp" />
-    <ClCompile Include="src\world\Map.cpp" />
+    <ClCompile Include="src\map\Map.cpp" />
     <ClCompile Include="src\world\World.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -183,13 +183,24 @@
     <ClInclude Include="include\stages\Tally.h" />
     <ClInclude Include="include\structure\Array.h" />
     <ClInclude Include="include\structure\DoublyLinkedList.h" />
+    <ClInclude Include="include\structure\String.h" />
     <ClInclude Include="include\utils\DebugUtils.h" />
     <ClInclude Include="include\utils\GameMath.h" />
     <ClInclude Include="include\world\GameInfo.h" />
     <ClInclude Include="include\world\Grid.h" />
-    <ClInclude Include="include\world\Map.h" />
+    <ClInclude Include="include\map\Map.h" />
+    <ClInclude Include="include\map\MapFactory.h" />
+    <ClInclude Include="include\map\Tile.h" />
     <ClInclude Include="include\world\Viewport.h" />
     <ClInclude Include="include\world\World.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="src\map\data\images\grass.png">
+      <DestinationFolders>$(OutDir)data\images\</DestinationFolders>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="src\map\data\images\stone.png">
+      <DestinationFolders>$(OutDir)data\images\</DestinationFolders>
+    </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

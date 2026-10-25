@@ -14,8 +14,8 @@ public:
     }
     float x() const { return x_; }
     float y() const { return y_; }
-    int width() const { return width_; }
-    int height() const { return height_; }
+    inline int width() const { return width_; }
+    inline int height() const { return height_; }
 
 private:
     float x_ = 0;

@@ -45,7 +45,7 @@ bool checkIsSingleDirection(GEB::Direction direction)
 
 void Hero::handleEvents(World &world, Layer &layer)
 {
-    const Map &map = world.gameInfo().map();
+    const MapInfo &map = world.gameInfo().mapInfo();
     auto &canvas = world.canvas();
     float dt = world.gameInfo().dt();
     float distance = dt * speed_;
@@ -53,8 +53,8 @@ void Hero::handleEvents(World &world, Layer &layer)
     auto &playStage = dynamic_cast<PlayStage &>(layer.currentStage());
 
     // get candidate items for collision detection
-    GEBArray<ItemEntity *> candidateItemList;
-    GridSystem::getCandidateItemList(playStage.gridSystem(), this, candidateItemList);
+    GEBArray<Entity *> candidateItemList;
+    GridSystem::getCandidateItemList(playStage.gridSystem(), this, distance, candidateItemList);
 
     // get old position
     auto oldCenter = center();
@@ -83,5 +83,5 @@ void Hero::update(World &world, Layer &layer)
     world.gameInfo()
         .updateHeroInfo(heroInfo);
 
-    world.gameInfo().updateViewport(heroInfo);
+    world.gameInfo().updateViewport(heroInfo, world.gameInfo().mapInfo());
 }

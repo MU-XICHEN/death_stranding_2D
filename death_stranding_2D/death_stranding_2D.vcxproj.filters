@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Resource Files\data">
+      <UniqueIdentifier>{9AE24CF9-AF31-4B42-B940-B01E64052DD4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\entities">
       <UniqueIdentifier>{8D86E330-A335-4B03-9D74-FA8860D72867}</UniqueIdentifier>
     </Filter>
@@ -25,11 +28,17 @@
     <Filter Include="Source Files\world">
       <UniqueIdentifier>{456C367A-8156-4C85-A19F-119CEF242882}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\map">
+      <UniqueIdentifier>{F2352B40-1486-41AE-B816-B0E887B16C9D}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\core">
       <UniqueIdentifier>{DD6BB71A-84D4-48D9-BDF5-3CF825F80FCF}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\world">
       <UniqueIdentifier>{5322D4BF-C8E2-42E5-B47E-37469B01688E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\map">
+      <UniqueIdentifier>{89DFAD30-D1F0-4AB1-A40C-F1D2707D52A8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\entities">
       <UniqueIdentifier>{196F5616-C012-46FD-8062-9E7A983E1636}</UniqueIdentifier>
@@ -90,8 +99,8 @@
     <ClCompile Include="src\world\GameInfo.cpp">
       <Filter>Source Files\world</Filter>
     </ClCompile>
-    <ClCompile Include="src\world\Map.cpp">
-      <Filter>Source Files\world</Filter>
+    <ClCompile Include="src\map\Map.cpp">
+      <Filter>Source Files\map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -149,11 +158,20 @@
     <ClInclude Include="include\structure\DoublyLinkedList.h">
       <Filter>Header Files\structure</Filter>
     </ClInclude>
+    <ClInclude Include="include\structure\String.h">
+      <Filter>Header Files\structure</Filter>
+    </ClInclude>
     <ClInclude Include="include\utils\GameMath.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
-    <ClInclude Include="include\world\Map.h">
-      <Filter>Header Files\world</Filter>
+    <ClInclude Include="include\map\Map.h">
+      <Filter>Header Files\map</Filter>
+    </ClInclude>
+    <ClInclude Include="include\map\MapFactory.h">
+      <Filter>Header Files\map</Filter>
+    </ClInclude>
+    <ClInclude Include="include\map\Tile.h">
+      <Filter>Header Files\map</Filter>
     </ClInclude>
     <ClInclude Include="include\world\GameInfo.h">
       <Filter>Header Files\world</Filter>
@@ -167,5 +185,13 @@
     <ClInclude Include="include\world\World.h">
       <Filter>Header Files\world</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="src\map\data\images\grass.png">
+      <Filter>Resource Files\data</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="src\map\data\images\stone.png">
+      <Filter>Resource Files\data</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

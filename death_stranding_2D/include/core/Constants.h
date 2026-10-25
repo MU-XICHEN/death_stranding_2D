@@ -24,6 +24,7 @@
 // Map
 #define MAP_WIDTH (GRID_SIZE * GRID_COLCNT)
 #define MAP_HEIGHT (GRID_SIZE * GRID_ROWCNT)
+#define MAX_PATH_LEN 256
 
 // Role
 #define PIXEL_PER_SEC 200

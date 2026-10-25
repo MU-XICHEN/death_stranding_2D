@@ -3,17 +3,13 @@
 #include "entities/Hero.h"
 #include "world/Viewport.h"
 #include "entities/Monster.h"
-#include "world/Map.h"
+#include "map/Map.h"
+#include "map/MapFactory.h"
 
 PlayStage::PlayStage() : gridSystem_(GRID_ROWCNT, GRID_COLCNT, GRID_SIZE)
 {
     // add map
-    auto map = new Map(
-        0,
-        0,
-        MAP_WIDTH,
-        MAP_HEIGHT,
-        GEB::Color(255, 255, 255));
+    auto map = new Map(MapType::Chapter1);
 
     pushEntity(map);
 
@@ -28,16 +24,16 @@ PlayStage::PlayStage() : gridSystem_(GRID_ROWCNT, GRID_COLCNT, GRID_SIZE)
     hero->setColor(255, 0, 0);
     addEntityToGridSystem(hero);
 
-    for (int i = 0; i < 10; ++i)
-    {
-        auto monster = new Beast(
-            200 + i * (ROLE_SIZE + 10),
-            200 + i * (ROLE_SIZE + 10),
-            ROLE_SIZE,
-            ROLE_SIZE);
-        monster->setColor(0, 255, 0);
-        addEntityToGridSystem(monster);
-    }
+    // for (int i = 0; i < 10; ++i)
+    // {
+    //     auto monster = new Beast(
+    //         200 + i * (ROLE_SIZE + 10),
+    //         200 + i * (ROLE_SIZE + 10),
+    //         ROLE_SIZE,
+    //         ROLE_SIZE);
+    //     monster->setColor(0, 255, 0);
+    //     addEntityToGridSystem(monster);
+    // }
 }
 
 GEB::Pair<int, int> getGridIndex(float x, float y)
@@ -61,6 +57,8 @@ void PlayStage::addEntityToGridSystem(ItemEntity *item)
 // updateEntities
 void PlayStage::updateEntities(World &world, Layer &layer)
 {
+    Stage::updateEntities(world, layer);
+
     // iterate gridSystem
     auto &gridMap = gridSystem_.gridMap();
     int gridCount = gridMap.size();
@@ -76,13 +74,12 @@ void PlayStage::updateEntities(World &world, Layer &layer)
                 item->update(world, layer);
         }
     }
-
-    Stage::updateEntities(world, layer);
 }
 
 // renderEntities
 void PlayStage::renderEntities(World &world, Layer &layer)
 {
+    Stage::renderEntities(world, layer);
 
     auto &gridMap = gridSystem_.gridMap();
     int gridCount = gridMap.size();
@@ -98,6 +95,4 @@ void PlayStage::renderEntities(World &world, Layer &layer)
                 item->render(world, layer);
         }
     }
-
-    Stage::renderEntities(world, layer);
 }

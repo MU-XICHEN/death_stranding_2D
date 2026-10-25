@@ -3,7 +3,6 @@
 #include "GamesEngineeringBase.h"
 #include "core/GameBase.h"
 #include "layers/Layer.h"
-#include "world/Map.h"
 #include "world/GameInfo.h"
 
 class World

@@ -2,7 +2,7 @@
 
 #include "entities/Entity.h"
 
-class Map;
+struct MapInfo;
 
 // ItemEntity is used to anything which should consider collision.
 class ItemEntity : public Entity
@@ -25,12 +25,12 @@ public:
         color_.b = b;
     }
 
-    void calculateBoundaryTop(GEB::Boundary &boundary, const ItemEntity *barrierItem);
-    void calculateBoundaryBottom(GEB::Boundary &boundary, const ItemEntity *barrierItem);
-    void calculateBoundaryLeft(GEB::Boundary &boundary, const ItemEntity *barrierItem);
-    void calculateBoundaryRight(GEB::Boundary &boundary, const ItemEntity *barrierItem);
-    void calculateBoundaryImpl(GEB::Boundary &boundary, const ItemEntity *barrierItem, GEB::Direction direction);
-    GEB::Boundary calculateBoundary(const Map &map, GEB::Direction diretion, ItemEntity **candidateItemHead, int size);
+    void calculateBoundaryTop(GEB::Boundary &boundary, const Entity *barrierItem);
+    void calculateBoundaryBottom(GEB::Boundary &boundary, const Entity *barrierItem);
+    void calculateBoundaryLeft(GEB::Boundary &boundary, const Entity *barrierItem);
+    void calculateBoundaryRight(GEB::Boundary &boundary, const Entity *barrierItem);
+    void calculateBoundaryImpl(GEB::Boundary &boundary, const Entity *barrierItem, GEB::Direction direction);
+    GEB::Boundary calculateBoundary(const MapInfo &map, GEB::Direction diretion, Entity **candidateItemHead, int size);
 
     void moveUp(float distance, float topBoundary);
     void moveDown(float distance, float bottomBoundary);
@@ -40,8 +40,8 @@ public:
     void moveWithCollision(
         float distance,
         GEB::Direction direction,
-        const Map &map,
-        ItemEntity **candidateItemHead,
+        const MapInfo &map,
+        Entity **candidateItemHead,
         int size);
 
 protected:

@@ -70,7 +70,6 @@ public:
             {0, "Grass", false, 0},
             {1, "Stone", true, 1}};
 
-        // Native snapshot of the GrassStone layout; no file parsing at runtime.
         static constexpr int ground[] = {
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
             1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,

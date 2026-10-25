@@ -66,24 +66,63 @@ public:
         if (oldRowIdx == newRowIdx && oldColIdx == newColIdx)
             return;
 
-        removeEntity(oldRowIdx, oldColIdx, item);
-        addEntity(newRowIdx, newColIdx, item);
+        changeEntityGrid(item, oldCenter, newCenter);
     }
 
-    void addEntity(int rowIdx, int colIdx, Entity *item)
+    // todo: be careful when updating the itemsToUpdate_ in the game loop to avoid modifying elements while iterating.
+    void addEntityToUpdateList(Entity *item)
+    {
+        if (item)
+            itemsToUpdate_.pushBack(item);
+    }
+
+    void removeEntityFromUpdateList(Entity *item)
+    {
+        for (int i = 0; i < itemsToUpdate_.size(); ++i)
+        {
+            if (itemsToUpdate_[i] == item)
+            {
+                itemsToUpdate_.removeAt(i);
+                break;
+            }
+        }
+    }
+
+    void addEntityToGrid(int rowIdx, int colIdx, Entity *item)
     {
         auto *targetGrid = grid(rowIdx, colIdx);
-
         if (targetGrid && item)
+        {
             targetGrid->addEntity(item);
+            addEntityToUpdateList(item); // sysc the updated items
+        }
     }
 
-    void removeEntity(int rowIdx, int colIdx, Entity *item)
+    void removeEntityFromGrid(int rowIdx, int colIdx, Entity *item)
     {
         auto *targetGrid = grid(rowIdx, colIdx);
 
         if (targetGrid && item)
+        {
             targetGrid->removeEntity(item);
+            removeEntityFromUpdateList(item);
+        }
+    }
+
+    // This method just moves the item from one grid to another without updating the update list.
+    void changeEntityGrid(Entity *item, GEB::Position oldCenter, GEB::Position newCenter)
+    {
+        // remove
+        auto *fromGird = grid(static_cast<int>(oldCenter.y) / gridSize_,
+                              static_cast<int>(oldCenter.x) / gridSize_);
+        if (fromGird && item)
+            fromGird->removeEntity(item);
+
+        // add
+        auto *toGrid = grid(static_cast<int>(newCenter.y) / gridSize_,
+                            static_cast<int>(newCenter.x) / gridSize_);
+        if (toGrid && item)
+            toGrid->addEntity(item);
     }
 
     Grid *grid(int rowIdx, int colIdx)
@@ -148,7 +187,7 @@ public:
     inline int gridSize() const { return gridSize_; }
     inline int rowCount() const { return rowCount_; }
     inline int colCount() const { return colCount_; }
-    inline GEB::Structures::Array<Grid> &gridMap() { return gridMap_; }
+    inline GEB::Structures::Array<Entity *> &itemsToUpdate() { return itemsToUpdate_; }
 
 private:
     int gridSize_;
@@ -156,4 +195,9 @@ private:
     int colCount_;
 
     GEB::Structures::Array<Grid> gridMap_;
+    /**
+     * just a copy version of the items that need to be updated.
+     * the memory of items that Entity * points to is managed by the Grid.
+     */
+    GEB::Structures::Array<Entity *> itemsToUpdate_;
 };

@@ -51,7 +51,7 @@ void PlayStage::addEntityToGridSystem(ItemEntity *item)
 {
     auto center = item->center();
     auto indexPair = getGridIndex(center.x, center.y);
-    gridSystem_.addEntity(indexPair.first, indexPair.second, item);
+    gridSystem_.addEntityToGrid(indexPair.first, indexPair.second, item);
 }
 
 // updateEntities
@@ -59,20 +59,13 @@ void PlayStage::updateEntities(World &world, Layer &layer)
 {
     Stage::updateEntities(world, layer);
 
-    // iterate gridSystem
-    auto &gridMap = gridSystem_.gridMap();
-    int gridCount = gridMap.size();
-    for (int i = 0; i < gridCount; ++i)
+    auto &itemsToUpdate = gridSystem_.itemsToUpdate();
+    int itemCount = itemsToUpdate.size();
+    for (int i = 0; i < itemCount; ++i)
     {
-        auto &grid = gridMap[i];
-        auto &itemList = grid.itemList();
-        int gridItemLen = itemList.size();
-        for (int j = 0; j < gridItemLen; ++j)
-        {
-            auto *item = itemList[j];
-            if (item)
-                item->update(world, layer);
-        }
+        auto *item = itemsToUpdate[i];
+        if (item)
+            item->update(world, layer);
     }
 }
 
@@ -80,19 +73,12 @@ void PlayStage::updateEntities(World &world, Layer &layer)
 void PlayStage::renderEntities(World &world, Layer &layer)
 {
     Stage::renderEntities(world, layer);
-
-    auto &gridMap = gridSystem_.gridMap();
-    int gridCount = gridMap.size();
-    for (int i = 0; i < gridCount; ++i)
+    auto &itemsToUpdate = gridSystem_.itemsToUpdate();
+    int itemCount = itemsToUpdate.size();
+    for (int i = 0; i < itemCount; ++i)
     {
-        auto &grid = gridMap[i];
-        auto &itemList = grid.itemList();
-        int gridItemLen = itemList.size();
-        for (int j = 0; j < gridItemLen; ++j)
-        {
-            auto *item = itemList[j];
-            if (item)
-                item->render(world, layer);
-        }
+        auto *item = itemsToUpdate[i];
+        if (item)
+            item->render(world, layer);
     }
 }

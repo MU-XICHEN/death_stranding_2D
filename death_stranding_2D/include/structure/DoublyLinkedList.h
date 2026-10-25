@@ -2,7 +2,7 @@
 
 /**
  * DoublyLinkedList
- * Note: 
+ * Note:
  *      ListNode<T> will be recycled automatically,
  *      but Users are responsible for recycling memory of nodes' data.
  */

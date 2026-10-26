@@ -143,7 +143,6 @@ void Map::initialize()
     for (int i = 0; i < source_.imageCount; ++i)
     {
         GEB::Image *image = new GEB::Image();
-        image->load(source_.images[i]);
         if (!image->load(source_.images[i]))
         {
             delete image;

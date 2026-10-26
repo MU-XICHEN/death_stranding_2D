@@ -2,7 +2,6 @@
 #include "core/GameBase.h"
 #include "entities/Entity.h"
 #include "structure/Array.h"
-#include "structure/String.h"
 #include "Tile.h"
 #include "MapFactory.h"
 

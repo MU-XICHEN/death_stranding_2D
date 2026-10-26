@@ -3,6 +3,7 @@
 #include "core/GameBase.h"
 #include "GamesEngineeringBase.h"
 #include "core/Types.h"
+#include "layers/MainLayer.h"
 #include "stages/Play.h"
 
 template <typename T>
@@ -50,7 +51,9 @@ void Hero::handleEvents(World &world, Layer &layer)
     float dt = world.gameInfo().dt();
     float distance = dt * speed_;
 
-    auto &playStage = dynamic_cast<PlayStage &>(layer.currentStage());
+    auto &mainLayer = dynamic_cast<MainLayer &>(layer);
+
+    auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
 
     auto distanceVec = GEB::Math::normalize(translateEventsToDirection(canvas)) * distance;
 

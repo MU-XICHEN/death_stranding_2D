@@ -13,7 +13,7 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Resource Files\data">
+    <Filter Include="Resource Files\assets">
       <UniqueIdentifier>{9AE24CF9-AF31-4B42-B940-B01E64052DD4}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\entities">
@@ -30,6 +30,9 @@
     </Filter>
     <Filter Include="Source Files\map">
       <UniqueIdentifier>{F2352B40-1486-41AE-B816-B0E887B16C9D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\renderer">
+      <UniqueIdentifier>{683D0775-31A0-42F5-BC3C-6EE95A2A75EC}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\core">
       <UniqueIdentifier>{DD6BB71A-84D4-48D9-BDF5-3CF825F80FCF}</UniqueIdentifier>
@@ -54,6 +57,9 @@
     </Filter>
     <Filter Include="Header Files\structure">
       <UniqueIdentifier>{6D3A4CC7-B9B0-4EB9-903B-4EFB42E4F72D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\renderer">
+      <UniqueIdentifier>{FC8B5E6A-6B73-421A-A649-C49F9CB59AED}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -90,8 +96,14 @@
     <ClCompile Include="src\stages\Tally.cpp">
       <Filter>Source Files\stages</Filter>
     </ClCompile>
-    <ClCompile Include="src\layers\Layer.cpp">
+    <ClCompile Include="src\layers\MainLayer.cpp">
       <Filter>Source Files\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\layers\DebugLayer.cpp">
+      <Filter>Source Files\layers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderer\TextRenderer.cpp">
+      <Filter>Source Files\renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
@@ -146,6 +158,15 @@
     <ClInclude Include="include\layers\MainLayer.h">
       <Filter>Header Files\layers</Filter>
     </ClInclude>
+    <ClInclude Include="include\layers\DebugLayer.h">
+      <Filter>Header Files\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\renderer\TextRenderer.h">
+      <Filter>Header Files\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="include\stages\Common.h">
+      <Filter>Header Files\stages</Filter>
+    </ClInclude>
     <ClInclude Include="include\stages\Intro.h">
       <Filter>Header Files\stages</Filter>
     </ClInclude>
@@ -160,9 +181,6 @@
     </ClInclude>
     <ClInclude Include="include\stages\Tally.h">
       <Filter>Header Files\stages</Filter>
-    </ClInclude>
-    <ClInclude Include="include\utils\DebugUtils.h">
-      <Filter>Header Files\utils</Filter>
     </ClInclude>
     <ClInclude Include="include\structure\Array.h">
       <Filter>Header Files\structure</Filter>
@@ -202,11 +220,8 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="src\map\data\images\grass.png">
-      <Filter>Resource Files\data</Filter>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="src\map\data\images\stone.png">
-      <Filter>Resource Files\data</Filter>
+    <CopyFileToFolders Include="src\assets\**\*">
+      <Filter>Resource Files\assets</Filter>
     </CopyFileToFolders>
   </ItemGroup>
 </Project>

@@ -160,7 +160,9 @@
     <ClCompile Include="src\stages\Play.cpp" />
     <ClCompile Include="src\stages\Stage.cpp" />
     <ClCompile Include="src\stages\Tally.cpp" />
-    <ClCompile Include="src\layers\Layer.cpp" />
+    <ClCompile Include="src\layers\MainLayer.cpp" />
+    <ClCompile Include="src\layers\DebugLayer.cpp" />
+    <ClCompile Include="src\renderer\TextRenderer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\world\GameInfo.cpp" />
     <ClCompile Include="src\map\Map.cpp" />
@@ -180,6 +182,9 @@
     <ClInclude Include="include\entities\State.h" />
     <ClInclude Include="include\layers\Layer.h" />
     <ClInclude Include="include\layers\MainLayer.h" />
+    <ClInclude Include="include\layers\DebugLayer.h" />
+    <ClInclude Include="include\renderer\TextRenderer.h" />
+    <ClInclude Include="include\stages\Common.h" />
     <ClInclude Include="include\stages\Intro.h" />
     <ClInclude Include="include\stages\Menu.h" />
     <ClInclude Include="include\stages\Play.h" />
@@ -189,7 +194,6 @@
     <ClInclude Include="include\structure\DoublyLinkedList.h" />
     <ClInclude Include="include\structure\Set.h" />
     <ClInclude Include="include\structure\String.h" />
-    <ClInclude Include="include\utils\DebugUtils.h" />
     <ClInclude Include="include\utils\GameMath.h" />
     <ClInclude Include="include\world\GameInfo.h" />
     <ClInclude Include="include\world\Grid.h" />
@@ -200,11 +204,8 @@
     <ClInclude Include="include\world\World.h" />
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="src\map\data\images\grass.png">
-      <DestinationFolders>$(OutDir)data\images\</DestinationFolders>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="src\map\data\images\stone.png">
-      <DestinationFolders>$(OutDir)data\images\</DestinationFolders>
+    <CopyFileToFolders Include="src\assets\**\*">
+      <DestinationFolders>$(OutDir)assets\%(RecursiveDir)</DestinationFolders>
     </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -3,6 +3,7 @@
 #include "world/World.h"
 #include "world/Grid.h"
 #include "stages/Play.h"
+#include "layers/MainLayer.h"
 
 template <GEB::Direction dir>
 void calculateDotAndDir(GEB::Direction &bestDir, float &dot, float newDot)
@@ -77,7 +78,9 @@ void Monster::handleMovement(World &world, Layer &layer)
     float dt = world.gameInfo().dt();
     float distance = dt * speed_;
 
-    auto &playStage = dynamic_cast<PlayStage &>(layer.currentStage());
+    auto &mainLayer = dynamic_cast<MainLayer &>(layer);
+
+    auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
 
     // get candidate items for collision detection
     auto oldCenter = center();

@@ -1,22 +1,15 @@
-#include "layers/Layer.h"
+#include "layers/MainLayer.h"
 #include "core/GameBase.h"
 
 // ------------------------------------------ Layer ------------------------------------------
 
-Layer::Layer(const StageCreator *stageCreator, unsigned int size, unsigned int initialIndex) : stageCreator_(stageCreator), size_(size), currentIndex_(initialIndex)
-{
-    size_ = size_;
-    currentIndex_ = initialIndex;
+MainLayer::MainLayer()
+    : stageCreator_(stageCreator),
+      size_(stageCreatorSize),
+      currentIndex_(2),
+      currentStage_(stageCreator[currentIndex_]()) {}
 
-    currentStage_ = stageCreator[initialIndex]();
-
-    if (!currentStage_)
-    {
-        GamesEngineeringBase::Debugger::showAlert();
-    }
-}
-
-Layer::~Layer()
+MainLayer::~MainLayer()
 {
     if (currentStage_)
     {
@@ -25,7 +18,7 @@ Layer::~Layer()
     }
 }
 
-void Layer::checkGoToNextStage()
+void MainLayer::checkGoToNextStage()
 {
     if (!nextFrameFlag_)
         return;
@@ -41,10 +34,17 @@ void Layer::checkGoToNextStage()
     unsigned int index = (++currentIndex_) % size_;
     currentStage_ = stageCreator_[index]();
     nextFrameFlag_ = false;
-
-    if (!currentStage_)
-    {
-        GamesEngineeringBase::Debugger::showAlert();
-        return;
-    }
 }
+
+void MainLayer::update(World &world)
+{
+    auto &stage = currentStage();
+    // update states of nodes in current Layer
+    stage.updateEntities(world, *this);
+};
+
+void MainLayer::render(World &world)
+{
+    auto &stage = currentStage();
+    stage.renderEntities(world, *this);
+};

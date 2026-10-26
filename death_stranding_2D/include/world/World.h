@@ -4,6 +4,7 @@
 #include "core/GameBase.h"
 #include "layers/Layer.h"
 #include "world/GameInfo.h"
+#include "renderer/TextRenderer.h"
 
 class World
 {
@@ -12,6 +13,7 @@ public:
     virtual ~World();
 
     GEB::Window &canvas() { return canvas_; }
+    const TextRenderer &textRenderer() { return textRenderer_; }
     GameInfo &gameInfo() { return gameInfo_; }
 
 private:
@@ -24,6 +26,7 @@ private:
 
     GEB::Timer timer_;
     GameInfo gameInfo_;
+    TextRenderer textRenderer_;
     GEB::Structures::Array<Layer *> layerList_;
 
     // Life Cycle

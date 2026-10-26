@@ -2,6 +2,14 @@
 
 namespace GamesEngineeringBase
 {
+
+    enum TextSize
+    {
+        TEXT_SIZE_SMALL = 0,
+        TEXT_SIZE_MEDIUM = 1,
+        TEXT_SIZE_LARGE = 2,
+    };
+    
     struct Color
     {
         int r = 0;

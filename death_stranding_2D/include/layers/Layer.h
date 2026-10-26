@@ -2,30 +2,43 @@
 
 #include "entities/Entity.h"
 #include "core/GameBase.h"
-#include "GamesEngineeringBase.h"
-#include "stages/Stage.h"
+#include "structure/Array.h"
 
-using StageCreator = Stage *(*)();
+class World;
 
 class Layer
 {
 public:
-    Layer(const StageCreator *stageCreator, unsigned int size, unsigned int initialIndex = 0);
-    virtual ~Layer();
+    Layer() = default;
+    virtual ~Layer()
+    {
+        for (int i = 0; i < itemEntities_.size(); ++i)
+        {
+            if (itemEntities_[i] == nullptr)
+                continue;
+            delete itemEntities_[i];
+            itemEntities_[i] = nullptr;
+        }
+    };
 
-    Stage &currentStage() const { return *currentStage_; }
+    virtual void update(World &world) {
+        for (int i = 0; i < itemEntities_.size(); ++i)
+        {
+            itemEntities_[i]->update(world, *this);
+        }
+    }
+    virtual void render(World &world) {
+        for (int i = 0; i < itemEntities_.size(); ++i)
+        {
+            itemEntities_[i]->render(world, *this);
+        }
+    };
 
-    bool nextFrameFlag() { return nextFrameFlag_; }
-    void setNextFrameFlag() { nextFrameFlag_ = true; }
-
-    void checkGoToNextStage();
+    inline void pushEntity(Entity *entity)
+    {
+        itemEntities_.pushBack(entity);
+    }
 
 private:
-    // members variables
-    Stage *currentStage_ = nullptr;
-    unsigned int currentIndex_ = 0;
-    unsigned int size_ = 0;
-    bool nextFrameFlag_ = false;
-
-    const StageCreator *stageCreator_ = nullptr;
+    GEB::Structures::Array<Entity *> itemEntities_;
 };

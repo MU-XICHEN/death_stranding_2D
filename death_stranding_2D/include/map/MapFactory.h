@@ -63,8 +63,8 @@ public:
     {
         // Paths are relative to the executable directory; MSBuild copies data there.
         static constexpr const char *images[] = {
-            "data/images/grass.png",
-            "data/images/stone.png"};
+            "assets/map/grass.png",
+            "assets/map/stone.png"};
 
         static constexpr MapSource::TileDefinition tileDefinitions[] = {
             {0, "Grass", false, 0},

@@ -6,18 +6,6 @@
 #include "Tile.h"
 #include "MapFactory.h"
 
-struct MapInfo
-{
-    int width;
-    int height;
-
-    inline int topBoundary() const { return 0; }
-    inline int bottomBoundary() const { return height; }
-
-    inline int leftBoundary() const { return 0; }
-    inline int rightBoundary() const { return width; }
-};
-
 class Map : public Entity
 {
 public:
@@ -27,19 +15,37 @@ public:
     void update(World &world, Layer &layer) override;
     void render(World &world, Layer &layer) override;
 
-    // x/y are the starting column/row; width/height are tile counts.
     const GEB::Structures::Array<TileBlock> &tileBlocks() const { return tileBlocks_; }
+    GEB::Position playerPosition() const;
+
+    void addCollisionTileToCandiList(Entity *detectedItem,
+                                     GEB::Direction direction,
+                                     float distance,
+                                     GEB::Structures::Array<Entity *> &candidateItemList);
 
 private:
     void initialize();
     void MergeTiles(const int *ground, int colCnt, int rowCnt);
-    void addCollisionTileToCandiList(Entity *detectedItem,
-                                     float distance,
-                                     GEB::Structures::Array<Entity *> &candidateItemList);
 
     const MapSource &source_;
 
-    MapInfo mapInfo_;
     GEB::Structures::Array<GEB::Image *> images_;
     GEB::Structures::Array<TileBlock> tileBlocks_; // need collision detection
+};
+
+struct MapInfo
+{
+    inline int width() const { return map_ ? map_->width() : 0; }
+    inline int height() const { return map_ ? map_->height() : 0; }
+
+    inline float topBoundary() const { return 0; }
+    inline float bottomBoundary() const { return static_cast<float>(height()); }
+
+    inline float leftBoundary() const { return 0; }
+    inline float rightBoundary() const { return static_cast<float>(width()); }
+
+    void setMap(const Map *map) { map_ = map; }
+
+private:
+    const Map *map_;
 };

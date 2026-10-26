@@ -1,18 +1,24 @@
 #include "world/World.h"
 #include "map/Map.h"
+#include "entities/AABB.h"
 
-GEB::Pair<bool, int> tileProcessed(int tileIndexX, int tileIndexY, const GEB::Structures::Array<TileBlock> &tileRects)
+GEB::Pair<bool, int> tileProcessed(int tileIndexX, int tileIndexY, int tileSize,
+                                   const GEB::Structures::Array<TileBlock> &tileRects)
 {
     // first for processed, second for next idxX
     GEB::Pair<bool, int> res{false, 0};
     for (int i = 0; i < tileRects.size(); i++)
     {
         const TileBlock &tileRect = tileRects[i];
-        if (tileIndexX >= tileRect.x() && tileIndexX < tileRect.x() + tileRect.width() &&
-            tileIndexY >= tileRect.y() && tileIndexY < tileRect.y() + tileRect.height())
+        const int firstCol = static_cast<int>(tileRect.x() / tileSize + 0.5f);
+        const int firstRow = static_cast<int>(tileRect.y() / tileSize + 0.5f);
+        const int endCol = static_cast<int>((tileRect.x() + tileRect.width()) / tileSize + 0.5f);
+        const int endRow = static_cast<int>((tileRect.y() + tileRect.height()) / tileSize + 0.5f);
+        if (tileIndexX >= firstCol && tileIndexX < endCol &&
+            tileIndexY >= firstRow && tileIndexY < endRow)
         {
             res.first = true;
-            res.second = static_cast<int>(tileRect.x()) + tileRect.width();
+            res.second = endCol;
             break;
         }
     }
@@ -20,7 +26,7 @@ GEB::Pair<bool, int> tileProcessed(int tileIndexX, int tileIndexY, const GEB::St
 }
 
 int expandTileRectSizeImpl(int direction, int tileIndexX, int tileIndexY,
-                           int maxColCnt, const int *ground, int colCnt,
+                           int maxColCnt, const int *ground, int colCnt, int tileSize,
                            const GEB::Structures::Array<TileBlock> &tileRects)
 {
     int rowWidth = 0;
@@ -29,20 +35,20 @@ int expandTileRectSizeImpl(int direction, int tileIndexX, int tileIndexY,
     {
         // if current tile does not need collision detection or has been processed, then stop.
         if (ground[tileIndexY * colCnt + x] == 0 ||
-            tileProcessed(x, tileIndexY, tileRects).first)
+            tileProcessed(x, tileIndexY, tileSize, tileRects).first)
             break;
         ++rowWidth;
     }
     return rowWidth;
 }
 
-void expandTileRectSize(TileBlock &tileRect, int tileIndexX, int tileIndexY,
-                        const int *ground, int colCnt, int rowCnt,
-                        const GEB::Structures::Array<TileBlock> &tileRects)
+int expandTileRectSize(TileBlock &tileRect, int tileIndexX, int tileIndexY,
+                       const int *ground, int colCnt, int rowCnt, int tileSize,
+                       const GEB::Structures::Array<TileBlock> &tileRects)
 {
     // calculate the malColCnt first
     const int maxColCnt = expandTileRectSizeImpl(
-        1, tileIndexX, tileIndexY, colCnt - tileIndexX, ground, colCnt, tileRects);
+        1, tileIndexX, tileIndexY, colCnt - tileIndexX, ground, colCnt, tileSize, tileRects);
 
     int blockRowCnt = 1;
     // the first row went right; the next row goes left.
@@ -59,18 +65,21 @@ void expandTileRectSize(TileBlock &tileRect, int tileIndexX, int tileIndexY,
             maxColCnt,
             ground,
             colCnt,
+            tileSize,
             tileRects);
 
         // reject current row, as it's shorter than  maxColCnt.
         if (rowWidth < maxColCnt)
             break;
+
         ++blockRowCnt;
         direction = 1 - direction;
     }
 
-    tileRect = TileBlock{static_cast<float>(tileIndexX),
-                         static_cast<float>(tileIndexY),
-                         maxColCnt, blockRowCnt};
+    tileRect = TileBlock{static_cast<float>(tileIndexX * tileSize),
+                         static_cast<float>(tileIndexY * tileSize),
+                         maxColCnt * tileSize, blockRowCnt * tileSize};
+    return maxColCnt;
 }
 
 Map::Map(MapType mapType)
@@ -88,6 +97,11 @@ Map::~Map()
     }
 }
 
+GEB::Position Map::playerPosition() const
+{
+    return center();
+}
+
 void Map::MergeTiles(const int *ground, int colCnt, int rowCnt)
 {
     tileBlocks_.resize(0);
@@ -102,7 +116,7 @@ void Map::MergeTiles(const int *ground, int colCnt, int rowCnt)
             if (ground[i * colCnt + j] == 0)
                 continue;
 
-            auto res = tileProcessed(j, i, tileBlocks_);
+            auto res = tileProcessed(j, i, source_.tileSize, tileBlocks_);
             if (res.first)
             {
                 j = res.second - 1;
@@ -110,19 +124,20 @@ void Map::MergeTiles(const int *ground, int colCnt, int rowCnt)
             }
 
             // if not processed, create a new tile block.
-            TileBlock newTile{static_cast<float>(j), static_cast<float>(i), 1, 1};
-            expandTileRectSize(newTile, j, i, ground, colCnt, rowCnt, tileBlocks_);
+            TileBlock newTile;
+            const int mergedColCount = expandTileRectSize(
+                newTile, j, i, ground, colCnt, rowCnt, source_.tileSize, tileBlocks_);
 
             tileBlocks_.pushBack(newTile);
-            j += newTile.width() - 1;
+            j += mergedColCount - 1;
         }
     }
 }
 
 void Map::initialize()
 {
-    mapInfo_.width = source_.pixelWidth;
-    mapInfo_.height = source_.pixelHeight;
+    width_ = source_.pixelWidth;
+    height_ = source_.pixelHeight;
 
     // load images
     for (int i = 0; i < source_.imageCount; ++i)
@@ -144,7 +159,7 @@ void Map::initialize()
 
 void Map::update(World &world, Layer &layer)
 {
-    world.gameInfo().updateMapInfo(mapInfo_);
+    world.gameInfo().updateMapInfo(*this);
 }
 
 void Map::render(World &world, Layer &layer)
@@ -153,21 +168,30 @@ void Map::render(World &world, Layer &layer)
 
     const Viewport &viewport = world.gameInfo().viewport();
 
-    // ceil
-    int visibleWidth = viewport.width();
-    int visibleHeight = viewport.height();
-    int viewportX = static_cast<int>(viewport.x());
-    int viewportY = static_cast<int>(viewport.y());
+    const int visiblePixelWidth = viewport.width();
+    const int visiblePixelHeight = viewport.height();
+
+    const int viewportX = GEB::Math::floorToInt(viewport.x());
+    const int viewportY = GEB::Math::floorToInt(viewport.y());
 
     // draw map to viewport by each pixel
-    for (int i = 0; i < visibleWidth; i++)
+    for (int i = 0; i < visiblePixelWidth; i++)
     {
-        for (int j = 0; j < visibleHeight; j++)
+        for (int j = 0; j < visiblePixelHeight; j++)
         {
             int targetX = viewportX + i;
             int targetY = viewportY + j;
+
+            if (targetX < 0 || targetY < 0)
+                continue;
+
             int tileIdxX = targetX / source_.tileSize;
             int tileIdxY = targetY / source_.tileSize;
+
+            if (tileIdxX < 0 || tileIdxX >= source_.colCnt ||
+                tileIdxY < 0 || tileIdxY >= source_.rowCnt)
+                continue;
+                
             int tileX = tileIdxX * source_.tileSize;
             int tileY = tileIdxY * source_.tileSize;
 
@@ -187,8 +211,33 @@ void Map::render(World &world, Layer &layer)
 }
 
 void Map::addCollisionTileToCandiList(Entity *detectedItem,
+                                      GEB::Direction direction,
                                       float distance,
                                       GEB::Structures::Array<Entity *> &candidateItemList)
 {
-    
+    if (!detectedItem)
+        return;
+
+    GEB::Boundary mapBoundary{
+        .top = 0,
+        .bottom = static_cast<float>(height_),
+        .left = 0,
+        .right = static_cast<float>(width_),
+    };
+
+    auto aabb = AABB::createAABB(
+        *detectedItem,
+        direction,
+        distance,
+        mapBoundary);
+
+    for (int i = 0; i < tileBlocks_.size(); i++)
+    {
+        auto &tileBlock = tileBlocks_[i];
+        bool intersected = aabb.intersects(AABB(tileBlock.x(), tileBlock.y(), tileBlock.width(), tileBlock.height()));
+        if (intersected)
+        {
+            candidateItemList.pushBack(&tileBlock);
+        }
+    }
 }

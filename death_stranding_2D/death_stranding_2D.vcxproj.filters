@@ -57,6 +57,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\entities\AABB.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
     <ClCompile Include="src\entities\ItemEntity.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
@@ -115,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="include\core\Types.h">
       <Filter>Header Files\core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\entities\AABB.h">
+      <Filter>Header Files\entities</Filter>
     </ClInclude>
     <ClInclude Include="include\entities\ItemEntity.h">
       <Filter>Header Files\entities</Filter>

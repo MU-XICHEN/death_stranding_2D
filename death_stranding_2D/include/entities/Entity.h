@@ -1,5 +1,3 @@
-// Reference: "Game Programming Patterns"
-
 #pragma once
 
 #include "core/GameBase.h"
@@ -20,12 +18,14 @@ public:
     inline GEB::Position center() const
     {
         return GEB::Position{
-            x_ + width_ / 2,
-            y_ + height_ / 2,
+            x_ + width_ / 2.0f,
+            y_ + height_ / 2.0f,
         };
     }
+    inline void setPos(float x, float y) { x_ = x; y_ = y; }
     inline float x() const { return x_; }
     inline float y() const { return y_; }
+    
     inline int width() const { return width_; }
     inline int height() const { return height_; }
 

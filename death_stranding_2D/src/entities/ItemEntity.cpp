@@ -5,6 +5,9 @@
 #include "map/Map.h"
 #include "layers/Layer.h"
 #include "stages/Play.h"
+#include "entities/AABB.h"
+
+
 
 void ItemEntity::update(World &world, Layer &layer) {}
 
@@ -134,10 +137,10 @@ void ItemEntity::calculateBoundaryImpl(GEB::Boundary &boundary, const Entity *ba
 GEB::Boundary ItemEntity::calculateBoundary(const MapInfo &map, GEB::Direction diretion, Entity **candidateItemHead, int size)
 {
     GEB::Boundary boundary{
-        .top = static_cast<float>(map.topBoundary()),
-        .bottom = static_cast<float>(map.bottomBoundary()),
-        .left = static_cast<float>(map.leftBoundary()),
-        .right = static_cast<float>(map.rightBoundary())};
+        .top = map.topBoundary(),
+        .bottom = map.bottomBoundary(),
+        .left = map.leftBoundary(),
+        .right = map.rightBoundary()};
 
     for (int i = 0; i < size; i++)
     {
@@ -188,5 +191,4 @@ void ItemEntity::moveWithCollision(
     default:
         break;
     }
-    
 }

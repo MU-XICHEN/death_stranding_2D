@@ -58,8 +58,15 @@ void Hero::handleEvents(World &world, Layer &layer)
 
     // get old position
     auto oldCenter = center();
-
     GEB::Direction direction = translateEventsToDirection(canvas);
+
+    // add map tiles which may collide with the hero to the candidate list
+    playStage.map().addCollisionTileToCandiList(this,
+                                                direction,
+                                                distance,
+                                                candidateItemList);
+
+    // move
     moveWithCollision(distance, direction, map, candidateItemList.head(), candidateItemList.size());
 
     // calculate new position

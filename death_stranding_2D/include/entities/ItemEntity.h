@@ -4,6 +4,9 @@
 
 struct MapInfo;
 
+class World;
+class Layer;
+
 // ItemEntity is used to anything which should consider collision.
 class ItemEntity : public Entity
 {

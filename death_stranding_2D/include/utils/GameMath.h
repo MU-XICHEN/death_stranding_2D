@@ -63,4 +63,16 @@ namespace GamesEngineeringBase::Math
         return a.x * b.x + a.y * b.y;
     }
 
+    inline int ceilToInt(float value)
+    {
+        const int truncated = static_cast<int>(value);
+        return value > truncated ? truncated + 1 : truncated;
+    }
+
+    inline int floorToInt(float value)
+    {
+        const int truncated = static_cast<int>(value);
+        return value < truncated ? truncated - 1 : truncated;
+    }
+
 }

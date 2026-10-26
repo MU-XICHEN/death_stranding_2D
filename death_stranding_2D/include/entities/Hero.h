@@ -9,7 +9,7 @@ struct HeroInfo
     int width;
     int height;
 
-    GEB::Position center() const { return {x + width / 2, y + height / 2}; }
+    GEB::Position center() const { return {x + width / 2.0f, y + height / 2.0f}; }
 };
 
 class Hero : public ItemEntity

@@ -11,7 +11,8 @@ World::World()
       layerList_()
 {
     // initialize canvas
-    canvas_.create(WINDOW_WIDTH, WINDOW_HEIGHT, "Tiles");
+    canvas_.create(static_cast<unsigned int>(WINDOW_WIDTH),
+                   static_cast<unsigned int>(WINDOW_HEIGHT), "Tiles");
 
     // Main Layer which handle main game process: Intro - Menu - Gameplay - Tally - Then, again!
     initLayers();

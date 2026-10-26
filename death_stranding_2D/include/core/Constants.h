@@ -6,7 +6,7 @@
 
 // Grid
 // Due to GridSystem for now, the grid size must be larger than or equal to the role size
-#define GRID_SIZE 64 
+#define GRID_SIZE 64
 #define GRID_ROWCNT 10
 #define GRID_COLCNT 15
 
@@ -27,13 +27,11 @@
 #define MAX_PATH_LEN 256
 
 // Role
-#define PIXEL_PER_SEC 200
+#define PIXEL_PER_SEC 200.0f
 #define ROLE_SIZE 60
-#define START_POSITION_X 0
-#define START_POSITION_Y 0
 
 // Monster
-#define M_Beast_PIXEL_PER_SEC 150
-#define M_Beast_DANGER_DISTANCE 100
-#define M_Ghost_PIXEL_PER_SEC 175
-#define M_Ghost_DANGER_DISTANCE 50
+#define M_Beast_PIXEL_PER_SEC 150.0f
+#define M_Beast_DANGER_DISTANCE 100.0f
+#define M_Ghost_PIXEL_PER_SEC 175.0f
+#define M_Ghost_DANGER_DISTANCE 50.0f

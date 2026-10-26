@@ -55,10 +55,10 @@ public:
 
     void updateEntityGridIfNeed(GEB::Position oldCenter, GEB::Position newCenter, Entity *item)
     {
-        int oldRowIdx = static_cast<int>(oldCenter.y) / gridSize_;
-        int oldColIdx = static_cast<int>(oldCenter.x) / gridSize_;
-        int newRowIdx = static_cast<int>(newCenter.y) / gridSize_;
-        int newColIdx = static_cast<int>(newCenter.x) / gridSize_;
+        int oldRowIdx = GEB::Math::floorToInt(oldCenter.y / gridSize_);
+        int oldColIdx = GEB::Math::floorToInt(oldCenter.x / gridSize_);
+        int newRowIdx = GEB::Math::floorToInt(newCenter.y / gridSize_);
+        int newColIdx = GEB::Math::floorToInt(newCenter.x / gridSize_);
 
         if (!item || !grid(oldRowIdx, oldColIdx) || !grid(newRowIdx, newColIdx))
             return;
@@ -113,14 +113,14 @@ public:
     void changeEntityGrid(Entity *item, GEB::Position oldCenter, GEB::Position newCenter)
     {
         // remove
-        auto *fromGird = grid(static_cast<int>(oldCenter.y) / gridSize_,
-                              static_cast<int>(oldCenter.x) / gridSize_);
+        auto *fromGird = grid(GEB::Math::floorToInt(oldCenter.y / gridSize_),
+                              GEB::Math::floorToInt(oldCenter.x / gridSize_));
         if (fromGird && item)
             fromGird->removeEntity(item);
 
         // add
-        auto *toGrid = grid(static_cast<int>(newCenter.y) / gridSize_,
-                            static_cast<int>(newCenter.x) / gridSize_);
+        auto *toGrid = grid(GEB::Math::floorToInt(newCenter.y / gridSize_),
+                            GEB::Math::floorToInt(newCenter.x / gridSize_));
         if (toGrid && item)
             toGrid->addEntity(item);
     }
@@ -135,10 +135,10 @@ public:
 
     void getCandidateGrids(float centerX, float centerY, float distance, GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids)
     {
-        const int centerRow = static_cast<int>(centerY / gridSize_);
-        const int centerCol = static_cast<int>(centerX / gridSize_);
+        const int centerRow = GEB::Math::floorToInt(centerY / gridSize_);
+        const int centerCol = GEB::Math::floorToInt(centerX / gridSize_);
 
-        const int extensionSize = (distance / gridSize_) + 1;
+        const int extensionSize = GEB::Math::floorToInt(distance / gridSize_) + 1;
 
         // GridSystem takes (row, column): y selects the row, x selects the column.
         for (int row = centerRow - extensionSize; row <= centerRow + extensionSize; ++row)
@@ -196,7 +196,7 @@ private:
 
     GEB::Structures::Array<Grid> gridMap_;
     /**
-     * just a copy version of the items that need to be updated.
+     * just a copy of the items that need to be updated.
      * the memory of items that Entity * points to is managed by the Grid.
      */
     GEB::Structures::Array<Entity *> itemsToUpdate_;

@@ -6,21 +6,21 @@
 #include "map/Map.h"
 #include "map/MapFactory.h"
 
-PlayStage::PlayStage() : gridSystem_(GRID_ROWCNT, GRID_COLCNT, GRID_SIZE)
+PlayStage::PlayStage()
+    : gridSystem_(GRID_ROWCNT, GRID_COLCNT, GRID_SIZE),
+      map_(MapType::Chapter1)
 {
-    // add map
-    auto map = new Map(MapType::Chapter1);
-
-    pushEntity(map);
+    auto heroPosition = map_.playerPosition();
 
     // add Items
     // [new] items will be recycled by the grid system
     auto hero = new Hero(
-        START_POSITION_X,
-        START_POSITION_Y,
+        heroPosition.x,
+        heroPosition.y,
         ROLE_SIZE,
         ROLE_SIZE,
         PIXEL_PER_SEC);
+
     hero->setColor(255, 0, 0);
     addEntityToGridSystem(hero);
 
@@ -39,8 +39,8 @@ PlayStage::PlayStage() : gridSystem_(GRID_ROWCNT, GRID_COLCNT, GRID_SIZE)
 GEB::Pair<int, int> getGridIndex(float x, float y)
 {
     GEB::Pair<int, int> index;
-    int rolIdx = static_cast<int>(y) / GRID_SIZE;
-    int corIdx = static_cast<int>(x) / GRID_SIZE;
+    int rolIdx = GEB::Math::floorToInt(y / GRID_SIZE);
+    int corIdx = GEB::Math::floorToInt(x / GRID_SIZE);
 
     index.first = rolIdx;
     index.second = corIdx;
@@ -57,7 +57,9 @@ void PlayStage::addEntityToGridSystem(ItemEntity *item)
 // updateEntities
 void PlayStage::updateEntities(World &world, Layer &layer)
 {
-    Stage::updateEntities(world, layer);
+    map_.update(world, layer);
+
+    Stage::updateEntities(world, layer); // update sections like information panels
 
     auto &itemsToUpdate = gridSystem_.itemsToUpdate();
     int itemCount = itemsToUpdate.size();
@@ -72,7 +74,10 @@ void PlayStage::updateEntities(World &world, Layer &layer)
 // renderEntities
 void PlayStage::renderEntities(World &world, Layer &layer)
 {
+    map_.render(world, layer);
+
     Stage::renderEntities(world, layer);
+
     auto &itemsToUpdate = gridSystem_.itemsToUpdate();
     int itemCount = itemsToUpdate.size();
     for (int i = 0; i < itemCount; ++i)

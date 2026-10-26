@@ -21,8 +21,8 @@ public:
     float dt() const { return dt_; }
 
     void updateHeroInfo(const HeroInfo &heroInfo) { heroInfo_ = heroInfo; }
-    void updateMapInfo(const MapInfo &mapInfo) { mapInfo_ = mapInfo; }
     void updateViewport(const HeroInfo &heroInfo, const MapInfo &map);
+    void updateMapInfo(const Map &map) { mapInfo_.setMap(&map); }
 
     void initialize();
 

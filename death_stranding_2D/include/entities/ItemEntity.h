@@ -33,16 +33,15 @@ public:
     void calculateBoundaryLeft(GEB::Boundary &boundary, const Entity *barrierItem);
     void calculateBoundaryRight(GEB::Boundary &boundary, const Entity *barrierItem);
     void calculateBoundaryImpl(GEB::Boundary &boundary, const Entity *barrierItem, GEB::Direction direction);
-    GEB::Boundary calculateBoundary(const MapInfo &map, GEB::Direction diretion, Entity **candidateItemHead, int size);
+    GEB::Boundary calculateBoundary(const MapInfo &map, GEB::Direction direction, Entity **candidateItemHead, int size);
 
     void moveUp(float distance, float topBoundary);
     void moveDown(float distance, float bottomBoundary);
     void moveLeft(float distance, float leftBoundary);
     void moveRight(float distance, float rightBoundary);
 
-    void moveWithCollision(
-        float distance,
-        GEB::Direction direction,
+    virtual void moveWithCollision(
+        GEB::Vec2 distanceVec,
         const MapInfo &map,
         Entity **candidateItemHead,
         int size);

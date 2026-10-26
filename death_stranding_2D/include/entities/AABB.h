@@ -9,9 +9,8 @@ public:
         : Entity(x, y, width, height) {}
 
     static AABB createAABB(
-        const Entity &item,
-        GEB::Direction dir,
-        float distance,
+        const Entity *item,
+        GEB::Vec2 distanceVec2,
         const GEB::Boundary &boundary);
 
     void update(World &world, Layer &layer) override {}

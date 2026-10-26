@@ -13,6 +13,12 @@ public:
 
     virtual ~Monster() = default;
 
+    // virtual void moveWithCollision(
+    //     GEB::Vec2 distanceVec,
+    //     const MapInfo &map,
+    //     Entity **candidateItemHead,
+    //     int size) override;
+
 protected:
     static GEB::Direction transDirVecToDiretion(const GEB::Vec2 &dirVec);
     static inline GEB::Vec2 calculateDirVecToHero(GEB::Position monsterCenter, GEB::Position heroCenter)

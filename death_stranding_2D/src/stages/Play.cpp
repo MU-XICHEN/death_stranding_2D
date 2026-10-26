@@ -24,16 +24,21 @@ PlayStage::PlayStage()
     hero->setColor(255, 0, 0);
     addEntityToGridSystem(hero);
 
-    // for (int i = 0; i < 10; ++i)
-    // {
-    //     auto monster = new Beast(
-    //         200 + i * (ROLE_SIZE + 10),
-    //         200 + i * (ROLE_SIZE + 10),
-    //         ROLE_SIZE,
-    //         ROLE_SIZE);
-    //     monster->setColor(0, 255, 0);
-    //     addEntityToGridSystem(monster);
-    // }
+    auto monster = new Beast(
+        heroPosition.x + 100,
+        heroPosition.y + 100,
+        ROLE_SIZE,
+        ROLE_SIZE);
+    monster->setColor(0, 255, 0);
+    addEntityToGridSystem(monster);
+
+    auto monster2 = new Beast(
+        heroPosition.x - 100,
+        heroPosition.y - 100,
+        ROLE_SIZE,
+        ROLE_SIZE);
+    monster2->setColor(0, 255, 0);
+    addEntityToGridSystem(monster2);
 }
 
 GEB::Pair<int, int> getGridIndex(float x, float y)

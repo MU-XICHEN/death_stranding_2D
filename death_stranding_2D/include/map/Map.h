@@ -19,8 +19,7 @@ public:
     GEB::Position playerPosition() const;
 
     void addCollisionTileToCandiList(Entity *detectedItem,
-                                     GEB::Direction direction,
-                                     float distance,
+                                     GEB::Vec2 distanceVec,
                                      GEB::Structures::Array<Entity *> &candidateItemList);
 
 private:

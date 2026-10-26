@@ -80,16 +80,26 @@ void Monster::handleMovement(World &world, Layer &layer)
     auto &playStage = dynamic_cast<PlayStage &>(layer.currentStage());
 
     // get candidate items for collision detection
-    GEB::Structures::Array<Entity *> candidateItemList;
-    GridSystem::getCandidateItemList(playStage.gridSystem(), this, distance, candidateItemList);
-
-    // get old position
     auto oldCenter = center();
+    auto distanceVec = GEB::Math::normalize(Monster::calculateDirVecToHero(center(), world.gameInfo().heroInfo().center())) * distance;
 
-    auto dirVec = Monster::calculateDirVecToHero(center(), world.gameInfo().heroInfo().center());
-    auto direction = Monster::transDirVecToDiretion(dirVec);
+    GEB::Structures::Array<Entity *> candidateItemList;
+    GEB::Boundary mapBoundary{
+        .top = 0,
+        .bottom = static_cast<float>(map.height()),
+        .left = 0,
+        .right = static_cast<float>(map.width()),
+    };
+    GridSystem::getCandidateItemList(playStage.gridSystem(), this, distanceVec, mapBoundary, candidateItemList);
 
-    moveWithCollision(distance, direction, map, candidateItemList.head(), candidateItemList.size());
+    auto direction = Monster::transDirVecToDiretion(distanceVec);
+
+    // add map tiles which may collide with the hero to the candidate list
+    playStage.map().addCollisionTileToCandiList(this,
+                                                distanceVec,
+                                                candidateItemList);
+
+    moveWithCollision(distanceVec, map, candidateItemList.head(), candidateItemList.size());
 
     // calculate new position
     auto newCenter = center();

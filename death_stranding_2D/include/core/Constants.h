@@ -28,7 +28,12 @@
 
 // Role
 #define PIXEL_PER_SEC 200.0f
-#define ROLE_SIZE 60
+/**
+ * ❗Note:
+ *  ensure that the role size does not exceed the grid size 
+ *  for preventing items from spanning multiple grid cells.
+ */
+#define ROLE_SIZE 60 
 
 // Monster
 #define M_Beast_PIXEL_PER_SEC 150.0f

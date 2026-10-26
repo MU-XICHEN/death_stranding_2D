@@ -191,7 +191,7 @@ void Map::render(World &world, Layer &layer)
             if (tileIdxX < 0 || tileIdxX >= source_.colCnt ||
                 tileIdxY < 0 || tileIdxY >= source_.rowCnt)
                 continue;
-                
+
             int tileX = tileIdxX * source_.tileSize;
             int tileY = tileIdxY * source_.tileSize;
 
@@ -211,8 +211,7 @@ void Map::render(World &world, Layer &layer)
 }
 
 void Map::addCollisionTileToCandiList(Entity *detectedItem,
-                                      GEB::Direction direction,
-                                      float distance,
+                                      GEB::Vec2 distanceVec,
                                       GEB::Structures::Array<Entity *> &candidateItemList)
 {
     if (!detectedItem)
@@ -226,9 +225,8 @@ void Map::addCollisionTileToCandiList(Entity *detectedItem,
     };
 
     auto aabb = AABB::createAABB(
-        *detectedItem,
-        direction,
-        distance,
+        detectedItem,
+        distanceVec,
         mapBoundary);
 
     for (int i = 0; i < tileBlocks_.size(); i++)

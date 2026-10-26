@@ -12,8 +12,6 @@ void Ghost::move(World &world, Layer &layer)
     float dt = world.gameInfo().dt();
     float distance = dt * speed_;
 
-    auto dirVec = calculateDirVecToHero(center(), world.gameInfo().heroInfo().center());
-
     // todo: handle move
 }
 

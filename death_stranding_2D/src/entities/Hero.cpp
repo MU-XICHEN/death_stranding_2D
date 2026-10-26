@@ -8,25 +8,25 @@
 template <typename T>
 using GEBArray = GEB::Structures::Array<T>;
 
-GEB::Direction translateEventsToDirection(const GamesEngineeringBase::Window &canvas)
+GEB::Vec2 translateEventsToDirection(const GamesEngineeringBase::Window &canvas)
 {
     if (canvas.keyPressed('W') && canvas.keyPressed('A'))
-        return GEB::Direction::UpLeft;
+        return GEB::Vec2{-1, -1};
     if (canvas.keyPressed('W') && canvas.keyPressed('D'))
-        return GEB::Direction::UpRight;
+        return GEB::Vec2{1, -1};
     if (canvas.keyPressed('S') && canvas.keyPressed('A'))
-        return GEB::Direction::DownLeft;
+        return GEB::Vec2{-1, 1};
     if (canvas.keyPressed('S') && canvas.keyPressed('D'))
-        return GEB::Direction::DownRight;
+        return GEB::Vec2{1, 1};
     if (canvas.keyPressed('W'))
-        return GEB::Direction::Up;
+        return GEB::Vec2{0, -1};
     if (canvas.keyPressed('S'))
-        return GEB::Direction::Down;
+        return GEB::Vec2{0, 1};
     if (canvas.keyPressed('A'))
-        return GEB::Direction::Left;
+        return GEB::Vec2{-1, 0};
     if (canvas.keyPressed('D'))
-        return GEB::Direction::Right;
-    return GEB::Direction::None;
+        return GEB::Vec2{1, 0};
+    return GEB::Vec2{0, 0};
 }
 
 bool checkIsSingleDirection(GEB::Direction direction)
@@ -52,22 +52,28 @@ void Hero::handleEvents(World &world, Layer &layer)
 
     auto &playStage = dynamic_cast<PlayStage &>(layer.currentStage());
 
+    auto distanceVec = GEB::Math::normalize(translateEventsToDirection(canvas)) * distance;
+
     // get candidate items for collision detection
     GEBArray<Entity *> candidateItemList;
-    GridSystem::getCandidateItemList(playStage.gridSystem(), this, distance, candidateItemList);
-
-    // get old position
-    auto oldCenter = center();
-    GEB::Direction direction = translateEventsToDirection(canvas);
+    GEB::Boundary mapBoundary{
+        .top = 0,
+        .bottom = static_cast<float>(map.height()),
+        .left = 0,
+        .right = static_cast<float>(map.width()),
+    };
+    GridSystem::getCandidateItemList(playStage.gridSystem(), this, distanceVec, mapBoundary, candidateItemList);
 
     // add map tiles which may collide with the hero to the candidate list
     playStage.map().addCollisionTileToCandiList(this,
-                                                direction,
-                                                distance,
+                                                distanceVec,
                                                 candidateItemList);
 
+    // get old position
+    auto oldCenter = center();
+
     // move
-    moveWithCollision(distance, direction, map, candidateItemList.head(), candidateItemList.size());
+    moveWithCollision(distanceVec, map, candidateItemList.head(), candidateItemList.size());
 
     // calculate new position
     auto newCenter = center();

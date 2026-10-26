@@ -3,6 +3,7 @@
 #include "entities/ItemEntity.h"
 #include "structure/Array.h"
 #include "core/Types.h"
+#include "entities/AABB.h"
 
 class Grid
 {
@@ -133,23 +134,34 @@ public:
         return &gridMap_[rowIdx * colCount_ + colIdx];
     }
 
-    void getCandidateGrids(float centerX, float centerY, float distance, GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids)
+    void getCandidateGrids(
+        Entity *detectedItem,
+        const GEB::Vec2 &distanceVec,
+        const GEB::Boundary &mapBoundary,
+        GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids)
     {
-        const int centerRow = GEB::Math::floorToInt(centerY / gridSize_);
-        const int centerCol = GEB::Math::floorToInt(centerX / gridSize_);
 
-        const int extensionSize = GEB::Math::floorToInt(distance / gridSize_) + 1;
+        if (!detectedItem)
+            return;
+        auto aabb = AABB::createAABB(detectedItem, distanceVec, mapBoundary);
 
-        // GridSystem takes (row, column): y selects the row, x selects the column.
-        for (int row = centerRow - extensionSize; row <= centerRow + extensionSize; ++row)
+        if (aabb.width() <= 0 || aabb.height() <= 0)
+            return;
+
+        /**
+         * [bugfix]: 
+         * extend the candidate grid range by 1 in all directions
+         * to account for items which belong to neighboring grids.
+         */
+        int startRow = GEB::Math::max(0, GEB::Math::floorToInt(aabb.y() / gridSize_) - 1);
+        int startCol = GEB::Math::max(0, GEB::Math::floorToInt(aabb.x() / gridSize_) - 1);
+        int endRow = GEB::Math::min(rowCount_ - 1, GEB::Math::floorToInt((aabb.y() + aabb.height()) / gridSize_) + 1);
+        int endCol = GEB::Math::min(colCount_ - 1, GEB::Math::floorToInt((aabb.x() + aabb.width()) / gridSize_) + 1);
+
+        for (int row = startRow; row <= endRow; row++)
         {
-            if (row < 0 || row >= rowCount_)
-                continue;
-
-            for (int col = centerCol - extensionSize; col <= centerCol + extensionSize; ++col)
+            for (int col = startCol; col <= endCol; col++)
             {
-                if (col < 0 || col >= colCount_)
-                    continue;
                 candidateGrids.pushBack({row, col});
             }
         }
@@ -157,12 +169,13 @@ public:
 
     static void getCandidateItemList(GridSystem &gridSystem,
                                      Entity *detectedItem,
-                                     float distance,
+                                     const GEB::Vec2 &distanceVec,
+                                     const GEB::Boundary &mapBoundary,
                                      GEB::Structures::Array<Entity *> &candidateItemList)
     {
         auto center = detectedItem->center();
         GEB::Structures::Array<GEB::Pair<int, int>> candidateGrids;
-        gridSystem.getCandidateGrids(center.x, center.y, distance, candidateGrids);
+        gridSystem.getCandidateGrids(detectedItem, distanceVec, mapBoundary, candidateGrids);
         // use nine grids(center grid and its eight neighbors) to detect potential collisions with items, as grid size is larger than role size.
         // todo: prune branches in the furture.
         int candidateGridSize = candidateGrids.size();

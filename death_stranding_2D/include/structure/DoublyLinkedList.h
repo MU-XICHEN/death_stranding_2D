@@ -10,19 +10,21 @@
 // Todo: change to arr, without jumping
 namespace GamesEngineeringBase::Structures
 {
-    template <typename T>
-    struct ListNode
-    {
-        T data;
-        ListNode<T> *next;
-        ListNode<T> *prev;
-
-        ListNode(const T &data) : data(data), next(nullptr), prev(nullptr) {}
-    };
 
     template <typename T>
     class DoublyLinkedList
     {
+
+        template <typename T>
+        struct ListNode
+        {
+            T data;
+            ListNode<T> *next;
+            ListNode<T> *prev;
+
+            ListNode(const T &data) : data(data), next(nullptr), prev(nullptr) {}
+        };
+
     public:
         DoublyLinkedList() : head_(nullptr), tail_(nullptr), size_(0) {}
         virtual ~DoublyLinkedList()

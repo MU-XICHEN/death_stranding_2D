@@ -1,6 +1,7 @@
 #pragma once
 
 #include "entities/Entity.h"
+#include "entities/State.h"
 
 struct MapInfo;
 
@@ -49,4 +50,5 @@ public:
 protected:
     GEB::Color color_{0, 0, 0};
     float speed_;
+    State state_;
 };

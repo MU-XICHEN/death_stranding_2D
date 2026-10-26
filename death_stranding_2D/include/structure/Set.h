@@ -1,10 +1,8 @@
 #pragma once
 
+#include "Array.h"
 /**
  * HashSet
- * Note:
- *      Node<T> will be recycled automatically,
- *      Users are responsible for recycling memory of node->data.
  */
 
 namespace GamesEngineeringBase::Structures
@@ -14,24 +12,31 @@ namespace GamesEngineeringBase::Structures
     class HashSet
     {
     private:
-        struct Node
-        {
-            T value;
-            Node *next;
-
-            Node(const T &value, Node *next)
-                : value(value), next(next) {}
-        };
-
-        Node *buckets_[BucketCount] = {};
+        GEB::Structures::Array<T> *buckets_[BucketCount];
         int size_ = 0;
 
         int bucketIndex(const T &value) const { return value % BucketCount; }
 
     public:
-        HashSet() = default;
+        HashSet()
+        {
+            for (int i = 0; i < BucketCount; i++)
+            {
+                buckets_[i] = new GEB::Structures::Array<T>();
+            }
+        };
 
-        ~HashSet() { clear(); }
+        virtual ~HashSet()
+        {
+            for (int i = 0; i < BucketCount; i++)
+            {
+                if (buckets_[i])
+                {
+                    delete buckets_[i];
+                    buckets_[i] = nullptr;
+                }
+            }
+        }
 
         HashSet(const HashSet &) = delete;
         HashSet &operator=(const HashSet &) = delete;
@@ -42,19 +47,17 @@ namespace GamesEngineeringBase::Structures
         {
             int index = bucketIndex(value);
 
-            Node *current = buckets_[index];
-
-            while (current)
+            GEB::Structures::Array<T> *array = buckets_[index];
+            for (int i = 0; i < array->size(); i++)
             {
-                if (current->value == value)
+                if (!array)
                     return false;
 
-                current = current->next;
+                if ((*array)[i] == value)
+                    return false;
             }
-
-            buckets_[index] = new Node(value, buckets_[index]);
-            ++size_;
-
+            array->push_back(value);
+            size_++;
             return true;
         }
 
@@ -62,14 +65,12 @@ namespace GamesEngineeringBase::Structures
         {
             int index = bucketIndex(value);
 
-            const Node *current = buckets_[index];
+            GEB::Structures::Array<T> *array = buckets_[index];
 
-            while (current)
+            for (int i = 0; i < array->size(); i++)
             {
-                if (current->value == value)
+                if ((*array)[i] == value)
                     return true;
-
-                current = current->next;
             }
 
             return false;
@@ -77,21 +78,18 @@ namespace GamesEngineeringBase::Structures
 
         void clear()
         {
-            for (int i = 0; i < BucketCount; ++i)
+            for (int i = 0; i < BucketCount; i++)
             {
-                Node *current = buckets_[i];
+                auto *array = buckets_[i];
+                if (!array)
+                    continue;
 
-                while (current)
+                for (int j = 0; j < array->size(); j++)
                 {
-                    Node *next = current->next;
-                    delete current;
-                    current = next;
+                    (*array)[j] = T();
                 }
-
-                buckets_[i] = nullptr;
             }
-
             size_ = 0;
         }
     };
-}
+};

@@ -122,6 +122,9 @@
     <ClInclude Include="include\entities\AABB.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
+    <ClInclude Include="include\entities\Attack.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
     <ClInclude Include="include\entities\ItemEntity.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
@@ -132,6 +135,9 @@
       <Filter>Header Files\entities</Filter>
     </ClInclude>
     <ClInclude Include="include\entities\Monster.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\entities\State.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
     <ClInclude Include="include\layers\Layer.h">
@@ -162,6 +168,9 @@
       <Filter>Header Files\structure</Filter>
     </ClInclude>
     <ClInclude Include="include\structure\DoublyLinkedList.h">
+      <Filter>Header Files\structure</Filter>
+    </ClInclude>
+    <ClInclude Include="include\structure\Set.h">
       <Filter>Header Files\structure</Filter>
     </ClInclude>
     <ClInclude Include="include\structure\String.h">

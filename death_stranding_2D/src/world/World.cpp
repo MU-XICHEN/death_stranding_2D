@@ -16,7 +16,7 @@ World::World()
                    static_cast<unsigned int>(WINDOW_HEIGHT), "Tiles");
 
     // initialize text renderer
-    textRenderer_.loadImages();
+    assetManager_.loadImages();
 
     // Main Layer which handle main game process: Intro - Menu - Gameplay - Tally - Then, again!
     initLayers();

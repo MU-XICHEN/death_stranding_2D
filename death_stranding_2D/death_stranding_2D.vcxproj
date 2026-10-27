@@ -164,8 +164,10 @@
     <ClCompile Include="src\layers\MainLayer.cpp" />
     <ClCompile Include="src\layers\DebugLayer.cpp" />
     <ClCompile Include="src\renderer\TextRenderer.cpp" />
+    <ClCompile Include="src\renderer\SlicerRenderer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\world\GameInfo.cpp" />
+    <ClCompile Include="src\world\AssetManager.cpp" />
     <ClCompile Include="src\map\Map.cpp" />
     <ClCompile Include="src\world\World.cpp" />
   </ItemGroup>
@@ -185,6 +187,7 @@
     <ClInclude Include="include\layers\MainLayer.h" />
     <ClInclude Include="include\layers\DebugLayer.h" />
     <ClInclude Include="include\renderer\TextRenderer.h" />
+    <ClInclude Include="include\renderer\SliceRenderer.h" />
     <ClInclude Include="include\stages\Common.h" />
     <ClInclude Include="include\stages\Intro.h" />
     <ClInclude Include="include\stages\Menu.h" />
@@ -194,9 +197,9 @@
     <ClInclude Include="include\structure\Array.h" />
     <ClInclude Include="include\structure\DoublyLinkedList.h" />
     <ClInclude Include="include\structure\Set.h" />
-    <ClInclude Include="include\structure\String.h" />
     <ClInclude Include="include\utils\GameMath.h" />
     <ClInclude Include="include\world\GameInfo.h" />
+    <ClInclude Include="include\world\AssetManager.h" />
     <ClInclude Include="include\world\Grid.h" />
     <ClInclude Include="include\map\Map.h" />
     <ClInclude Include="include\map\MapFactory.h" />

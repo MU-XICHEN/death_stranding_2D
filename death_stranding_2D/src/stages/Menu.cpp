@@ -3,20 +3,59 @@
 #include "world/World.h"
 #include "layers/Layer.h"
 #include "layers/MainLayer.h"
+#include "world/AssetManager.h"
+
+void MenuStage::moveSelection(int direction)
+{
+    int newIdx = selectedIdx_ + direction;
+    if (newIdx < 0)
+        newIdx = 0;
+    if (newIdx > maxIdx_)
+        newIdx = maxIdx_;
+    selectedIdx_ = newIdx;
+}
 
 void MenuStage::update(World &world, Layer &layer)
 {
-    handleEvents(world, layer);
+    Stage::handleEvents(world, layer);
+
+    // handle current events
+    const auto &canvas = world.canvas();
+    if (wKeyState_.justPressed(canvas.keyPressed('W')) || wKeyState_.justPressed(canvas.keyPressed(VK_UP)))
+        moveSelection(-1);
+    else if (sKeyState_.justPressed(canvas.keyPressed('S')) || sKeyState_.justPressed(canvas.keyPressed(VK_DOWN)))
+        moveSelection(1);
+}
+
+void MenuStage::renderSelection(World &world, Layer &layer)
+{
 }
 
 void MenuStage::render(World &world, Layer &layer)
 {
+    // render the background cover
     auto &canvas = world.canvas();
-    for (int i = 0; i < 50; i++)
-    {
-        for (int j = 0; j < 50; j++)
-        {
-            canvas.draw(i, j, 255, 0, 0);
-        }
-    }
+
+    auto *image = world.assetManager().getImage(AssetId::Cover);
+    if (!image || image->channels != 3)
+        return;
+
+    auto *buffer = canvas.getBackBuffer();
+    if (!buffer)
+        return;
+
+    auto imageWidth = image->width;
+    auto imageHeight = image->height;
+
+    auto windowWidth = canvas.getWidth();
+    auto windowHeight = canvas.getHeight();
+
+    if (imageWidth != windowWidth || imageHeight != windowHeight)
+        return;
+
+    int bytes = imageWidth * imageHeight * 3;
+    memcpy(buffer, image->data, bytes);
+
+    // render the selection
+    renderSelection(world, layer);
 }

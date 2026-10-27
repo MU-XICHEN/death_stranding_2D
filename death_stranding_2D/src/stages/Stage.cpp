@@ -25,20 +25,13 @@ void Stage::pushEntity(Entity *entity)
 void Stage::handleEvents(World &world, Layer &layer)
 {
     const auto &canvas = world.canvas();
-    if (canvas.keyPressed(VK_RETURN))
+    if (Stage::enterState.justPressed(canvas.keyPressed(VK_RETURN)))
     {
-        if (Stage::isUpdating())
-            return;
         auto mainLayer = dynamic_cast<MainLayer *>(&layer);
         if (mainLayer)
         {
-            Stage::setUpdating(true);
             mainLayer->goToNextStageInNextFrame();
         }
-    }
-    else
-    {
-        Stage::setUpdating(false);
     }
 }
 

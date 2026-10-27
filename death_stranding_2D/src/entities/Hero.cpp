@@ -11,6 +11,7 @@ using GEBArray = GEB::Structures::Array<T>;
 
 GEB::Vec2 translateEventsToDirection(const GamesEngineeringBase::Window &canvas)
 {
+    // wsad
     if (canvas.keyPressed('W') && canvas.keyPressed('A'))
         return GEB::Vec2{-1, -1};
     if (canvas.keyPressed('W') && canvas.keyPressed('D'))
@@ -27,6 +28,25 @@ GEB::Vec2 translateEventsToDirection(const GamesEngineeringBase::Window &canvas)
         return GEB::Vec2{-1, 0};
     if (canvas.keyPressed('D'))
         return GEB::Vec2{1, 0};
+
+    // up\down\left\right keys
+    if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_LEFT))
+        return GEB::Vec2{-1, -1};
+    if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_RIGHT))
+        return GEB::Vec2{1, -1};
+    if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_LEFT))
+        return GEB::Vec2{-1, 1};
+    if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_RIGHT))
+        return GEB::Vec2{1, 1};
+    if (canvas.keyPressed(VK_UP))
+        return GEB::Vec2{0, -1};
+    if (canvas.keyPressed(VK_DOWN))
+        return GEB::Vec2{0, 1};
+    if (canvas.keyPressed(VK_LEFT))
+        return GEB::Vec2{-1, 0};
+    if (canvas.keyPressed(VK_RIGHT))
+        return GEB::Vec2{1, 0};
+
     return GEB::Vec2{0, 0};
 }
 

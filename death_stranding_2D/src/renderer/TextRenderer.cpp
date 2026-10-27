@@ -1,63 +1,49 @@
 #include "renderer/TextRenderer.h"
 #include "core/GameBase.h"
 #include "world/World.h"
-
-const char *TEXT_IMAGE_PATHS[TEXT_SIZE_COUNT] = {
-    "assets/font/font_9x18.png",
-    "assets/font/font_12x24.png",
-    "assets/font/font_18x36.png"};
+#include "world/AssetManager.h"
 
 const int TEXT_WIDTH[TEXT_SIZE_COUNT] = {9, 12, 18};
 const int TEXT_HEIGHT[TEXT_SIZE_COUNT] = {18, 24, 36};
 const int CHAR_COUNT_ROW = 16;
 
-void TextRenderer::loadImages()
+AssetId translateTextSizeToAssetId(GEB::TextSize size)
 {
-    for (int i = 0; i < TEXT_SIZE_COUNT; ++i)
+    switch (size)
     {
-        GEB::Image *image = new GEB::Image();
-        if (!image->load(TEXT_IMAGE_PATHS[i]))
-        {
-            delete image;
-
-            images[i] = nullptr;
-            continue;
-        }
-
-        images[i] = image;
+    case GEB::TextSize::TEXT_SIZE_SMALL:
+        return AssetId::TextSmall;
+    case GEB::TextSize::TEXT_SIZE_MEDIUM:
+        return AssetId::TextMedium;
+    case GEB::TextSize::TEXT_SIZE_LARGE:
+        return AssetId::TextLarge;
+    default:
+        return AssetId::None;
     }
 }
 
-bool TextRenderer::checkImagesValid() const
-{
-    for (int i = 0; i < TEXT_SIZE_COUNT; ++i)
-    {
-        if (!images[i])
-            return false;
-    }
-    return true;
-}
-
-void TextRenderer::drawCharacter(GEB::Window &canvas,
-                                 GEB::TextSize size,
+void TextRenderer::drawCharacter(World &world,
+                                 GEB::TextSize textSize,
                                  unsigned int x,
                                  unsigned int y,
                                  unsigned int row,
                                  unsigned int col) const
 {
-    const int imageIndex = static_cast<int>(size);
+    auto &canvas = world.canvas();
+    auto &assetManager = world.assetManager();
+    auto id = translateTextSizeToAssetId(textSize);
+    const GEB::Image *fontImage = assetManager.getImage(id);
+    if (!fontImage)
+        return;
+
+    const int imageIndex = static_cast<int>(textSize);
     const int fontWidth = TEXT_WIDTH[imageIndex];
     const int fontHeight = TEXT_HEIGHT[imageIndex];
     const int charXInImage = col * TEXT_WIDTH[imageIndex];
     const int charYInImage = row * TEXT_HEIGHT[imageIndex];
 
-    const int validWidth = canvas.getWidth();
-    const int validHeight = canvas.getHeight();
-
-    const GEB::Image *fontImage = images[imageIndex];
-
-    if (!fontImage)
-        return;
+    const int validWidth = world.canvas().getWidth();
+    const int validHeight = world.canvas().getHeight();
 
     for (int i = 0; i < fontWidth; i++)
     {
@@ -74,19 +60,23 @@ void TextRenderer::drawCharacter(GEB::Window &canvas,
     }
 }
 
-void TextRenderer::drawString(GEB::Window &canvas,
+void TextRenderer::drawString(World &world,
                               const char *text,
                               int x,
                               int y,
-                              GEB::TextSize size) const
+                              GEB::TextSize textSize) const
 {
-    if (!checkImagesValid())
+
+    auto id = translateTextSizeToAssetId(textSize);
+    auto &assetManager = world.assetManager();
+    const GEB::Image *fontImage = assetManager.getImage(id);
+    if (!fontImage)
         return;
 
     if (!text || !*text)
         return;
 
-    const int ratio = static_cast<int>(size) + 1;
+    const int ratio = static_cast<int>(textSize) + 1;
 
     char c = *text;
     while (c != '\0')
@@ -124,9 +114,9 @@ void TextRenderer::drawString(GEB::Window &canvas,
         }
 
         if (c != ' ')
-            drawCharacter(canvas, size, x, y, row, col);
+            drawCharacter(world, textSize, x, y, row, col);
 
-        x += (TEXT_WIDTH[static_cast<int>(size)]);
+        x += (TEXT_WIDTH[static_cast<int>(textSize)]);
         // Move to the next character
         c = *++text;
     }

@@ -2,6 +2,7 @@
 
 #include "entities/Entity.h"
 #include "structure/Array.h"
+#include "utils/KeyState.h"
 
 class Stage
 {
@@ -13,10 +14,8 @@ public:
     virtual void update(World &world, Layer &layer);
     virtual void render(World &world, Layer &layer);
 
-    static bool isUpdating() { return stageUpdating_; }
-    static void setUpdating(bool updating) { stageUpdating_ = updating; }
+    static inline KeyState enterState{};
 
 private:
-    static inline bool stageUpdating_ = false;
     GEB::Structures::Array<Entity *> entityList_;
 };

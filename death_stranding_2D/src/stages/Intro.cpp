@@ -4,8 +4,6 @@
 #include "layers/Layer.h"
 #include "layers/MainLayer.h"
 
-
-
 void IntroStage::update(World &world, Layer &layer)
 {
     handleEvents(world, layer);
@@ -18,7 +16,7 @@ void IntroStage::render(World &world, Layer &layer)
     {
         for (int j = 0; j < 50; j++)
         {
-            canvas.draw(i, j, 0, 255, 0);
+            canvas.draw(i, j, 255, 0, 0);
         }
     }
 }

@@ -32,12 +32,12 @@ public:
     void render(World &world, Layer &layer) override
     {
         const auto &txtRdr = world.textRenderer();
-        txtRdr.drawString(world.canvas(), fpsText_.c_str(), 20, 20, GEB::TextSize::TEXT_SIZE_MEDIUM);
+        txtRdr.drawString(world, fpsText_.c_str(), 20, 20, GEB::TextSize::TEXT_SIZE_MEDIUM);
     }
 
 private:
     int count_ = 0;
-    double elapsedTime_ = 0.0;
+    float elapsedTime_ = 0.0;
     std::string fpsText_ = "FPS 0";
 };
 

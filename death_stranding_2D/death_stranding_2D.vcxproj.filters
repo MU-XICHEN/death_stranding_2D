@@ -105,6 +105,9 @@
     <ClCompile Include="src\renderer\TextRenderer.cpp">
       <Filter>Source Files\renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\renderer\SlicerRenderer.cpp">
+      <Filter>Source Files\renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -112,6 +115,9 @@
       <Filter>Source Files\world</Filter>
     </ClCompile>
     <ClCompile Include="src\world\GameInfo.cpp">
+      <Filter>Source Files\world</Filter>
+    </ClCompile>
+    <ClCompile Include="src\world\AssetManager.cpp">
       <Filter>Source Files\world</Filter>
     </ClCompile>
     <ClCompile Include="src\map\Map.cpp">
@@ -164,6 +170,9 @@
     <ClInclude Include="include\renderer\TextRenderer.h">
       <Filter>Header Files\renderer</Filter>
     </ClInclude>
+    <ClInclude Include="include\renderer\SliceRenderer.h">
+      <Filter>Header Files\renderer</Filter>
+    </ClInclude>
     <ClInclude Include="include\stages\Common.h">
       <Filter>Header Files\stages</Filter>
     </ClInclude>
@@ -191,9 +200,6 @@
     <ClInclude Include="include\structure\Set.h">
       <Filter>Header Files\structure</Filter>
     </ClInclude>
-    <ClInclude Include="include\structure\String.h">
-      <Filter>Header Files\structure</Filter>
-    </ClInclude>
     <ClInclude Include="include\utils\GameMath.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
@@ -207,6 +213,9 @@
       <Filter>Header Files\map</Filter>
     </ClInclude>
     <ClInclude Include="include\world\GameInfo.h">
+      <Filter>Header Files\world</Filter>
+    </ClInclude>
+    <ClInclude Include="include\world\AssetManager.h">
       <Filter>Header Files\world</Filter>
     </ClInclude>
     <ClInclude Include="include\world\Grid.h">

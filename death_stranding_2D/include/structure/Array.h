@@ -1,19 +1,20 @@
 #pragma once
 
 static const int DEFAULT_CAPACITY = 20;
+static const int DEFAULT_SIZE = 0;
 
 namespace GamesEngineeringBase::Structures
 {
 
     // Variable-Length Array
     // Users need to manage the memory of the elements themselves if they are pointers.
-    template <typename T>
+    template <typename T, int defaultSize = DEFAULT_SIZE>
     class Array
     {
     public:
-        Array(int size = 0)
+        Array(int size = defaultSize)
             : size_(size),
-              capacity_(size + DEFAULT_CAPACITY),
+              capacity_(size ? size : DEFAULT_CAPACITY),
               data_(new T[capacity_]{}) {}
 
         ~Array() { delete[] data_; }

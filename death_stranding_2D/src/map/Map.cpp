@@ -194,9 +194,7 @@ void Map::cachemap()
     }
 }
 
-void Map::update(World &world, Layer &layer)
-{
-}
+void Map::update(World &world, Layer &layer) {}
 
 void Map::render(World &world, Layer &layer)
 {

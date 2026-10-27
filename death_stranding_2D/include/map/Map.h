@@ -28,7 +28,7 @@ private:
 
     const MapSource &source_;
 
-    GEB::Structures::Array<GEB::Image *> images_;
+    GEB::Structures::Array<GEB::Image *> images_; // load images by map self for now
     GEB::Structures::Array<unsigned char> mapCache_;
     GEB::Structures::Array<TileBlock> tileBlocks_; // need collision detection
 };

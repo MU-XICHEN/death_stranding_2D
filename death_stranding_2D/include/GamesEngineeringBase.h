@@ -299,8 +299,8 @@ namespace GamesEngineeringBase
 			}
 
 			// Set the process DPI awareness for proper scaling
-			// SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_UNAWARE);
-			SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
+			SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_UNAWARE);
+			// SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
 
 
 			// Adjust window rectangle to accommodate for window borders

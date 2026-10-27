@@ -31,19 +31,17 @@ public:
 
     Stage &currentStage() const { return *currentStage_; }
 
-    bool nextFrameFlag() { return nextFrameFlag_; }
-    void setNextFrameFlag() { nextFrameFlag_ = true; }
-
-    void checkGoToNextStage();
+    void goToNextStageInNextFrame();
 
     virtual void update(World &world) override;
     virtual void render(World &world) override;
 
 private:
+    void checkgoToNextStage();
+    bool nextStageFlag_ = false;
+
     const StageCreator *stageCreator_ = nullptr;
     unsigned int size_ = 0;
     unsigned int currentIndex_ = 0;
     Stage *currentStage_ = nullptr;
-
-    bool nextFrameFlag_ = false;
 };

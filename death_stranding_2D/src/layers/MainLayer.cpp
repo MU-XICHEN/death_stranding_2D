@@ -3,11 +3,15 @@
 
 // ------------------------------------------ Layer ------------------------------------------
 
+const int initialIndex = 0;
+
 MainLayer::MainLayer()
     : stageCreator_(stageCreator),
       size_(stageCreatorSize),
-      currentIndex_(2),
-      currentStage_(stageCreator[currentIndex_]()) {}
+      currentIndex_(initialIndex),
+      currentStage_(stageCreator[initialIndex]())
+{
+}
 
 MainLayer::~MainLayer()
 {
@@ -18,9 +22,14 @@ MainLayer::~MainLayer()
     }
 }
 
-void MainLayer::checkGoToNextStage()
+void MainLayer::goToNextStageInNextFrame()
 {
-    if (!nextFrameFlag_)
+    nextStageFlag_ = true;
+}
+
+void MainLayer::checkgoToNextStage()
+{
+    if (!nextStageFlag_)
         return;
 
     // delete current stage
@@ -31,20 +40,30 @@ void MainLayer::checkGoToNextStage()
     }
 
     // create next stage
-    unsigned int index = (++currentIndex_) % size_;
-    currentStage_ = stageCreator_[index]();
-    nextFrameFlag_ = false;
+    if (++currentIndex_ < size_)
+    {
+        currentStage_ = stageCreator_[currentIndex_]();
+    }
+    else
+    {
+        currentIndex_ = 0;
+        currentStage_ = stageCreator_[currentIndex_]();
+    }
+
+    nextStageFlag_ = false;
 }
 
 void MainLayer::update(World &world)
 {
+    checkgoToNextStage();
+
     auto &stage = currentStage();
     // update states of nodes in current Layer
-    stage.updateEntities(world, *this);
+    stage.update(world, *this);
 };
 
 void MainLayer::render(World &world)
 {
     auto &stage = currentStage();
-    stage.renderEntities(world, *this);
+    stage.render(world, *this);
 };

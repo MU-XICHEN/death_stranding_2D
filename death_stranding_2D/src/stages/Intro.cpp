@@ -1,16 +1,17 @@
 
 #include "stages/Intro.h"
 #include "world/World.h"
+#include "layers/Layer.h"
+#include "layers/MainLayer.h"
 
-void Intro::handleEvents(World &world)
+
+
+void IntroStage::update(World &world, Layer &layer)
 {
+    handleEvents(world, layer);
 }
 
-void Intro::update(World &world, Layer &layer)
-{
-}
-
-void Intro::render(World &world, Layer &layer)
+void IntroStage::render(World &world, Layer &layer)
 {
     auto &canvas = world.canvas();
     for (int i = 0; i < 50; i++)

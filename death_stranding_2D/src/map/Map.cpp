@@ -196,7 +196,6 @@ void Map::cachemap()
 
 void Map::update(World &world, Layer &layer)
 {
-    world.gameInfo().updateMapInfo(*this);
 }
 
 void Map::render(World &world, Layer &layer)

@@ -1,15 +1,18 @@
 #include "stages/Play.h"
 #include "core/GameBase.h"
 #include "entities/Hero.h"
-#include "world/Viewport.h"
 #include "entities/Monster.h"
 #include "map/Map.h"
 #include "map/MapFactory.h"
+#include "layers/MainLayer.h"
+#include "world/World.h"
 
 PlayStage::PlayStage()
     : gridSystem_(GRID_ROWCNT, GRID_COLCNT, GRID_SIZE),
       map_(MapType::Chapter1)
 {
+    mapUpdated_ = true;
+
     auto heroPosition = map_.playerPosition();
 
     // add Items
@@ -39,6 +42,8 @@ PlayStage::PlayStage()
         ROLE_SIZE);
     monster2->setColor(0, 255, 0);
     addEntityToGridSystem(monster2);
+
+    // todo: other sections like information panel.
 }
 
 GEB::Pair<int, int> getGridIndex(float x, float y)
@@ -60,11 +65,17 @@ void PlayStage::addEntityToGridSystem(ItemEntity *item)
 }
 
 // updateEntities
-void PlayStage::updateEntities(World &world, Layer &layer)
+void PlayStage::update(World &world, Layer &layer)
 {
-    map_.update(world, layer);
+    Stage::handleEvents(world, layer);
 
-    Stage::updateEntities(world, layer); // update sections like information panels
+    if (mapUpdated_)
+    {
+        world.gameInfo().updateMapInfo(map_);
+        mapUpdated_ = false;
+    }
+
+    Stage::update(world, layer); // update sections like information panels
 
     auto &itemsToUpdate = gridSystem_.itemsToUpdate();
     int itemCount = itemsToUpdate.size();
@@ -77,11 +88,11 @@ void PlayStage::updateEntities(World &world, Layer &layer)
 }
 
 // renderEntities
-void PlayStage::renderEntities(World &world, Layer &layer)
+void PlayStage::render(World &world, Layer &layer)
 {
     map_.render(world, layer);
 
-    Stage::renderEntities(world, layer);
+    Stage::render(world, layer);
 
     auto &itemsToUpdate = gridSystem_.itemsToUpdate();
     int itemCount = itemsToUpdate.size();

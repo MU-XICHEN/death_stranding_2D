@@ -23,11 +23,13 @@ public:
 
 private:
     void initialize();
-    void MergeTiles(const int *ground, int colCnt, int rowCnt);
+    void cachemap();
+    void mergeTiles(const int *ground, int colCnt, int rowCnt);
 
     const MapSource &source_;
 
     GEB::Structures::Array<GEB::Image *> images_;
+    GEB::Structures::Array<unsigned char> mapCache_;
     GEB::Structures::Array<TileBlock> tileBlocks_; // need collision detection
 };
 

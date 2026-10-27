@@ -5,6 +5,7 @@
 class AABB : public Entity
 {
 public:
+    using Entity::Entity;
     AABB(float x, float y, int width, int height)
         : Entity(x, y, width, height) {}
 

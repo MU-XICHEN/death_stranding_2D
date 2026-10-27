@@ -1,6 +1,7 @@
 #include "world/World.h"
 #include "map/Map.h"
 #include "entities/AABB.h"
+#include <cstring>
 
 GEB::Pair<bool, int> tileProcessed(int tileIndexX, int tileIndexY, int tileSize,
                                    const GEB::Structures::Array<TileBlock> &tileRects)
@@ -102,7 +103,7 @@ GEB::Position Map::playerPosition() const
     return center();
 }
 
-void Map::MergeTiles(const int *ground, int colCnt, int rowCnt)
+void Map::mergeTiles(const int *ground, int colCnt, int rowCnt)
 {
     tileBlocks_.resize(0);
     if (!ground || colCnt <= 0 || rowCnt <= 0)
@@ -146,14 +147,51 @@ void Map::initialize()
         if (!image->load(source_.images[i]))
         {
             delete image;
-            continue;
+            image = nullptr;
         }
 
         images_.pushBack(image);
     }
 
     // merge tiles to large pieces
-    MergeTiles(source_.ground, source_.colCnt, source_.rowCnt);
+    mergeTiles(source_.ground, source_.colCnt, source_.rowCnt);
+
+    cachemap();
+}
+
+void Map::cachemap()
+{
+    mapCache_.resize(width_ * height_ * 3);
+
+    std::memset(mapCache_.head(), 0, mapCache_.size());
+
+    for (int row = 0; row < source_.rowCnt; ++row)
+    {
+        for (int col = 0; col < source_.colCnt; ++col)
+        {
+            const int tileIndex = source_.ground[row * source_.colCnt + col];
+            const int imageIndex = source_.tileDefinitions[tileIndex].imageIndex;
+            const auto *image = images_[imageIndex];
+
+            if (!image || !image->data || image->width == 0 || image->height == 0)
+                continue;
+
+            for (int x = 0; x < source_.tileSize; ++x)
+            {
+                for (int y = 0; y < source_.tileSize; ++y)
+                {
+                    const int mapX = col * source_.tileSize + x;
+                    const int mapY = row * source_.tileSize + y;
+
+                    const int cacheIndex = (mapY * width_ + mapX) * 3;
+                    const auto *pixel = image->at(x, y);
+                    mapCache_[cacheIndex] = pixel[0];
+                    mapCache_[cacheIndex + 1] = pixel[1];
+                    mapCache_[cacheIndex + 2] = pixel[2];
+                }
+            }
+        }
+    }
 }
 
 void Map::update(World &world, Layer &layer)
@@ -163,49 +201,39 @@ void Map::update(World &world, Layer &layer)
 
 void Map::render(World &world, Layer &layer)
 {
-    auto &canvas = world.canvas();
+    if (mapCache_.size() == 0)
+        return;
 
+    auto &canvas = world.canvas();
     const Viewport &viewport = world.gameInfo().viewport();
 
-    const int visiblePixelWidth = viewport.width();
-    const int visiblePixelHeight = viewport.height();
+    const int viewportWidth = viewport.width();
+    const int viewportHeight = viewport.height();
 
-    const int viewportX = GEB::Math::floorToInt(viewport.x());
-    const int viewportY = GEB::Math::floorToInt(viewport.y());
+    const int mapStartX = GEB::Math::max(static_cast<int>(viewport.x()), 0);
+    const int mapStartY = GEB::Math::max(static_cast<int>(viewport.y()), 0);
 
-    // draw map to viewport by each pixel
-    for (int i = 0; i < visiblePixelWidth; i++)
+    const int mapEndX = GEB::Math::min(mapStartX + viewportWidth, width_);
+    const int mapEndY = GEB::Math::min(mapStartY + viewportHeight, height_);
+
+    if (mapStartX >= mapEndX || mapStartY >= mapEndY)
+        return;
+
+    const int rowBytes = (mapEndX - mapStartX) * 3;
+
+    for (int mapY = mapStartY; mapY < mapEndY; ++mapY)
     {
-        for (int j = 0; j < visiblePixelHeight; j++)
-        {
-            int targetX = viewportX + i;
-            int targetY = viewportY + j;
+        const int canvasX = 0;
+        const int canvasY = mapY - mapStartY;
 
-            if (targetX < 0 || targetY < 0)
-                continue;
+        const int cacheIndex = (mapY * width_ + mapStartX) * 3;
 
-            int tileIdxX = targetX / source_.tileSize;
-            int tileIdxY = targetY / source_.tileSize;
+        const int canvasIndex = (canvasY * viewportWidth + canvasX) * 3;
 
-            if (tileIdxX < 0 || tileIdxX >= source_.colCnt ||
-                tileIdxY < 0 || tileIdxY >= source_.rowCnt)
-                continue;
+        auto *canvasPixels = canvas.getBackBuffer();
 
-            int tileX = tileIdxX * source_.tileSize;
-            int tileY = tileIdxY * source_.tileSize;
-
-            int imageIdxX = targetX - tileX;
-            int imageIdxY = targetY - tileY;
-
-            auto tileIndex = source_.ground[tileIdxY * source_.colCnt + tileIdxX];
-            auto imageIndex = source_.tileDefinitions[tileIndex].imageIndex;
-            auto image = images_[imageIndex];
-
-            if (!image)
-                return;
-
-            canvas.draw(i, j, image->at(imageIdxX, imageIdxY));
-        }
+        // speed up, copy a whole row of pixels at once.
+        std::memcpy(&canvasPixels[canvasIndex], &mapCache_[cacheIndex], rowBytes);
     }
 }
 

@@ -28,6 +28,11 @@ public:
         x_ = x;
         y_ = y;
     }
+    inline void setSize(int width, int height)
+    {
+        width_ = width;
+        height_ = height;
+    }
     inline float x() const { return x_; }
     inline float y() const { return y_; }
 

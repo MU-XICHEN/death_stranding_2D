@@ -5,6 +5,23 @@
 
 namespace GamesEngineeringBase::Utils
 {
+    static GEB::Vec2 rotateCounterClockwise(GEB::Vec2 point, GEB::Vec2 origin, float degrees)
+    {
+        float radians = GEB::Math::toRadians(degrees);
+        float sinRadians = std::sin(radians);
+        float cosRadians = std::cos(radians);
+
+        point.x -= origin.x;
+        point.y -= origin.y;
+
+        float xnew = point.x * cosRadians + point.y * sinRadians;
+        float ynew = -point.x * sinRadians + point.y * cosRadians;
+
+        point.x = xnew + origin.x;
+        point.y = ynew + origin.y;
+        return point;
+    }
+
     static GEB::Vec2 rotateClockwise(GEB::Vec2 point, GEB::Vec2 origin, float degrees)
     {
         float radians = GEB::Math::toRadians(degrees);

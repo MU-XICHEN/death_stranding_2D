@@ -5,23 +5,37 @@
 
 void getRotatedHitBoxPoints(const AttackInfo &attackInfo, float elapsedTime, GEB::Vec2 hitBoxPoints[4])
 {
-    auto degree = attackInfo.angleSpeed * elapsedTime;
+    GEB::Vec2 originPoint1 = attackInfo.originPoint;
 
     const auto unitDirVec2 = GEB::Utils::transDirToUnitVec2(attackInfo.direction);
+
+    auto startDirVec2 = unitDirVec2;
+    startDirVec2.x = unitDirVec2.y;
+    startDirVec2.y = -unitDirVec2.x;
 
     const auto hitBoxWidth = attackInfo.hitBoxWidth;
     const auto hitBoxHeight = attackInfo.hitBoxHeight;
 
-    GEB::Vec2 originPoint1 = attackInfo.originPoint;
-    GEB::Vec2 originPoint2 = attackInfo.originPoint + (unitDirVec2 * hitBoxHeight);
+    GEB::Vec2 originPoint2 = attackInfo.originPoint + (startDirVec2 * hitBoxHeight);
 
-    const auto perpVec2 = GEB::Math::normalize(GEB::Math::perpendicular(unitDirVec2));
+    const auto perpVec2 = GEB::Math::normalize(GEB::Math::perpendicular(startDirVec2));
 
     // get hit box points
     hitBoxPoints[0] = originPoint1 + (perpVec2 * (hitBoxWidth / 2));
     hitBoxPoints[1] = originPoint1 - (perpVec2 * (hitBoxWidth / 2));
     hitBoxPoints[2] = originPoint2 + (perpVec2 * (hitBoxWidth / 2));
     hitBoxPoints[3] = originPoint2 - (perpVec2 * (hitBoxWidth / 2));
+
+    // calcuate progress
+    const float hitDuration = attackInfo.hitEndTime - attackInfo.hitStartTime;
+    float progress = 0;
+    if (hitDuration > 0.0f)
+    {
+        progress = GEB::Math::min(1.0f, (elapsedTime - attackInfo.hitStartTime) / hitDuration);
+        progress = GEB::Math::max(0.0f, progress);
+    }
+
+    const float degree = 180.0f * progress;
 
     // apply rotation
     hitBoxPoints[0] = GEB::Utils::rotateClockwise(hitBoxPoints[0], attackInfo.originPoint, degree);

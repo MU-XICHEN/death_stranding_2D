@@ -16,7 +16,6 @@ struct AttackInfo
     float hitEndTime = 0.0f;
     int hitBoxWidth = 0;  // actual size of the hit box
     int hitBoxHeight = 0; // actual size of the hit box
-    float angleSpeed = 0.0f;
 
     GEB::Vec2 originPoint = {0.0f, 0.0f};
     GEB::Direction direction = GEB::Direction::None;

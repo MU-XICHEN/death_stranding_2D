@@ -168,7 +168,6 @@ AttackInfo Hero::createAttackInfo()
             .hitEndTime = 0.14f,
             .hitBoxWidth = 80,
             .hitBoxHeight = 30,
-            .angleSpeed = 3000.0f, // 3000 ° per second
             .originPoint = getOriginPoint(),
             .direction = direction_,
         };

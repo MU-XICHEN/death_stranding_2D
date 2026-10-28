@@ -34,6 +34,9 @@
     <Filter Include="Source Files\renderer">
       <UniqueIdentifier>{683D0775-31A0-42F5-BC3C-6EE95A2A75EC}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\skills">
+      <UniqueIdentifier>{A82EEA5A-035D-47E7-A84B-1174CAC81EDA}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\core">
       <UniqueIdentifier>{DD6BB71A-84D4-48D9-BDF5-3CF825F80FCF}</UniqueIdentifier>
     </Filter>
@@ -60,6 +63,9 @@
     </Filter>
     <Filter Include="Header Files\renderer">
       <UniqueIdentifier>{FC8B5E6A-6B73-421A-A649-C49F9CB59AED}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\skills">
+      <UniqueIdentifier>{31D834EB-1202-4518-96C6-59EC78A8FA79}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -108,6 +114,9 @@
     <ClCompile Include="src\renderer\SlicerRenderer.cpp">
       <Filter>Source Files\renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\skills\HalfCircleSlash.cpp">
+      <Filter>Source Files\skills</Filter>
+    </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -140,9 +149,6 @@
     <ClInclude Include="include\entities\AABB.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
-    <ClInclude Include="include\entities\Attack.h">
-      <Filter>Header Files\entities</Filter>
-    </ClInclude>
     <ClInclude Include="include\entities\ItemEntity.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
@@ -173,6 +179,12 @@
     <ClInclude Include="include\renderer\SliceRenderer.h">
       <Filter>Header Files\renderer</Filter>
     </ClInclude>
+    <ClInclude Include="include\skills\Attack.h">
+      <Filter>Header Files\skills</Filter>
+    </ClInclude>
+    <ClInclude Include="include\skills\HalfCircleSlash.h">
+      <Filter>Header Files\skills</Filter>
+    </ClInclude>
     <ClInclude Include="include\stages\Common.h">
       <Filter>Header Files\stages</Filter>
     </ClInclude>
@@ -201,6 +213,12 @@
       <Filter>Header Files\structure</Filter>
     </ClInclude>
     <ClInclude Include="include\utils\GameMath.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utils\KeyState.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utils\Utils.h">
       <Filter>Header Files\utils</Filter>
     </ClInclude>
     <ClInclude Include="include\map\Map.h">

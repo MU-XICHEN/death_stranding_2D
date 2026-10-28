@@ -81,6 +81,7 @@ void Monster::handleMovement(World &world, Layer &layer)
     auto &mainLayer = dynamic_cast<MainLayer &>(layer);
 
     auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
+    auto &gridSystem = playStage.gridSystem();
 
     // get candidate items for collision detection
     auto oldCenter = center();
@@ -93,7 +94,7 @@ void Monster::handleMovement(World &world, Layer &layer)
         .left = 0,
         .right = static_cast<float>(map.width()),
     };
-    GridSystem::getCandidateItemList(playStage.gridSystem(), this, distanceVec, mapBoundary, candidateItemList);
+    gridSystem.getCollisionCandidateListByItem(this, distanceVec, mapBoundary, candidateItemList);
 
     // add map tiles which may collide with the hero to the candidate list
     playStage.map().addCollisionTileToCandiList(this,
@@ -104,6 +105,6 @@ void Monster::handleMovement(World &world, Layer &layer)
 
     // calculate new position
     auto newCenter = center();
-    playStage.gridSystem().updateEntityGridIfNeed(oldCenter, newCenter, this);
+    gridSystem.updateEntityGridIfNeed(oldCenter, newCenter, this);
     return;
 }

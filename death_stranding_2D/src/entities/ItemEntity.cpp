@@ -8,6 +8,17 @@
 #include "layers/Layer.h"
 #include "stages/Play.h"
 #include "entities/AABB.h"
+#include "skills/Attack.h"
+
+ItemEntity::~ItemEntity()
+{
+    for (int i = 0; i < attacks_.size(); i++)
+    {
+        if (attacks_[i])
+            delete attacks_[i];
+        attacks_[i] = nullptr;
+    }
+}
 
 void ItemEntity::update(World &world, Layer &layer) {}
 
@@ -45,12 +56,12 @@ void ItemEntity::render(World &world, Layer &layer)
     }
 
     // draw health
-    if (state_.getHealth() > 0)
+    if (state_.health > 0)
     {
         auto &textRenderer = world.textRenderer();
         auto targetX = static_cast<int>(xRelativeToViewport);
         auto targetY = static_cast<int>(yRelativeToViewport) - GEB::TextSizeH::TEXT_SIZE_H_SMALL - HeroTextSep;
-        std::string healthText = std::to_string(state_.getHealth());
+        std::string healthText = std::to_string(state_.health);
         textRenderer.drawString(
             world,
             healthText.c_str(),
@@ -183,4 +194,9 @@ void ItemEntity::moveWithCollision(
         moveLeft(-distanceVec.x, calculateBoundary(map, GEB::Direction::Left, candidateItemHead, size).left);
     else if (distanceVec.x > 0)
         moveRight(distanceVec.x, calculateBoundary(map, GEB::Direction::Right, candidateItemHead, size).right);
+}
+
+void ItemEntity::onAttack(const AttackInfo &attackInfo)
+{
+    state_.health -= attackInfo.damage;
 }

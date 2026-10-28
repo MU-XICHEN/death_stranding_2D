@@ -66,12 +66,12 @@ namespace GamesEngineeringBase::Math
 
     const float Pi = 3.14159265358979323846f;
 
-    float toRadians(float degrees)
+    inline float toRadians(float degrees)
     {
         return degrees * (Pi / 180.0f);
     }
 
-    float toDegrees(float radians)
+    inline float toDegrees(float radians)
     {
         return radians * (180.0f / Pi);
     }

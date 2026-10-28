@@ -6,6 +6,7 @@
 #include "map/MapFactory.h"
 #include "layers/MainLayer.h"
 #include "world/World.h"
+#include "skills/HalfCircleSlash.h"
 
 PlayStage::PlayStage()
     : gridSystem_(GRID_ROWCNT, GRID_COLCNT, GRID_SIZE),
@@ -26,6 +27,8 @@ PlayStage::PlayStage()
 
     hero->setColor(255, 0, 0);
     hero->updateState(State(1, 100));
+    auto *skill = new HalfCircleSlash('J');
+    hero->addAttack(skill);
     addEntityToGridSystem(hero);
 
     auto monster = new Beast(

@@ -7,11 +7,10 @@ class World;
 class HalfCircleSlash : public Attack
 {
 public:
-    HalfCircleSlash() = default;
+    using Attack::Attack;
     virtual ~HalfCircleSlash() = default;
 
-    virtual void update(World &world) override;
+    virtual AABB getAttackContainer(World &world) override;
+    virtual bool tryHit(World &world, const ItemEntity &item, std::uintptr_t entityPtr) override;
     virtual void render(World &world) override;
-
-    virtual void initialize(const AttackInfo &attackInfo) override;
 };

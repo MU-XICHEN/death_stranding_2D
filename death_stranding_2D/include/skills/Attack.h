@@ -3,48 +3,41 @@
 #include "core/GameBase.h"
 #include "structure/Set.h"
 #include "entities/ItemEntity.h"
+#include "entities/AABB.h"
 
 class World;
 
 struct AttackInfo
 {
     // base
-    GEB::Direction direction = GEB::Direction::None;
-    GEB::Vec2 originPoint = {0.0f, 0.0f};
     float damage = 0.0f;
     float duration = 0.0f;
     float hitStartTime = 0.0f;
     float hitEndTime = 0.0f;
-
-    // for slash attacks
-    float radius = 0.0f;
+    int hitBoxWidth = 0;  // actual size of the hit box
+    int hitBoxHeight = 0; // actual size of the hit box
     float angleSpeed = 0.0f;
-    int hitBoxWidth = 0;
-    int hitBoxHeight = 0;
+
+    GEB::Vec2 originPoint = {0.0f, 0.0f};
+    GEB::Direction direction = GEB::Direction::None;
 };
 
 class Attack
 {
 public:
-    Attack() = default;
+    Attack(int key) : triggerKey_(key) {};
     virtual ~Attack() = default;
 
-    virtual void update(World &world) = 0;
     virtual void render(World &world) = 0;
 
-    virtual void initialize(const AttackInfo &attackInfo)
-    {
-        attackInfo_ = attackInfo;
+    virtual AABB getAttackContainer(World &world) = 0; // used for filtering items which might be attacked
 
-        elapsedTime_ = 0.0f;
-        active_ = false;
-    }
-
-    void begin()
+    void begin(const AttackInfo &info)
     {
         if (active_)
             return;
 
+        attackInfo_ = info;
         hitTargets_.clear();
         active_ = true;
         elapsedTime_ = 0.0f;
@@ -52,25 +45,28 @@ public:
 
     void end() { active_ = false; }
 
-    bool tryHit(unsigned int id)
+    virtual bool tryHit(World &world, const ItemEntity &item, std::uintptr_t entityPtr)
     {
         if (!active_)
             return false;
 
-        if (hitTargets_.contains(id))
+        if (hitTargets_.contains(entityPtr))
             return false;
 
-        hitTargets_.insert(id);
         return true;
     }
 
     inline const AttackInfo &attackInfo() const { return attackInfo_; }
 
+    inline const int triggerKey() const { return triggerKey_; }
+
 protected:
     bool active_ = false;
     float elapsedTime_ = 0.0f;
 
+    int triggerKey_;
+
     AttackInfo attackInfo_;
 
-    GEB::Structures::HashSet<unsigned int> hitTargets_;
+    GEB::Structures::HashSet<std::uintptr_t> hitTargets_;
 };

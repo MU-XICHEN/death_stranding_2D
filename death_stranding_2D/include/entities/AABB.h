@@ -17,5 +17,5 @@ public:
     void update(World &world, Layer &layer) override {}
     void render(World &world, Layer &layer) override {}
 
-    inline bool intersects(const AABB &aabb) const;
+    bool intersects(const AABB &aabb) const;
 };

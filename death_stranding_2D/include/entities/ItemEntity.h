@@ -10,7 +10,7 @@ struct MapInfo;
 class World;
 class Layer;
 class Attack;
-class AttackInfo;
+struct AttackInfo;
 
 // ItemEntity is used to anything which should consider collision.
 class ItemEntity : public Entity
@@ -53,6 +53,15 @@ public:
         Entity **candidateItemHead,
         int size);
 
+    void handleEvents(World &world, Layer &layer);
+    virtual void handleMovement(World &world, Layer &layer);
+    virtual void processAttack(World &world, Layer &layer);
+    virtual void tryTiggerSkills(World &world, Layer &layer);
+    virtual void onAttack(const AttackInfo &attackInfo);
+    inline void addAttack(Attack *attack) { attacks_.pushBack(attack); }
+    GEB::Structures::Array<Attack *> &attacks() { return attacks_; }
+    const GEB::Structures::Array<Attack *> &attacks() const { return attacks_; }
+
     GEB::Vec2 getOriginPoint() const
     {
         auto unitDirVec2 = GEB::Utils::transDirToUnitVec2(direction_);
@@ -61,11 +70,6 @@ public:
         return GEB::Vec2{centerX + (unitDirVec2.x * width_ / 2),
                          centerY + (unitDirVec2.y * height_ / 2)};
     }
-
-    virtual void onAttack(const AttackInfo &attackInfo);
-    inline void addAttack(Attack *attack) { attacks_.pushBack(attack); }
-    GEB::Structures::Array<Attack *> &attacks() { return attacks_; }
-    const GEB::Structures::Array<Attack *> &attacks() const { return attacks_; }
 
 protected:
     GEB::Color color_{0, 0, 0};

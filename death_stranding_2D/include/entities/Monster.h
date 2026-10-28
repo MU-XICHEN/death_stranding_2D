@@ -13,11 +13,8 @@ public:
 
     virtual ~Monster() = default;
 
-    // virtual void moveWithCollision(
-    //     GEB::Vec2 distanceVec,
-    //     const MapInfo &map,
-    //     Entity **candidateItemHead,
-    //     int size) override;
+    virtual void update(World &world, Layer &layer) override;
+    virtual void handleMovement(World &world, Layer &layer) override;
 
 protected:
     static GEB::Direction transDirVecToDiretion(const GEB::Vec2 &dirVec, GEB::Direction prevDirection);
@@ -29,9 +26,7 @@ protected:
     }
 
     void awaken() { awakened_ = true; }
-    virtual void move(World &world, Layer &layer) = 0;
     virtual void checkDangerDistance(World &world, Layer &layer);
-    virtual void handleMovement(World &world, Layer &layer);
 
     bool awakened_ = false;
     float dangerDistance_;
@@ -44,9 +39,6 @@ public:
           float speed = M_Beast_PIXEL_PER_SEC,
           float distance = M_Beast_DANGER_DISTANCE)
         : Monster(x, y, width, height, speed, distance) {}
-
-    void move(World &world, Layer &layer) override;
-    void update(World &world, Layer &layer) override;
 };
 
 class Ghost : public Monster
@@ -57,8 +49,6 @@ public:
           float distance = M_Ghost_DANGER_DISTANCE)
         : Monster(x, y, width, height, speed, distance) {}
 
-    void move(World &world, Layer &layer) override;
-    void update(World &world, Layer &layer) override;
     void render(World &world, Layer &layer) override;
 
 protected:

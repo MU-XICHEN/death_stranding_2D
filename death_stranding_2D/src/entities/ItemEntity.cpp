@@ -6,9 +6,11 @@
 #include "world/World.h"
 #include "map/Map.h"
 #include "layers/Layer.h"
+#include "layers/MainLayer.h"
 #include "stages/Play.h"
 #include "entities/AABB.h"
 #include "skills/Attack.h"
+#include "structure/Array.h"
 
 ItemEntity::~ItemEntity()
 {
@@ -20,7 +22,10 @@ ItemEntity::~ItemEntity()
     }
 }
 
-void ItemEntity::update(World &world, Layer &layer) {}
+void ItemEntity::update(World &world, Layer &layer)
+{
+    handleEvents(world, layer);
+}
 
 void ItemEntity::render(World &world, Layer &layer)
 {
@@ -195,6 +200,74 @@ void ItemEntity::moveWithCollision(
     else if (distanceVec.x > 0)
         moveRight(distanceVec.x, calculateBoundary(map, GEB::Direction::Right, candidateItemHead, size).right);
 }
+
+void ItemEntity::handleEvents(World &world, Layer &layer)
+{
+    handleMovement(world, layer);  // handle movement for this frame
+    processAttack(world, layer);   // handle attacks for this frame
+    tryTiggerSkills(world, layer); // trigger skill for next frame
+}
+
+void ItemEntity::handleMovement(World &world, Layer &layer) {}
+void ItemEntity::processAttack(World &world, Layer &layer)
+{
+    auto &canvas = world.canvas();
+
+    auto &mainLayer = dynamic_cast<MainLayer &>(layer);
+    auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
+    auto &gridSystem = playStage.gridSystem();
+
+    auto dt = world.gameInfo().dt();
+
+    GEB::Boundary mapBoundary{
+        .top = 0,
+        .bottom = static_cast<float>(playStage.map().height()),
+        .left = 0,
+        .right = static_cast<float>(playStage.map().width()),
+    };
+
+    for (int i = 0; i < attacks_.size(); i++)
+    {
+        auto *attack = attacks_[i];
+        if (!attack)
+            continue;
+
+        if (!attack->isActive())
+            continue;
+
+        attack->updateElapsedTime(dt);
+
+        if (attack->elapsedTime() >= attack->attackInfo().duration)
+        {
+            attack->end();
+            continue;
+        }
+
+        // attackContainer is used for filtering candidate itemlist which might handle the attack
+        // The actual hit detection happens in 'virtual Attack::tryHit' method.
+        // pointers in list do not need to be owned, just references to existing entities, like 'this'.
+        AABB attackContainer = attack->getAttackContainer(world);
+        GEB::Structures::Array<Entity *> candidateItemList;
+        gridSystem.getCandidateListByAABB(this, attackContainer, mapBoundary, candidateItemList);
+
+        // try hit
+        for (int j = 0; j < candidateItemList.size(); ++j)
+        {
+            auto *entity = dynamic_cast<ItemEntity *>(candidateItemList[j]);
+            if (!entity)
+                continue;
+
+            bool hitted = attack->tryHit(world, *this, reinterpret_cast<std::uintptr_t>(entity));
+
+            if (hitted)
+            {
+                const auto &attackInfo = attack->attackInfo();
+                entity->onAttack(attackInfo);
+            }
+        }
+    }
+}
+void ItemEntity::tryTiggerSkills(World &world, Layer &layer) {}
 
 void ItemEntity::onAttack(const AttackInfo &attackInfo)
 {

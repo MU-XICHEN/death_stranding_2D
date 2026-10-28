@@ -154,7 +154,6 @@
     <ClCompile Include="src\entities\ItemEntity.cpp" />
     <ClCompile Include="src\entities\Hero.cpp" />
     <ClCompile Include="src\entities\Monster.cpp" />
-    <ClCompile Include="src\entities\Beast.cpp" />
     <ClCompile Include="src\entities\Ghost.cpp" />
     <ClCompile Include="src\stages\Intro.cpp" />
     <ClCompile Include="src\stages\Menu.cpp" />

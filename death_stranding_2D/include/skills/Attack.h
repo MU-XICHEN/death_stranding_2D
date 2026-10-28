@@ -10,7 +10,7 @@ class World;
 struct AttackInfo
 {
     // base
-    float damage = 0.0f;
+    int damage = 0;
     float duration = 0.0f;
     float hitStartTime = 0.0f;
     float hitEndTime = 0.0f;

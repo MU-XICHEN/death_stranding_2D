@@ -2,19 +2,6 @@
 #include "world/World.h"
 #include "layers/Layer.h"
 
-// Ghost
-void Ghost::move(World &world, Layer &layer)
-{
-    // Todo: ghosts have their own movement manner.
-    if (!awakened_)
-        return;
-
-    float dt = world.gameInfo().dt();
-    float distance = dt * speed_;
-
-    // todo: handle move
-}
-
 void Ghost::checkDangerDistance(World &world, Layer &layer)
 {
     if (awakened_)
@@ -29,12 +16,6 @@ void Ghost::checkDangerDistance(World &world, Layer &layer)
         appear();
         awaken();
     }
-}
-
-void Ghost::update(World &world, Layer &layer)
-{
-    checkDangerDistance(world, layer);
-    move(world, layer);
 }
 
 void Ghost::render(World &world, Layer &layer)

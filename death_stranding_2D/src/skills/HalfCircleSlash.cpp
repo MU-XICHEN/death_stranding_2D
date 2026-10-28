@@ -13,8 +13,8 @@ void getRotatedHitBoxPoints(const AttackInfo &attackInfo, float elapsedTime, GEB
     startDirVec2.x = unitDirVec2.y;
     startDirVec2.y = -unitDirVec2.x;
 
-    const auto hitBoxWidth = attackInfo.hitBoxWidth;
-    const auto hitBoxHeight = attackInfo.hitBoxHeight;
+    const auto hitBoxWidth = static_cast<float>(attackInfo.hitBoxWidth);
+    const auto hitBoxHeight = static_cast<float>(attackInfo.hitBoxHeight);
 
     GEB::Vec2 originPoint2 = attackInfo.originPoint + (startDirVec2 * hitBoxHeight);
 

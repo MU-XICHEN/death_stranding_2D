@@ -14,12 +14,6 @@ using GEBArray = GEB::Structures::Array<T>;
 GEB::Vec2 translateEventsToDirectionVec2(const GamesEngineeringBase::Window &canvas);
 GEB::Direction translateEventsToDirection(const GamesEngineeringBase::Window &canvas, GEB::Direction prevDirection);
 
-void Hero::handleEvents(World &world, Layer &layer)
-{
-    handleMovement(world, layer);
-    handleSkills(world, layer);
-}
-
 void Hero::handleMovement(World &world, Layer &layer)
 {
     const MapInfo &map = world.gameInfo().mapInfo();
@@ -64,64 +58,9 @@ void Hero::handleMovement(World &world, Layer &layer)
     playStage.gridSystem().updateEntityGridIfNeed(oldCenter, newCenter, this);
 }
 
-void Hero::handleSkills(World &world, Layer &layer)
+void Hero::tryTiggerSkills(World &world, Layer &layer)
 {
     auto &canvas = world.canvas();
-
-    auto &mainLayer = dynamic_cast<MainLayer &>(layer);
-    auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
-    auto &gridSystem = playStage.gridSystem();
-
-    auto dt = world.gameInfo().dt();
-
-    GEB::Boundary mapBoundary{
-        .top = 0,
-        .bottom = static_cast<float>(playStage.map().height()),
-        .left = 0,
-        .right = static_cast<float>(playStage.map().width()),
-    };
-
-    for (int i = 0; i < attacks_.size(); i++)
-    {
-        auto *attack = attacks_[i];
-        if (!attack)
-            continue;
-
-        if (!attack->isActive())
-            continue;
-
-        attack->updateElapsedTime(dt);
-
-        if (attack->elapsedTime() >= attack->attackInfo().duration)
-        {
-            attack->end();
-            continue;
-        }
-
-        // attackContainer is used for filtering candidate itemlist which might handle the attack
-        // The actual hit detection happens in 'virtual Attack::tryHit' method.
-        // pointers in list do not need to be owned, just references to existing entities, like 'this'.
-        AABB attackContainer = attack->getAttackContainer(world);
-        GEBArray<Entity *> candidateItemList;
-        gridSystem.getCandidateListByAABB(this, attackContainer, mapBoundary, candidateItemList);
-
-        // try hit
-        for (int j = 0; j < candidateItemList.size(); ++j)
-        {
-            auto *entity = dynamic_cast<ItemEntity *>(candidateItemList[j]);
-            if (!entity)
-                continue;
-
-            bool hitted = attack->tryHit(world, *this, reinterpret_cast<std::uintptr_t>(entity));
-
-            if (hitted)
-            {
-                const auto &attackInfo = attack->attackInfo();
-                entity->onAttack(attackInfo);
-            }
-        }
-    }
-
     // try begin attacks
     for (int i = 0; i < attacks_.size(); ++i)
     {
@@ -141,8 +80,7 @@ void Hero::handleSkills(World &world, Layer &layer)
 
 void Hero::update(World &world, Layer &layer)
 {
-    // handle keyboard events for hero
-    handleEvents(world, layer);
+    ItemEntity::update(world, layer);
 
     HeroInfo heroInfo{
         .x = x_,
@@ -162,7 +100,7 @@ AttackInfo Hero::createAttackInfo()
     if constexpr (std::is_same_v<T, HalfCircleSlash>)
     {
         AttackInfo slashAttackInfo{
-            .damage = 10.0f,
+            .damage = 10,
             .duration = 0.3f,
             .hitStartTime = 0.06f,
             .hitEndTime = 0.14f,

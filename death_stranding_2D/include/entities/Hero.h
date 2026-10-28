@@ -20,12 +20,10 @@ public:
     using ItemEntity::ItemEntity;
 
     void update(World &world, Layer &layer) override;
+    void tryTiggerSkills(World &world, Layer &layer) override;
+    void handleMovement(World &world, Layer &layer) override;
 
 private:
-    void handleMovement(World &world, Layer &layer);
-    void handleSkills(World &world, Layer &layer);
-    void handleEvents(World &world, Layer &layer);
-
     template <typename T>
     AttackInfo createAttackInfo();
 

@@ -58,7 +58,6 @@ GEB::Direction Monster::transDirVecToDiretion(const GEB::Vec2 &dirVec, GEB::Dire
 
 void Monster::checkDangerDistance(World &world, Layer &layer)
 {
-
     if (awakened_)
         return;
     GEB::Position heroCenter = world.gameInfo().heroInfo().center();
@@ -73,6 +72,9 @@ void Monster::checkDangerDistance(World &world, Layer &layer)
 
 void Monster::handleMovement(World &world, Layer &layer)
 {
+    if (!awakened_)
+        return;
+
     const MapInfo &map = world.gameInfo().mapInfo();
     auto &canvas = world.canvas();
     float dt = world.gameInfo().dt();
@@ -108,4 +110,10 @@ void Monster::handleMovement(World &world, Layer &layer)
     auto newCenter = center();
     gridSystem.updateEntityGridIfNeed(oldCenter, newCenter, this);
     return;
+}
+
+void Monster::update(World &world, Layer &layer)
+{
+    checkDangerDistance(world, layer);
+    ItemEntity::update(world, layer);
 }

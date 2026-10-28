@@ -27,12 +27,11 @@ void PlayStage::initialize()
         heroPosition.x,
         heroPosition.y,
         ROLE_SIZE,
-        ROLE_SIZE,
-        PIXEL_PER_SEC);
+        ROLE_SIZE);
 
     hero->setColor(255, 0, 0);
     hero->updateState(State(1, 100));
-    auto *skill = new HalfCircleSlash('J');
+    auto *skill = new HalfCircleSlash('J', true);
     hero->addAttack(skill);
     addEntityToGridSystem(hero);
 

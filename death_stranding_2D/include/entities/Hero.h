@@ -12,19 +12,28 @@ struct HeroInfo
     GEB::Position center() const { return {x + width / 2.0f, y + height / 2.0f}; }
 };
 
+class HeroImpl;
+
 class Hero : public ItemEntity
 {
+
+    friend class HeroImpl;
+
 public:
-    explicit Hero()
-        : ItemEntity(0, 0, ROLE_SIZE, ROLE_SIZE) {}
-    using ItemEntity::ItemEntity;
+    explicit Hero(
+        float x,
+        float y,
+        int width,
+        int height,
+        float speed = PIXEL_PER_SEC);
+    virtual ~Hero();
 
     void update(World &world, Layer &layer) override;
     void tryTiggerAttacks(World &world, Layer &layer) override;
     void handleMovement(World &world, Layer &layer) override;
-
     AttackInfo createAttackInfo(Attack *attack) override;
 
 private:
     HeroInfo heroInfo_;
+    HeroImpl *impl_;
 };

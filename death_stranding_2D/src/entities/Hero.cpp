@@ -18,6 +18,44 @@ namespace GamesEngineeringBase::Utils
     GEB::Direction translateEventsToDirection(const GamesEngineeringBase::Window &canvas, GEB::Direction prevDirection);
 }
 
+class HeroImpl
+{
+public:
+    explicit HeroImpl(Hero *hero)
+        : host_(hero) {}
+
+    bool checkLockDirection() const
+    {
+        for (int i = 0; i < host_->attacks_.size(); ++i)
+        {
+            if (!host_->attacks_[i])
+                continue;
+            if (host_->attacks_[i]->lockDirection())
+                return true;
+        }
+        return false;
+    }
+
+private:
+    Hero *host_;
+};
+
+Hero::Hero(
+    float x,
+    float y,
+    int width,
+    int height,
+    float speed)
+    : ItemEntity(x, y, width, height, speed),
+      impl_(new HeroImpl(this)) {}
+
+Hero::~Hero()
+{
+    if (impl_)
+        delete impl_;
+    impl_ = nullptr;
+}
+
 void Hero::handleMovement(World &world, Layer &layer)
 {
     const MapInfo &map = world.gameInfo().mapInfo();
@@ -31,7 +69,11 @@ void Hero::handleMovement(World &world, Layer &layer)
 
     auto &gridSystem = playStage.gridSystem();
 
-    direction_ = GEB::Utils::translateEventsToDirection(canvas, direction_);
+    bool lockDirection = impl_->checkLockDirection();
+
+    if (!lockDirection)
+        direction_ = GEB::Utils::translateEventsToDirection(canvas, direction_);
+
     auto distanceVec = GEB::Math::normalize(GEB::Utils::translateEventsToDirectionVec2(canvas)) * distance;
 
     // get candidate items for collision detection

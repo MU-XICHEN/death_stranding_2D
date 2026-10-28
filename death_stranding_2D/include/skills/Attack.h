@@ -24,7 +24,8 @@ struct AttackInfo
 class Attack
 {
 public:
-    Attack(int key) : triggerKey_(key) {};
+    Attack(int key, bool lockDirection = false)
+        : triggerKey_(key), lockDirection_(lockDirection) {};
     virtual ~Attack() = default;
 
     virtual void render(World &world) = 0;
@@ -44,16 +45,14 @@ public:
     inline const int triggerKey() const { return triggerKey_; }
     inline bool isActive() const { return active_; }
     inline float elapsedTime() const { return elapsedTime_; }
+    inline bool lockDirection() const { return active_ && lockDirection_; }
 
 protected:
     bool active_ = false;
     float elapsedTime_ = 0.0f;
-
     int triggerKey_;
-
     AttackInfo attackInfo_;
-
     GEB::Structures::HashSet<std::uintptr_t> hitTargets_;
-
     ItemEntity *owner_ = nullptr;
+    bool lockDirection_ = false;
 };

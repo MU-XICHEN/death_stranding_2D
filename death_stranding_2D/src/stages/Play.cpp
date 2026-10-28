@@ -25,6 +25,7 @@ PlayStage::PlayStage()
         PIXEL_PER_SEC);
 
     hero->setColor(255, 0, 0);
+    hero->updateState(State(1, 100));
     addEntityToGridSystem(hero);
 
     auto monster = new Beast(
@@ -33,6 +34,7 @@ PlayStage::PlayStage()
         ROLE_SIZE,
         ROLE_SIZE);
     monster->setColor(0, 255, 0);
+    monster->updateState(State(2, 100));
     addEntityToGridSystem(monster);
 
     auto monster2 = new Beast(
@@ -41,6 +43,7 @@ PlayStage::PlayStage()
         ROLE_SIZE,
         ROLE_SIZE);
     monster2->setColor(0, 255, 0);
+    monster2->updateState(State(3, 100));
     addEntityToGridSystem(monster2);
 
     // todo: other sections like information panel.

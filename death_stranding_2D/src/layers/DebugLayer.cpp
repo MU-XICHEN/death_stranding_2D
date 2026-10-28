@@ -32,7 +32,7 @@ public:
     void render(World &world, Layer &layer) override
     {
         const auto &txtRdr = world.textRenderer();
-        txtRdr.drawString(world, fpsText_.c_str(), 20, 20, GEB::TextSize::TEXT_SIZE_MEDIUM);
+        txtRdr.drawString(world, fpsText_.c_str(), 20, 20, GEB::TextSizeType::TEXT_SIZE_MEDIUM);
     }
 
 private:

@@ -3,7 +3,7 @@
 
 // ------------------------------------------ Layer ------------------------------------------
 
-const int initialIndex = 0;
+const int initialIndex = 2;
 
 MainLayer::MainLayer()
     : stageCreator_(stageCreator),

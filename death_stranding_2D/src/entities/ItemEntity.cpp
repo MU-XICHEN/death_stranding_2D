@@ -1,13 +1,13 @@
 #include <iostream>
+#include <string>
 
 #include "entities/ItemEntity.h"
+#include "GamesEngineeringBase.h"
 #include "world/World.h"
 #include "map/Map.h"
 #include "layers/Layer.h"
 #include "stages/Play.h"
 #include "entities/AABB.h"
-
-
 
 void ItemEntity::update(World &world, Layer &layer) {}
 
@@ -42,6 +42,21 @@ void ItemEntity::render(World &world, Layer &layer)
                         color_.g,
                         color_.b);
         }
+    }
+
+    // draw health
+    if (state_.getHealth() > 0)
+    {
+        auto &textRenderer = world.textRenderer();
+        auto targetX = static_cast<int>(xRelativeToViewport);
+        auto targetY = static_cast<int>(yRelativeToViewport) - GEB::TextSizeH::TEXT_SIZE_H_SMALL - HeroTextSep;
+        std::string healthText = std::to_string(state_.getHealth());
+        textRenderer.drawString(
+            world,
+            healthText.c_str(),
+            targetX,
+            targetY,
+            GEB::TextSizeType::TEXT_SIZE_SMALL);
     }
 }
 

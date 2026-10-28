@@ -40,3 +40,6 @@
 #define M_Beast_DANGER_DISTANCE 100.0f
 #define M_Ghost_PIXEL_PER_SEC 175.0f
 #define M_Ghost_DANGER_DISTANCE 50.0f
+
+// Text
+#define HeroTextSep 5

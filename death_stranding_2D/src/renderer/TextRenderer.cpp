@@ -3,19 +3,25 @@
 #include "world/World.h"
 #include "world/AssetManager.h"
 
-const int TEXT_WIDTH[TEXT_SIZE_COUNT] = {9, 12, 18};
-const int TEXT_HEIGHT[TEXT_SIZE_COUNT] = {18, 24, 36};
+const int TEXT_WIDTH[TEXT_SIZE_COUNT] = {
+    GEB::TextSizeW::TEXT_SIZE_W_SMALL,
+    GEB::TextSizeW::TEXT_SIZE_W_MEDIUM,
+    GEB::TextSizeW::TEXT_SIZE_W_LARGE};
+const int TEXT_HEIGHT[TEXT_SIZE_COUNT] = {
+    GEB::TextSizeH::TEXT_SIZE_H_SMALL,
+    GEB::TextSizeH::TEXT_SIZE_H_MEDIUM,
+    GEB::TextSizeH::TEXT_SIZE_H_LARGE};
 const int CHAR_COUNT_ROW = 16;
 
-AssetId translateTextSizeToAssetId(GEB::TextSize size)
+AssetId translateTextSizeToAssetId(GEB::TextSizeType size)
 {
     switch (size)
     {
-    case GEB::TextSize::TEXT_SIZE_SMALL:
+    case GEB::TextSizeType::TEXT_SIZE_SMALL:
         return AssetId::TextSmall;
-    case GEB::TextSize::TEXT_SIZE_MEDIUM:
+    case GEB::TextSizeType::TEXT_SIZE_MEDIUM:
         return AssetId::TextMedium;
-    case GEB::TextSize::TEXT_SIZE_LARGE:
+    case GEB::TextSizeType::TEXT_SIZE_LARGE:
         return AssetId::TextLarge;
     default:
         return AssetId::None;
@@ -23,7 +29,7 @@ AssetId translateTextSizeToAssetId(GEB::TextSize size)
 }
 
 void TextRenderer::drawCharacter(World &world,
-                                 GEB::TextSize textSize,
+                                 GEB::TextSizeType textSize,
                                  unsigned int x,
                                  unsigned int y,
                                  unsigned int row,
@@ -64,7 +70,7 @@ void TextRenderer::drawString(World &world,
                               const char *text,
                               int x,
                               int y,
-                              GEB::TextSize textSize) const
+                              GEB::TextSizeType textSize) const
 {
 
     auto id = translateTextSizeToAssetId(textSize);

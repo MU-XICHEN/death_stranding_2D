@@ -29,6 +29,8 @@ public:
         color_.b = b;
     }
 
+    void updateState(const State &state) { state_ = state; }
+
     void calculateBoundaryTop(GEB::Boundary &boundary, const Entity *barrierItem);
     void calculateBoundaryBottom(GEB::Boundary &boundary, const Entity *barrierItem);
     void calculateBoundaryLeft(GEB::Boundary &boundary, const Entity *barrierItem);

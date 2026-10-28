@@ -95,8 +95,6 @@ void Monster::handleMovement(World &world, Layer &layer)
     };
     GridSystem::getCandidateItemList(playStage.gridSystem(), this, distanceVec, mapBoundary, candidateItemList);
 
-    auto direction = Monster::transDirVecToDiretion(distanceVec);
-
     // add map tiles which may collide with the hero to the candidate list
     playStage.map().addCollisionTileToCandiList(this,
                                                 distanceVec,

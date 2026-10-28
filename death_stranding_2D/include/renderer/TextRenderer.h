@@ -17,11 +17,11 @@ public:
     TextRenderer(const TextRenderer &) = delete;
     TextRenderer &operator=(const TextRenderer &) = delete;
 
-    void drawString(World &world, const char *text, int x, int y, GEB::TextSize size) const;
+    void drawString(World &world, const char *text, int x, int y, GEB::TextSizeType size) const;
 
 private:
     void drawCharacter(World &world,
-                       GEB::TextSize size,
+                       GEB::TextSizeType size,
                        unsigned int x,
                        unsigned int y,
                        unsigned int row,

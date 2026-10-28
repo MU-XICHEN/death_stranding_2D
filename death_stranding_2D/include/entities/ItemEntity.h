@@ -3,6 +3,7 @@
 #include "entities/Entity.h"
 #include "entities/State.h"
 #include "structure/Array.h"
+#include "utils/Utils.h"
 
 struct MapInfo;
 
@@ -52,13 +53,19 @@ public:
         Entity **candidateItemHead,
         int size);
 
-    virtual void onAttack(const AttackInfo &attackInfo);
-
-    inline void addAttack(Attack *attack)
+    GEB::Vec2 getOriginPoint() const
     {
-        attacks_.pushBack(attack);
+        auto unitDirVec2 = GEB::Utils::transDirToUnitVec2(direction_);
+        auto centerX = center().x;
+        auto centerY = center().y;
+        return GEB::Vec2{centerX + (unitDirVec2.x * width_ / 2),
+                         centerY + (unitDirVec2.y * height_ / 2)};
     }
+
+    virtual void onAttack(const AttackInfo &attackInfo);
+    inline void addAttack(Attack *attack) { attacks_.pushBack(attack); }
     GEB::Structures::Array<Attack *> &attacks() { return attacks_; }
+    const GEB::Structures::Array<Attack *> &attacks() const { return attacks_; }
 
 protected:
     GEB::Color color_{0, 0, 0};

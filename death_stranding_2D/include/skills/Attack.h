@@ -56,9 +56,13 @@ public:
         return true;
     }
 
+    inline void updateElapsedTime(float dt) { elapsedTime_ += dt; }
+
     inline const AttackInfo &attackInfo() const { return attackInfo_; }
 
     inline const int triggerKey() const { return triggerKey_; }
+
+    inline bool isActive() const { return active_; }
 
 protected:
     bool active_ = false;

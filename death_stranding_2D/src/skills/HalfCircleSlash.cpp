@@ -3,12 +3,10 @@
 #include "utils/Utils.h"
 #include "entities/AABB.h"
 
-void getRotatedHitBoxPoints(const AttackInfo &attackInfo, float dt, GEB::Vec2 hitBoxPoints[4])
+void getRotatedHitBoxPoints(const AttackInfo &attackInfo, float elapsedTime, GEB::Vec2 hitBoxPoints[4])
 {
-    auto degree = attackInfo.angleSpeed * dt;
+    auto degree = attackInfo.angleSpeed * elapsedTime;
 
-
-    // todo: check
     const auto unitDirVec2 = GEB::Utils::transDirToUnitVec2(attackInfo.direction);
 
     const auto hitBoxWidth = attackInfo.hitBoxWidth;
@@ -34,12 +32,10 @@ void getRotatedHitBoxPoints(const AttackInfo &attackInfo, float dt, GEB::Vec2 hi
 
 AABB HalfCircleSlash::getAttackContainer(World &world)
 {
-    const float dt = world.gameInfo().dt();
-
     auto &attackInfo = this->attackInfo();
 
     GEB::Vec2 hitBoxPoints[4];
-    getRotatedHitBoxPoints(attackInfo, dt, hitBoxPoints);
+    getRotatedHitBoxPoints(attackInfo, elapsedTime_, hitBoxPoints);
 
     float minX = hitBoxPoints[0].x;
     float maxX = hitBoxPoints[0].x;
@@ -68,11 +64,7 @@ bool HalfCircleSlash::tryHit(World &world, const ItemEntity &item, std::uintptr_
 
     // After [!Attack::tryHit], it means that the attack is active,
     // and hitTargets hasn't contained this id.
-
-    const float dt = world.gameInfo().dt();
     const auto &attackInfo = this->attackInfo();
-
-    elapsedTime_ += dt;
 
     // todo: In the future, maybe support the remote attach here.
     if (elapsedTime_ >= attackInfo.duration)
@@ -85,7 +77,7 @@ bool HalfCircleSlash::tryHit(World &world, const ItemEntity &item, std::uintptr_
         return false;
 
     GEB::Vec2 points[4];
-    getRotatedHitBoxPoints(attackInfo, dt, points);
+    getRotatedHitBoxPoints(attackInfo, elapsedTime_, points);
 
     // SAT
     const Entity *entity = reinterpret_cast<const Entity *>(entityPtr);

@@ -5,7 +5,7 @@
 
 namespace GamesEngineeringBase::Utils
 {
-    GEB::Vec2 rotateClockwise(GEB::Vec2 point, GEB::Vec2 origin, float degrees)
+    static GEB::Vec2 rotateClockwise(GEB::Vec2 point, GEB::Vec2 origin, float degrees)
     {
         float radians = GEB::Math::toRadians(degrees);
         float sinRadians = std::sin(radians);
@@ -22,7 +22,7 @@ namespace GamesEngineeringBase::Utils
         return point;
     }
 
-    GEB::Vec2 transDirToUnitVec2(GEB::Direction direction)
+    static GEB::Vec2 transDirToUnitVec2(GEB::Direction direction)
     {
         switch (direction)
         {
@@ -47,7 +47,7 @@ namespace GamesEngineeringBase::Utils
         }
     }
 
-    bool SAT(const GEB::Vec2 *rectA, const GEB::Vec2 *rectB)
+    static bool SAT(const GEB::Vec2 *rectA, const GEB::Vec2 *rectB)
     {
         const int size = 4;
         GEB::Pair<float, float> projectionAY;
@@ -63,19 +63,19 @@ namespace GamesEngineeringBase::Utils
 
         for (int i = 0; i < size; ++i)
         {
-            projectionAX.first = std::min(projectionAX.first, rectA[i].x);
-            projectionAX.second = std::max(projectionAX.second, rectA[i].x);
+            projectionAX.first = GEB::Math::min(projectionAX.first, rectA[i].x);
+            projectionAX.second = GEB::Math::max(projectionAX.second, rectA[i].x);
 
-            projectionAY.first = std::min(projectionAY.first, rectA[i].y);
-            projectionAY.second = std::max(projectionAY.second, rectA[i].y);
+            projectionAY.first = GEB::Math::min(projectionAY.first, rectA[i].y);
+            projectionAY.second = GEB::Math::max(projectionAY.second, rectA[i].y);
         }
         for (int i = 0; i < size; ++i)
         {
-            projectionBX.first = std::min(projectionBX.first, rectB[i].x);
-            projectionBX.second = std::max(projectionBX.second, rectB[i].x);
+            projectionBX.first = GEB::Math::min(projectionBX.first, rectB[i].x);
+            projectionBX.second = GEB::Math::max(projectionBX.second, rectB[i].x);
 
-            projectionBY.first = std::min(projectionBY.first, rectB[i].y);
-            projectionBY.second = std::max(projectionBY.second, rectB[i].y);
+            projectionBY.first = GEB::Math::min(projectionBY.first, rectB[i].y);
+            projectionBY.second = GEB::Math::max(projectionBY.second, rectB[i].y);
         }
 
         if (projectionAX.second < projectionBX.first || projectionBX.second < projectionAX.first)

@@ -72,6 +72,8 @@ void Hero::handleSkills(World &world, Layer &layer)
     auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
     auto &gridSystem = playStage.gridSystem();
 
+    auto dt = world.gameInfo().dt();
+
     GEB::Boundary mapBoundary{
         .top = 0,
         .bottom = static_cast<float>(playStage.map().height()),
@@ -85,6 +87,8 @@ void Hero::handleSkills(World &world, Layer &layer)
         if (!attack)
             continue;
 
+        attack->updateElapsedTime(dt);
+
         // attackContainer is used for filtering candidate itemlist which might handle the attack
         // The actual hit detection happens in 'virtual Attack::tryHit' method.
         // pointers in list do not need to be owned, just references to existing entities, like 'this'.
@@ -95,11 +99,17 @@ void Hero::handleSkills(World &world, Layer &layer)
         // try hit
         for (int j = 0; j < candidateItemList.size(); ++j)
         {
-            auto *entity = candidateItemList[j];
+            auto *entity = dynamic_cast<ItemEntity *>(candidateItemList[j]);
             if (!entity)
                 continue;
 
-            attack->tryHit(world, *this, reinterpret_cast<std::uintptr_t>(entity));
+            bool hitted = attack->tryHit(world, *this, reinterpret_cast<std::uintptr_t>(entity));
+
+            if (hitted)
+            {
+                const auto &attackInfo = attack->attackInfo();
+                entity->onAttack(attackInfo);
+            }
         }
     }
 
@@ -110,6 +120,10 @@ void Hero::handleSkills(World &world, Layer &layer)
             continue;
         if (canvas.keyPressed(attacks_[i]->triggerKey()))
         {
+            if (attacks_[i]->isActive())
+                continue;
+
+            // handle different types of attacks
             if (dynamic_cast<HalfCircleSlash *>(attacks_[i]))
                 attacks_[i]->begin(createAttackInfo<HalfCircleSlash>());
         }
@@ -138,7 +152,6 @@ AttackInfo Hero::createAttackInfo()
 {
     if constexpr (std::is_same_v<T, HalfCircleSlash>)
     {
-        // todo: creat attackInfo
         AttackInfo slashAttackInfo{
             .damage = 10.0f,
             .duration = 0.3f,
@@ -147,14 +160,14 @@ AttackInfo Hero::createAttackInfo()
             .hitBoxWidth = 80,
             .hitBoxHeight = 30,
             .angleSpeed = 3000.0f, // 3000 ° per second
-            .originPoint = {0.0f, 0.0f},
+            .originPoint = getOriginPoint(),
             .direction = direction_,
         };
         return slashAttackInfo;
     }
     else
     {
-        return 0;
+        return AttackInfo{};
     }
 }
 

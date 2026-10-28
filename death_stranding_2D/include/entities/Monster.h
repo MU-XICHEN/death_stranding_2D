@@ -20,7 +20,7 @@ public:
     //     int size) override;
 
 protected:
-    static GEB::Direction transDirVecToDiretion(const GEB::Vec2 &dirVec);
+    static GEB::Direction transDirVecToDiretion(const GEB::Vec2 &dirVec, GEB::Direction prevDirection);
     static inline GEB::Vec2 calculateDirVecToHero(GEB::Position monsterCenter, GEB::Position heroCenter)
     {
         float dx = heroCenter.x - monsterCenter.x;

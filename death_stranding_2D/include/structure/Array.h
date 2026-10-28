@@ -61,7 +61,6 @@ namespace GamesEngineeringBase::Structures
                 data_ = newData;
                 capacity_ = newCapacity;
             }
-
             data_[size_++] = value;
         }
 

@@ -12,7 +12,7 @@ template <typename T>
 using GEBArray = GEB::Structures::Array<T>;
 
 GEB::Vec2 translateEventsToDirectionVec2(const GamesEngineeringBase::Window &canvas);
-GEB::Direction translateEventsToDirection(const GamesEngineeringBase::Window &canvas);
+GEB::Direction translateEventsToDirection(const GamesEngineeringBase::Window &canvas, GEB::Direction prevDirection);
 
 void Hero::handleEvents(World &world, Layer &layer)
 {
@@ -33,7 +33,7 @@ void Hero::handleMovement(World &world, Layer &layer)
 
     auto &gridSystem = playStage.gridSystem();
 
-    direction_ = translateEventsToDirection(canvas);
+    direction_ = translateEventsToDirection(canvas, direction_);
     auto distanceVec = GEB::Math::normalize(translateEventsToDirectionVec2(canvas)) * distance;
 
     // get candidate items for collision detection
@@ -85,6 +85,9 @@ void Hero::handleSkills(World &world, Layer &layer)
     {
         auto *attack = attacks_[i];
         if (!attack)
+            continue;
+
+        if (!attack->isActive())
             continue;
 
         attack->updateElapsedTime(dt);
@@ -171,26 +174,44 @@ AttackInfo Hero::createAttackInfo()
     }
 }
 
-GEB::Direction translateEventsToDirection(const GamesEngineeringBase::Window &canvas)
+GEB::Direction translateEventsToDirection(const GamesEngineeringBase::Window &canvas, GEB::Direction prevDirection)
 {
     if (canvas.keyPressed('W') && canvas.keyPressed('A'))
         return GEB::Direction::UpLeft;
-    if (canvas.keyPressed('W') && canvas.keyPressed('D'))
+    else if (canvas.keyPressed('W') && canvas.keyPressed('D'))
         return GEB::Direction::UpRight;
-    if (canvas.keyPressed('S') && canvas.keyPressed('A'))
+    else if (canvas.keyPressed('S') && canvas.keyPressed('A'))
         return GEB::Direction::DownLeft;
-    if (canvas.keyPressed('S') && canvas.keyPressed('D'))
+    else if (canvas.keyPressed('S') && canvas.keyPressed('D'))
         return GEB::Direction::DownRight;
-    if (canvas.keyPressed('W'))
+    else if (canvas.keyPressed('W'))
         return GEB::Direction::Up;
-    if (canvas.keyPressed('S'))
+    else if (canvas.keyPressed('S'))
         return GEB::Direction::Down;
-    if (canvas.keyPressed('A'))
+    else if (canvas.keyPressed('A'))
         return GEB::Direction::Left;
-    if (canvas.keyPressed('D'))
+    else if (canvas.keyPressed('D'))
         return GEB::Direction::Right;
 
-    return GEB::Direction::None;
+    // up\down\left\right keys
+    else if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_LEFT))
+        return GEB::Direction::UpLeft;
+    else if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_RIGHT))
+        return GEB::Direction::UpRight;
+    else if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_LEFT))
+        return GEB::Direction::DownLeft;
+    else if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_RIGHT))
+        return GEB::Direction::DownRight;
+    else if (canvas.keyPressed(VK_UP))
+        return GEB::Direction::Up;
+    else if (canvas.keyPressed(VK_DOWN))
+        return GEB::Direction::Down;
+    else if (canvas.keyPressed(VK_LEFT))
+        return GEB::Direction::Left;
+    else if (canvas.keyPressed(VK_RIGHT))
+        return GEB::Direction::Right;
+
+    return prevDirection;
 }
 
 GEB::Vec2 translateEventsToDirectionVec2(const GamesEngineeringBase::Window &canvas)
@@ -198,37 +219,37 @@ GEB::Vec2 translateEventsToDirectionVec2(const GamesEngineeringBase::Window &can
     // wsad
     if (canvas.keyPressed('W') && canvas.keyPressed('A'))
         return GEB::Vec2{-1, -1};
-    if (canvas.keyPressed('W') && canvas.keyPressed('D'))
+    else if (canvas.keyPressed('W') && canvas.keyPressed('D'))
         return GEB::Vec2{1, -1};
-    if (canvas.keyPressed('S') && canvas.keyPressed('A'))
+    else if (canvas.keyPressed('S') && canvas.keyPressed('A'))
         return GEB::Vec2{-1, 1};
-    if (canvas.keyPressed('S') && canvas.keyPressed('D'))
+    else if (canvas.keyPressed('S') && canvas.keyPressed('D'))
         return GEB::Vec2{1, 1};
-    if (canvas.keyPressed('W'))
+    else if (canvas.keyPressed('W'))
         return GEB::Vec2{0, -1};
-    if (canvas.keyPressed('S'))
+    else if (canvas.keyPressed('S'))
         return GEB::Vec2{0, 1};
-    if (canvas.keyPressed('A'))
+    else if (canvas.keyPressed('A'))
         return GEB::Vec2{-1, 0};
-    if (canvas.keyPressed('D'))
+    else if (canvas.keyPressed('D'))
         return GEB::Vec2{1, 0};
 
     // up\down\left\right keys
-    if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_LEFT))
+    else if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_LEFT))
         return GEB::Vec2{-1, -1};
-    if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_RIGHT))
+    else if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_RIGHT))
         return GEB::Vec2{1, -1};
-    if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_LEFT))
+    else if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_LEFT))
         return GEB::Vec2{-1, 1};
-    if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_RIGHT))
+    else if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_RIGHT))
         return GEB::Vec2{1, 1};
-    if (canvas.keyPressed(VK_UP))
+    else if (canvas.keyPressed(VK_UP))
         return GEB::Vec2{0, -1};
-    if (canvas.keyPressed(VK_DOWN))
+    else if (canvas.keyPressed(VK_DOWN))
         return GEB::Vec2{0, 1};
-    if (canvas.keyPressed(VK_LEFT))
+    else if (canvas.keyPressed(VK_LEFT))
         return GEB::Vec2{-1, 0};
-    if (canvas.keyPressed(VK_RIGHT))
+    else if (canvas.keyPressed(VK_RIGHT))
         return GEB::Vec2{1, 0};
 
     return GEB::Vec2{0, 0};

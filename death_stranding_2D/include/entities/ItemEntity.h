@@ -71,7 +71,7 @@ protected:
     GEB::Color color_{0, 0, 0};
     float speed_;
     State state_;
-    GEB::Direction direction_ = GEB::Direction::None;
+    GEB::Direction direction_ = GEB::Direction::Down;
 
     GEB::Structures::Array<Attack *> attacks_;
 };

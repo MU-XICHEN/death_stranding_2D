@@ -48,11 +48,11 @@ namespace GamesEngineeringBase::Structures
             int index = bucketIndex(value);
 
             GEB::Structures::Array<T> *array = buckets_[index];
+            if (!array)
+                return false;
+
             for (int i = 0; i < array->size(); i++)
             {
-                if (!array || !array->size())
-                    return false;
-
                 if ((*array)[i] == value)
                     return false;
             }
@@ -83,11 +83,7 @@ namespace GamesEngineeringBase::Structures
                 auto *array = buckets_[i];
                 if (!array)
                     continue;
-
-                for (int j = 0; j < array->size(); j++)
-                {
-                    (*array)[j] = T();
-                }
+                array->resize(0);
             }
             size_ = 0;
         }

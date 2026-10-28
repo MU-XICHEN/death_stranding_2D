@@ -47,42 +47,72 @@ namespace GamesEngineeringBase::Utils
         }
     }
 
+    // get projection of a vertex onto a unit axis
+    static float project(const GEB::Vec2 vertex,
+                         const GEB::Vec2 &unitAxis)
+    {
+        return vertex.x * unitAxis.x + vertex.y * unitAxis.y;
+    }
+
+    // get projection interval of a rectangle onto a unit axis
+    static GEB::Pair<float, float> projectRect(const GEB::Vec2 *vertices,
+                                               const GEB::Vec2 &unitAxis)
+    {
+        GEB::Pair<float, float> interval;
+
+        float first = project(vertices[0], unitAxis);
+
+        interval.first = first;  // min
+        interval.second = first; // max
+
+        for (int i = 1; i < 4; ++i)
+        {
+            float value = project(vertices[i], unitAxis);
+
+            interval.first = GEB::Math::min(interval.first, value);
+            interval.second = GEB::Math::max(interval.second, value);
+        }
+
+        return interval;
+    }
+
     static bool SAT(const GEB::Vec2 *rectA, const GEB::Vec2 *rectB)
     {
-        const int size = 4;
-        GEB::Pair<float, float> projectionAY;
-        GEB::Pair<float, float> projectionAX;
-        GEB::Pair<float, float> projectionBY;
-        GEB::Pair<float, float> projectionBX;
 
-        projectionAX.first = projectionAX.second = rectA[0].x;
-        projectionAY.first = projectionAY.second = rectA[0].y;
+        // Get two edges from each rectangle to form the axes for SAT
+        const GEB::Vec2 edges[4] = {
+            rectA[1] - rectA[0],
+            rectA[2] - rectA[0],
+            rectB[1] - rectB[0],
+            rectB[2] - rectB[0]};
 
-        projectionBX.first = projectionBX.second = rectB[0].x;
-        projectionBY.first = projectionBY.second = rectB[0].y;
+        GEB::Vec2 axes[4];
 
-        for (int i = 0; i < size; ++i)
+        for (int i = 0; i < 4; ++i)
         {
-            projectionAX.first = GEB::Math::min(projectionAX.first, rectA[i].x);
-            projectionAX.second = GEB::Math::max(projectionAX.second, rectA[i].x);
+            if (edges[i].x == 0.0f && edges[i].y == 0.0f)
+                return false;
 
-            projectionAY.first = GEB::Math::min(projectionAY.first, rectA[i].y);
-            projectionAY.second = GEB::Math::max(projectionAY.second, rectA[i].y);
-        }
-        for (int i = 0; i < size; ++i)
-        {
-            projectionBX.first = GEB::Math::min(projectionBX.first, rectB[i].x);
-            projectionBX.second = GEB::Math::max(projectionBX.second, rectB[i].x);
-
-            projectionBY.first = GEB::Math::min(projectionBY.first, rectB[i].y);
-            projectionBY.second = GEB::Math::max(projectionBY.second, rectB[i].y);
+            // use perpendicular vector as the axis for SAT
+            // as if there is a gap between the rectangles along this axis, their projections on normal will not overlap.
+            axes[i] = GEB::Vec2{-edges[i].y, edges[i].x};
         }
 
-        if (projectionAX.second < projectionBX.first || projectionBX.second < projectionAX.first)
-            return false;
-        if (projectionAY.second < projectionBY.first || projectionBY.second < projectionAY.first)
-            return false;
+        for (const GEB::Vec2 &axis : axes)
+        {
+            // caculate the projection
+            const auto projectionA = projectRect(rectA, axis);
+            const auto projectionB = projectRect(rectB, axis);
+
+            const float minA = projectionA.first;
+            const float maxA = projectionA.second;
+            const float minB = projectionB.first;
+            const float maxB = projectionB.second;
+
+            if (maxA < minB || maxB < minA)
+                return false;
+        }
 
         return true;
     }
-}
+};

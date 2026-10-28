@@ -66,13 +66,6 @@ bool HalfCircleSlash::tryHit(World &world, const ItemEntity &item, std::uintptr_
     // and hitTargets hasn't contained this id.
     const auto &attackInfo = this->attackInfo();
 
-    // todo: In the future, maybe support the remote attach here.
-    if (elapsedTime_ >= attackInfo.duration)
-    {
-        end();
-        return false;
-    }
-
     if (elapsedTime_ < attackInfo.hitStartTime || elapsedTime_ >= attackInfo.hitEndTime)
         return false;
 

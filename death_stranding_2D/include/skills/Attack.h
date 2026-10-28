@@ -56,7 +56,12 @@ public:
         return true;
     }
 
-    inline void updateElapsedTime(float dt) { elapsedTime_ += dt; }
+    inline void updateElapsedTime(float dt)
+    {
+        elapsedTime_ += dt;
+        if (elapsedTime_ >= attackInfo_.duration)
+            end();
+    }
 
     inline const AttackInfo &attackInfo() const { return attackInfo_; }
 

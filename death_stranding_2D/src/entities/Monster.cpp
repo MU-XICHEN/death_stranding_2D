@@ -15,10 +15,10 @@ void calculateDotAndDir(GEB::Direction &bestDir, float &dot, float newDot)
     }
 }
 
-GEB::Direction Monster::transDirVecToDiretion(const GEB::Vec2 &dirVec)
+GEB::Direction Monster::transDirVecToDiretion(const GEB::Vec2 &dirVec, GEB::Direction prevDirection)
 {
     if (dirVec.x == 0 && dirVec.y == 0)
-        return GEB::Direction::None;
+        return prevDirection;
 
     auto normalizedDirVec = GEB::Math::normalize(dirVec);
 
@@ -53,7 +53,7 @@ GEB::Direction Monster::transDirVecToDiretion(const GEB::Vec2 &dirVec)
     calculateDotAndDir<GEB::Direction::DownRight>(bestDirection, maxDot, tempDot);
 
     // Default direction if no match
-    return bestDirection;
+    return bestDirection == GEB::Direction::None ? prevDirection : bestDirection;
 }
 
 void Monster::checkDangerDistance(World &world, Layer &layer)
@@ -86,6 +86,7 @@ void Monster::handleMovement(World &world, Layer &layer)
     // get candidate items for collision detection
     auto oldCenter = center();
     auto distanceVec = GEB::Math::normalize(Monster::calculateDirVecToHero(center(), world.gameInfo().heroInfo().center())) * distance;
+    direction_ = transDirVecToDiretion(distanceVec, direction_);
 
     GEB::Structures::Array<Entity *> candidateItemList;
     GEB::Boundary mapBoundary{

@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include "core/GameBase.h"
+#include "GamesEngineeringBase.h"
 
 namespace GamesEngineeringBase::Utils
 {
@@ -131,5 +132,86 @@ namespace GamesEngineeringBase::Utils
         }
 
         return true;
+    }
+
+    static GEB::Direction translateEventsToDirection(const GamesEngineeringBase::Window &canvas, GEB::Direction prevDirection)
+    {
+        if (canvas.keyPressed('W') && canvas.keyPressed('A'))
+            return GEB::Direction::UpLeft;
+        else if (canvas.keyPressed('W') && canvas.keyPressed('D'))
+            return GEB::Direction::UpRight;
+        else if (canvas.keyPressed('S') && canvas.keyPressed('A'))
+            return GEB::Direction::DownLeft;
+        else if (canvas.keyPressed('S') && canvas.keyPressed('D'))
+            return GEB::Direction::DownRight;
+        else if (canvas.keyPressed('W'))
+            return GEB::Direction::Up;
+        else if (canvas.keyPressed('S'))
+            return GEB::Direction::Down;
+        else if (canvas.keyPressed('A'))
+            return GEB::Direction::Left;
+        else if (canvas.keyPressed('D'))
+            return GEB::Direction::Right;
+
+        // up\down\left\right keys
+        else if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_LEFT))
+            return GEB::Direction::UpLeft;
+        else if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_RIGHT))
+            return GEB::Direction::UpRight;
+        else if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_LEFT))
+            return GEB::Direction::DownLeft;
+        else if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_RIGHT))
+            return GEB::Direction::DownRight;
+        else if (canvas.keyPressed(VK_UP))
+            return GEB::Direction::Up;
+        else if (canvas.keyPressed(VK_DOWN))
+            return GEB::Direction::Down;
+        else if (canvas.keyPressed(VK_LEFT))
+            return GEB::Direction::Left;
+        else if (canvas.keyPressed(VK_RIGHT))
+            return GEB::Direction::Right;
+
+        return prevDirection;
+    }
+
+    static GEB::Vec2 translateEventsToDirectionVec2(const GamesEngineeringBase::Window &canvas)
+    {
+        // wsad
+        if (canvas.keyPressed('W') && canvas.keyPressed('A'))
+            return GEB::Vec2{-1, -1};
+        else if (canvas.keyPressed('W') && canvas.keyPressed('D'))
+            return GEB::Vec2{1, -1};
+        else if (canvas.keyPressed('S') && canvas.keyPressed('A'))
+            return GEB::Vec2{-1, 1};
+        else if (canvas.keyPressed('S') && canvas.keyPressed('D'))
+            return GEB::Vec2{1, 1};
+        else if (canvas.keyPressed('W'))
+            return GEB::Vec2{0, -1};
+        else if (canvas.keyPressed('S'))
+            return GEB::Vec2{0, 1};
+        else if (canvas.keyPressed('A'))
+            return GEB::Vec2{-1, 0};
+        else if (canvas.keyPressed('D'))
+            return GEB::Vec2{1, 0};
+
+        // up\down\left\right keys
+        else if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_LEFT))
+            return GEB::Vec2{-1, -1};
+        else if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_RIGHT))
+            return GEB::Vec2{1, -1};
+        else if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_LEFT))
+            return GEB::Vec2{-1, 1};
+        else if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_RIGHT))
+            return GEB::Vec2{1, 1};
+        else if (canvas.keyPressed(VK_UP))
+            return GEB::Vec2{0, -1};
+        else if (canvas.keyPressed(VK_DOWN))
+            return GEB::Vec2{0, 1};
+        else if (canvas.keyPressed(VK_LEFT))
+            return GEB::Vec2{-1, 0};
+        else if (canvas.keyPressed(VK_RIGHT))
+            return GEB::Vec2{1, 0};
+
+        return GEB::Vec2{0, 0};
     }
 };

@@ -11,6 +11,6 @@ public:
     virtual ~HalfCircleSlash() = default;
 
     virtual AABB getAttackContainer(World &world) override;
-    virtual bool tryHit(World &world, const ItemEntity &item, std::uintptr_t entityPtr) override;
+    virtual bool tryHit(World &world, std::uintptr_t entityPtr) override;
     virtual void render(World &world) override;
 };

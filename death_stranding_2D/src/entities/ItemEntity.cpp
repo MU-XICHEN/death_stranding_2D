@@ -1,4 +1,3 @@
-#include <iostream>
 #include <string>
 
 #include "entities/ItemEntity.h"
@@ -205,7 +204,7 @@ void ItemEntity::handleEvents(World &world, Layer &layer)
 {
     handleMovement(world, layer);  // handle movement for this frame
     processAttack(world, layer);   // handle attacks for this frame
-    tryTiggerSkills(world, layer); // trigger skill for next frame
+    tryTiggerAttacks(world, layer); // trigger skill for next frame
 }
 
 void ItemEntity::processAttack(World &world, Layer &layer)
@@ -234,6 +233,8 @@ void ItemEntity::processAttack(World &world, Layer &layer)
         if (!attack->isActive())
             continue;
 
+        attack->updateAttackInfo();
+
         attack->updateElapsedTime(dt);
 
         if (attack->elapsedTime() >= attack->attackInfo().duration)
@@ -256,7 +257,7 @@ void ItemEntity::processAttack(World &world, Layer &layer)
             if (!entity)
                 continue;
 
-            bool hitted = attack->tryHit(world, *this, reinterpret_cast<std::uintptr_t>(entity));
+            bool hitted = attack->tryHit(world, reinterpret_cast<std::uintptr_t>(entity));
 
             if (hitted)
             {
@@ -270,4 +271,10 @@ void ItemEntity::processAttack(World &world, Layer &layer)
 void ItemEntity::onAttack(const AttackInfo &attackInfo)
 {
     state_.health -= attackInfo.damage;
+}
+
+void ItemEntity::addAttack(Attack *attack)
+{
+    attack->setOwner(this);
+    attacks_.pushBack(attack);
 }

@@ -71,9 +71,9 @@ AABB HalfCircleSlash::getAttackContainer(World &world)
     return AABB(minX, minY, static_cast<int>(std::ceil(maxX - minX)), static_cast<int>(std::ceil(maxY - minY)));
 }
 
-bool HalfCircleSlash::tryHit(World &world, const ItemEntity &item, std::uintptr_t entityPtr)
+bool HalfCircleSlash::tryHit(World &world, std::uintptr_t entityPtr)
 {
-    if (!Attack::tryHit(world, item, entityPtr))
+    if (!Attack::tryHit(world, entityPtr))
         return false;
 
     // After [!Attack::tryHit], it means that the attack is active,
@@ -105,6 +105,4 @@ bool HalfCircleSlash::tryHit(World &world, const ItemEntity &item, std::uintptr_
     return false;
 }
 
-void HalfCircleSlash::render(World &world)
-{
-}
+void HalfCircleSlash::render(World &world) {}

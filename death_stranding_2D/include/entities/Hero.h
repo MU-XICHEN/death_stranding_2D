@@ -20,12 +20,11 @@ public:
     using ItemEntity::ItemEntity;
 
     void update(World &world, Layer &layer) override;
-    void tryTiggerSkills(World &world, Layer &layer) override;
+    void tryTiggerAttacks(World &world, Layer &layer) override;
     void handleMovement(World &world, Layer &layer) override;
 
-private:
-    template <typename T>
-    AttackInfo createAttackInfo();
+    AttackInfo createAttackInfo(Attack *attack) override;
 
+private:
     HeroInfo heroInfo_;
 };

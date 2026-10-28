@@ -7,12 +7,16 @@
 #include "stages/Play.h"
 #include "skills/Attack.h"
 #include "skills/HalfCircleSlash.h"
+#include "utils/Utils.h"
 
 template <typename T>
 using GEBArray = GEB::Structures::Array<T>;
 
-GEB::Vec2 translateEventsToDirectionVec2(const GamesEngineeringBase::Window &canvas);
-GEB::Direction translateEventsToDirection(const GamesEngineeringBase::Window &canvas, GEB::Direction prevDirection);
+namespace GamesEngineeringBase::Utils
+{
+    GEB::Vec2 translateEventsToDirectionVec2(const GamesEngineeringBase::Window &canvas);
+    GEB::Direction translateEventsToDirection(const GamesEngineeringBase::Window &canvas, GEB::Direction prevDirection);
+}
 
 void Hero::handleMovement(World &world, Layer &layer)
 {
@@ -27,8 +31,8 @@ void Hero::handleMovement(World &world, Layer &layer)
 
     auto &gridSystem = playStage.gridSystem();
 
-    direction_ = translateEventsToDirection(canvas, direction_);
-    auto distanceVec = GEB::Math::normalize(translateEventsToDirectionVec2(canvas)) * distance;
+    direction_ = GEB::Utils::translateEventsToDirection(canvas, direction_);
+    auto distanceVec = GEB::Math::normalize(GEB::Utils::translateEventsToDirectionVec2(canvas)) * distance;
 
     // get candidate items for collision detection
     GEBArray<Entity *> candidateItemList;
@@ -58,7 +62,7 @@ void Hero::handleMovement(World &world, Layer &layer)
     playStage.gridSystem().updateEntityGridIfNeed(oldCenter, newCenter, this);
 }
 
-void Hero::tryTiggerSkills(World &world, Layer &layer)
+void Hero::tryTiggerAttacks(World &world, Layer &layer)
 {
     auto &canvas = world.canvas();
     // try begin attacks
@@ -72,8 +76,7 @@ void Hero::tryTiggerSkills(World &world, Layer &layer)
                 continue;
 
             // handle different types of attacks
-            if (dynamic_cast<HalfCircleSlash *>(attacks_[i]))
-                attacks_[i]->begin(createAttackInfo<HalfCircleSlash>());
+            attacks_[i]->begin();
         }
     }
 }
@@ -94,12 +97,11 @@ void Hero::update(World &world, Layer &layer)
     world.gameInfo().updateViewport(heroInfo, world.gameInfo().mapInfo());
 }
 
-template <typename T>
-AttackInfo Hero::createAttackInfo()
+AttackInfo Hero::createAttackInfo(Attack *attack)
 {
-    if constexpr (std::is_same_v<T, HalfCircleSlash>)
+    if (dynamic_cast<HalfCircleSlash *>(attack))
     {
-        AttackInfo slashAttackInfo{
+        return AttackInfo{
             .damage = 10,
             .duration = 0.3f,
             .hitStartTime = 0.06f,
@@ -107,93 +109,8 @@ AttackInfo Hero::createAttackInfo()
             .hitBoxWidth = 80,
             .hitBoxHeight = 30,
             .originPoint = getOriginPoint(),
-            .direction = direction_,
+            .direction = direction(),
         };
-        return slashAttackInfo;
     }
-    else
-    {
-        return AttackInfo{};
-    }
-}
-
-GEB::Direction translateEventsToDirection(const GamesEngineeringBase::Window &canvas, GEB::Direction prevDirection)
-{
-    if (canvas.keyPressed('W') && canvas.keyPressed('A'))
-        return GEB::Direction::UpLeft;
-    else if (canvas.keyPressed('W') && canvas.keyPressed('D'))
-        return GEB::Direction::UpRight;
-    else if (canvas.keyPressed('S') && canvas.keyPressed('A'))
-        return GEB::Direction::DownLeft;
-    else if (canvas.keyPressed('S') && canvas.keyPressed('D'))
-        return GEB::Direction::DownRight;
-    else if (canvas.keyPressed('W'))
-        return GEB::Direction::Up;
-    else if (canvas.keyPressed('S'))
-        return GEB::Direction::Down;
-    else if (canvas.keyPressed('A'))
-        return GEB::Direction::Left;
-    else if (canvas.keyPressed('D'))
-        return GEB::Direction::Right;
-
-    // up\down\left\right keys
-    else if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_LEFT))
-        return GEB::Direction::UpLeft;
-    else if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_RIGHT))
-        return GEB::Direction::UpRight;
-    else if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_LEFT))
-        return GEB::Direction::DownLeft;
-    else if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_RIGHT))
-        return GEB::Direction::DownRight;
-    else if (canvas.keyPressed(VK_UP))
-        return GEB::Direction::Up;
-    else if (canvas.keyPressed(VK_DOWN))
-        return GEB::Direction::Down;
-    else if (canvas.keyPressed(VK_LEFT))
-        return GEB::Direction::Left;
-    else if (canvas.keyPressed(VK_RIGHT))
-        return GEB::Direction::Right;
-
-    return prevDirection;
-}
-
-GEB::Vec2 translateEventsToDirectionVec2(const GamesEngineeringBase::Window &canvas)
-{
-    // wsad
-    if (canvas.keyPressed('W') && canvas.keyPressed('A'))
-        return GEB::Vec2{-1, -1};
-    else if (canvas.keyPressed('W') && canvas.keyPressed('D'))
-        return GEB::Vec2{1, -1};
-    else if (canvas.keyPressed('S') && canvas.keyPressed('A'))
-        return GEB::Vec2{-1, 1};
-    else if (canvas.keyPressed('S') && canvas.keyPressed('D'))
-        return GEB::Vec2{1, 1};
-    else if (canvas.keyPressed('W'))
-        return GEB::Vec2{0, -1};
-    else if (canvas.keyPressed('S'))
-        return GEB::Vec2{0, 1};
-    else if (canvas.keyPressed('A'))
-        return GEB::Vec2{-1, 0};
-    else if (canvas.keyPressed('D'))
-        return GEB::Vec2{1, 0};
-
-    // up\down\left\right keys
-    else if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_LEFT))
-        return GEB::Vec2{-1, -1};
-    else if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_RIGHT))
-        return GEB::Vec2{1, -1};
-    else if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_LEFT))
-        return GEB::Vec2{-1, 1};
-    else if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_RIGHT))
-        return GEB::Vec2{1, 1};
-    else if (canvas.keyPressed(VK_UP))
-        return GEB::Vec2{0, -1};
-    else if (canvas.keyPressed(VK_DOWN))
-        return GEB::Vec2{0, 1};
-    else if (canvas.keyPressed(VK_LEFT))
-        return GEB::Vec2{-1, 0};
-    else if (canvas.keyPressed(VK_RIGHT))
-        return GEB::Vec2{1, 0};
-
-    return GEB::Vec2{0, 0};
+    return AttackInfo{};
 }

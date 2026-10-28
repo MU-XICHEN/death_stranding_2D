@@ -12,6 +12,11 @@ PlayStage::PlayStage()
     : gridSystem_(GRID_ROWCNT, GRID_COLCNT, GRID_SIZE),
       map_(MapType::Chapter1)
 {
+    initialize();
+}
+
+void PlayStage::initialize()
+{
     mapUpdated_ = true;
 
     auto heroPosition = map_.playerPosition();

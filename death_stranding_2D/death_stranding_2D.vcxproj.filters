@@ -114,6 +114,9 @@
     <ClCompile Include="src\skills\HalfCircleSlash.cpp">
       <Filter>Source Files\skills</Filter>
     </ClCompile>
+    <ClCompile Include="src\skills\Attack.cpp">
+      <Filter>Source Files\skills</Filter>
+    </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

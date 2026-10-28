@@ -4,6 +4,7 @@
 #include "entities/State.h"
 #include "structure/Array.h"
 #include "utils/Utils.h"
+#include "Skills/Attack.h"
 
 struct MapInfo;
 
@@ -56,11 +57,12 @@ public:
     void handleEvents(World &world, Layer &layer);
     virtual void processAttack(World &world, Layer &layer);
     virtual void handleMovement(World &world, Layer &layer) {};
-    virtual void tryTiggerSkills(World &world, Layer &layer) {};
+    virtual void tryTiggerAttacks(World &world, Layer &layer) {};
+    virtual AttackInfo createAttackInfo(Attack *attack) { return AttackInfo{}; };
 
     // relevant to attacks
     virtual void onAttack(const AttackInfo &attackInfo);
-    inline void addAttack(Attack *attack) { attacks_.pushBack(attack); }
+    void addAttack(Attack *attack);
     GEB::Structures::Array<Attack *> &attacks() { return attacks_; }
     const GEB::Structures::Array<Attack *> &attacks() const { return attacks_; }
 
@@ -72,6 +74,8 @@ public:
         return GEB::Vec2{centerX + (unitDirVec2.x * width_ / 2),
                          centerY + (unitDirVec2.y * height_ / 2)};
     }
+
+    GEB::Direction direction() const { return direction_; }
 
 protected:
     GEB::Color color_{0, 0, 0};

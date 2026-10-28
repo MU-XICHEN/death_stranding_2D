@@ -133,6 +133,7 @@ void Hero::handleSkills(World &world, Layer &layer)
                 continue;
 
             // handle different types of attacks
+            // todo: update attackInfo while hero is moving.
             if (dynamic_cast<HalfCircleSlash *>(attacks_[i]))
                 attacks_[i]->begin(createAttackInfo<HalfCircleSlash>());
         }

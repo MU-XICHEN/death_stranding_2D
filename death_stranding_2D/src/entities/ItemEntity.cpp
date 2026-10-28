@@ -208,7 +208,6 @@ void ItemEntity::handleEvents(World &world, Layer &layer)
     tryTiggerSkills(world, layer); // trigger skill for next frame
 }
 
-void ItemEntity::handleMovement(World &world, Layer &layer) {}
 void ItemEntity::processAttack(World &world, Layer &layer)
 {
     auto &canvas = world.canvas();
@@ -267,7 +266,6 @@ void ItemEntity::processAttack(World &world, Layer &layer)
         }
     }
 }
-void ItemEntity::tryTiggerSkills(World &world, Layer &layer) {}
 
 void ItemEntity::onAttack(const AttackInfo &attackInfo)
 {

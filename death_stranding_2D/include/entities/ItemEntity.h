@@ -54,9 +54,11 @@ public:
         int size);
 
     void handleEvents(World &world, Layer &layer);
-    virtual void handleMovement(World &world, Layer &layer);
     virtual void processAttack(World &world, Layer &layer);
-    virtual void tryTiggerSkills(World &world, Layer &layer);
+    virtual void handleMovement(World &world, Layer &layer) {};
+    virtual void tryTiggerSkills(World &world, Layer &layer) {};
+
+    // relevant to attacks
     virtual void onAttack(const AttackInfo &attackInfo);
     inline void addAttack(Attack *attack) { attacks_.pushBack(attack); }
     GEB::Structures::Array<Attack *> &attacks() { return attacks_; }

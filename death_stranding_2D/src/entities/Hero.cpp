@@ -92,6 +92,12 @@ void Hero::handleSkills(World &world, Layer &layer)
 
         attack->updateElapsedTime(dt);
 
+        if (attack->elapsedTime() >= attack->attackInfo().duration)
+        {
+            attack->end();
+            continue;
+        }
+
         // attackContainer is used for filtering candidate itemlist which might handle the attack
         // The actual hit detection happens in 'virtual Attack::tryHit' method.
         // pointers in list do not need to be owned, just references to existing entities, like 'this'.

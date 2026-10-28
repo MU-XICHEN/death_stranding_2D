@@ -38,12 +38,16 @@ public:
             return;
 
         attackInfo_ = info;
-        hitTargets_.clear();
         active_ = true;
         elapsedTime_ = 0.0f;
     }
 
-    void end() { active_ = false; }
+    void end()
+    {
+        hitTargets_.clear();
+        active_ = false;
+        elapsedTime_ = 0.0f;
+    }
 
     virtual bool tryHit(World &world, const ItemEntity &item, std::uintptr_t entityPtr)
     {
@@ -59,8 +63,6 @@ public:
     inline void updateElapsedTime(float dt)
     {
         elapsedTime_ += dt;
-        if (elapsedTime_ >= attackInfo_.duration)
-            end();
     }
 
     inline const AttackInfo &attackInfo() const { return attackInfo_; }
@@ -68,6 +70,7 @@ public:
     inline const int triggerKey() const { return triggerKey_; }
 
     inline bool isActive() const { return active_; }
+    inline float elapsedTime() const { return elapsedTime_; }
 
 protected:
     bool active_ = false;

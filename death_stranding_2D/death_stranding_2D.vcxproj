@@ -121,6 +121,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -160,9 +161,14 @@
     <ClCompile Include="src\stages\Play.cpp" />
     <ClCompile Include="src\stages\Stage.cpp" />
     <ClCompile Include="src\stages\Tally.cpp" />
-    <ClCompile Include="src\layers\Layer.cpp" />
+    <ClCompile Include="src\layers\MainLayer.cpp" />
+    <ClCompile Include="src\layers\DebugLayer.cpp" />
+    <ClCompile Include="src\renderer\TextRenderer.cpp" />
+    <ClCompile Include="src\renderer\SlicerRenderer.cpp" />
+    <ClCompile Include="src\skills\HalfCircleSlash.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\world\GameInfo.cpp" />
+    <ClCompile Include="src\world\AssetManager.cpp" />
     <ClCompile Include="src\map\Map.cpp" />
     <ClCompile Include="src\world\World.cpp" />
   </ItemGroup>
@@ -172,7 +178,6 @@
     <ClInclude Include="include\core\GameBase.h" />
     <ClInclude Include="include\core\Types.h" />
     <ClInclude Include="include\entities\AABB.h" />
-    <ClInclude Include="include\entities\Attack.h" />
     <ClInclude Include="include\entities\ItemEntity.h" />
     <ClInclude Include="include\entities\Entity.h" />
     <ClInclude Include="include\entities\Hero.h" />
@@ -180,6 +185,12 @@
     <ClInclude Include="include\entities\State.h" />
     <ClInclude Include="include\layers\Layer.h" />
     <ClInclude Include="include\layers\MainLayer.h" />
+    <ClInclude Include="include\layers\DebugLayer.h" />
+    <ClInclude Include="include\renderer\TextRenderer.h" />
+    <ClInclude Include="include\renderer\SliceRenderer.h" />
+    <ClInclude Include="include\skills\Attack.h" />
+    <ClInclude Include="include\skills\HalfCircleSlash.h" />
+    <ClInclude Include="include\stages\Common.h" />
     <ClInclude Include="include\stages\Intro.h" />
     <ClInclude Include="include\stages\Menu.h" />
     <ClInclude Include="include\stages\Play.h" />
@@ -188,10 +199,11 @@
     <ClInclude Include="include\structure\Array.h" />
     <ClInclude Include="include\structure\DoublyLinkedList.h" />
     <ClInclude Include="include\structure\Set.h" />
-    <ClInclude Include="include\structure\String.h" />
-    <ClInclude Include="include\utils\DebugUtils.h" />
     <ClInclude Include="include\utils\GameMath.h" />
+    <ClInclude Include="include\utils\KeyState.h" />
+    <ClInclude Include="include\utils\Utils.h" />
     <ClInclude Include="include\world\GameInfo.h" />
+    <ClInclude Include="include\world\AssetManager.h" />
     <ClInclude Include="include\world\Grid.h" />
     <ClInclude Include="include\map\Map.h" />
     <ClInclude Include="include\map\MapFactory.h" />
@@ -200,11 +212,8 @@
     <ClInclude Include="include\world\World.h" />
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="src\map\data\images\grass.png">
-      <DestinationFolders>$(OutDir)data\images\</DestinationFolders>
-    </CopyFileToFolders>
-    <CopyFileToFolders Include="src\map\data\images\stone.png">
-      <DestinationFolders>$(OutDir)data\images\</DestinationFolders>
+    <CopyFileToFolders Include="src\assets\**\*">
+      <DestinationFolders>$(OutDir)assets\%(RecursiveDir)</DestinationFolders>
     </CopyFileToFolders>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

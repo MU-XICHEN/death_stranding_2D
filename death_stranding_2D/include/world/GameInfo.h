@@ -24,8 +24,6 @@ public:
     void updateViewport(const HeroInfo &heroInfo, const MapInfo &map);
     void updateMapInfo(const Map &map) { mapInfo_.setMap(&map); }
 
-    void initialize();
-
 private:
     float dt_;
 

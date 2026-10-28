@@ -3,6 +3,7 @@
 #include "world/World.h"
 #include "world/Grid.h"
 #include "stages/Play.h"
+#include "layers/MainLayer.h"
 
 template <GEB::Direction dir>
 void calculateDotAndDir(GEB::Direction &bestDir, float &dot, float newDot)
@@ -77,7 +78,10 @@ void Monster::handleMovement(World &world, Layer &layer)
     float dt = world.gameInfo().dt();
     float distance = dt * speed_;
 
-    auto &playStage = dynamic_cast<PlayStage &>(layer.currentStage());
+    auto &mainLayer = dynamic_cast<MainLayer &>(layer);
+
+    auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
+    auto &gridSystem = playStage.gridSystem();
 
     // get candidate items for collision detection
     auto oldCenter = center();
@@ -90,9 +94,7 @@ void Monster::handleMovement(World &world, Layer &layer)
         .left = 0,
         .right = static_cast<float>(map.width()),
     };
-    GridSystem::getCandidateItemList(playStage.gridSystem(), this, distanceVec, mapBoundary, candidateItemList);
-
-    auto direction = Monster::transDirVecToDiretion(distanceVec);
+    gridSystem.getCollisionCandidateListByItem(this, distanceVec, mapBoundary, candidateItemList);
 
     // add map tiles which may collide with the hero to the candidate list
     playStage.map().addCollisionTileToCandiList(this,
@@ -103,6 +105,6 @@ void Monster::handleMovement(World &world, Layer &layer)
 
     // calculate new position
     auto newCenter = center();
-    playStage.gridSystem().updateEntityGridIfNeed(oldCenter, newCenter, this);
+    gridSystem.updateEntityGridIfNeed(oldCenter, newCenter, this);
     return;
 }

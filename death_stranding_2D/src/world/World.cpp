@@ -4,6 +4,7 @@
 #include "core/GameBase.h"
 #include "entities/Hero.h"
 #include "layers/MainLayer.h"
+#include "layers/DebugLayer.h"
 
 World::World()
     : canvas_(),
@@ -13,6 +14,9 @@ World::World()
     // initialize canvas
     canvas_.create(static_cast<unsigned int>(WINDOW_WIDTH),
                    static_cast<unsigned int>(WINDOW_HEIGHT), "Tiles");
+
+    // initialize text renderer
+    assetManager_.loadImages();
 
     // Main Layer which handle main game process: Intro - Menu - Gameplay - Tally - Then, again!
     initLayers();
@@ -35,6 +39,7 @@ void World::initLayers()
 {
     // Game main layer
     layerList_.pushBack(new MainLayer());
+    layerList_.pushBack(new DebugLayer());
 }
 
 void World::refreshTimer()
@@ -49,9 +54,6 @@ void World::refreshTimer()
 
     float dt = timer_.dt();
     gameInfo_.updateDt(dt);
-
-    if (dt > 0.0f)
-        std::cout << "FPS: " << 1.0f / dt << std::endl;
 }
 
 void World::frameStart()
@@ -77,11 +79,10 @@ void World::frameDraw()
     {
         auto *layer = layerList_[i];
 
-        auto &stage = layer->currentStage();
         // update states of nodes in current Layer
-        stage.updateEntities(*this, *layer);
+        layer->update(*this);
         // render this layer
-        stage.renderEntities(*this, *layer);
+        layer->render(*this);
     }
 
     // Events like mouse/keyboard are saved in present() by pumpLoop().
@@ -94,16 +95,6 @@ bool World::frameFinished()
     // Manage layers/stages here.
     if (layerList_.size() == 0)
         return result;
-
-    // Handle Stages
-    for (int i = layerList_.size() - 1; i >= 0; --i)
-    {
-        auto *layer = layerList_[i];
-
-        layer->checkGoToNextStage();
-    }
-
-    // todo: handle Layers
 
     return result;
 }

@@ -22,7 +22,12 @@ public:
     void update(World &world, Layer &layer) override;
 
 private:
+    void handleMovement(World &world, Layer &layer);
+    void handleSkills(World &world, Layer &layer);
     void handleEvents(World &world, Layer &layer);
+
+    template <typename T>
+    AttackInfo createAttackInfo();
 
     HeroInfo heroInfo_;
 };

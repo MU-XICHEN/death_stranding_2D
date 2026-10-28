@@ -54,6 +54,57 @@ public:
 
     virtual ~GridSystem() = default;
 
+    void getCandidateListByAABB(
+        Entity *detectedItem,
+        const AABB &aabb,
+        const GEB::Boundary &mapBoundary,
+        GEB::Structures::Array<Entity *> &candidateItemList)
+    {
+        GEB::Structures::Array<GEB::Pair<int, int>> candidateGrids;
+        getCandidateGridsByAABB(aabb, mapBoundary, candidateGrids);
+
+        getCollisionCandidateListByGrids(
+            detectedItem,
+            candidateGrids,
+            candidateItemList);
+    }
+
+    void getCollisionCandidateListByGrids(
+        Entity *detectedItem,
+        const GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids,
+        GEB::Structures::Array<Entity *> &candidateItemList)
+    {
+        int candidateGridSize = candidateGrids.size();
+        for (int i = 0; i < candidateGridSize; i++)
+        {
+            auto pos = candidateGrids[i];
+            auto *gridPtr = grid(pos.first, pos.second);
+            if (!gridPtr)
+                continue;
+
+            int len = gridPtr->itemList().size();
+            auto &itemList = gridPtr->itemList();
+            for (int j = 0; j < len; j++)
+            {
+                if (!itemList[j] || itemList[j] == detectedItem)
+                    continue;
+                candidateItemList.pushBack(itemList[j]);
+            }
+        }
+    }
+
+    void getCollisionCandidateListByItem(
+        Entity *detectedItem,
+        const GEB::Vec2 &distanceVec,
+        const GEB::Boundary &mapBoundary,
+        GEB::Structures::Array<Entity *> &candidateItemList)
+    {
+        auto center = detectedItem->center();
+        GEB::Structures::Array<GEB::Pair<int, int>> candidateGrids;
+        getCandidateGrids(detectedItem, distanceVec, mapBoundary, candidateGrids);
+        getCollisionCandidateListByGrids(detectedItem, candidateGrids, candidateItemList);
+    }
+
     void updateEntityGridIfNeed(GEB::Position oldCenter, GEB::Position newCenter, Entity *item)
     {
         int oldRowIdx = GEB::Math::floorToInt(oldCenter.y / gridSize_);
@@ -134,23 +185,13 @@ public:
         return &gridMap_[rowIdx * colCount_ + colIdx];
     }
 
-    void getCandidateGrids(
-        Entity *detectedItem,
-        const GEB::Vec2 &distanceVec,
-        const GEB::Boundary &mapBoundary,
-        GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids)
+    void getCandidateGridsByAABB(const AABB &aabb,
+                                 const GEB::Boundary &mapBoundary,
+                                 GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids)
     {
-
-        if (!detectedItem)
-            return;
-        auto aabb = AABB::createAABB(detectedItem, distanceVec, mapBoundary);
-
-        if (aabb.width() <= 0 || aabb.height() <= 0)
-            return;
-
         /**
-         * [bugfix]: 
-         * extend the candidate grid range by 1 in all directions
+         * [bugfix]:
+         * extend one more grid in all directions
          * to account for items which belong to neighboring grids.
          */
         int startRow = GEB::Math::max(0, GEB::Math::floorToInt(aabb.y() / gridSize_) - 1);
@@ -167,34 +208,21 @@ public:
         }
     }
 
-    static void getCandidateItemList(GridSystem &gridSystem,
-                                     Entity *detectedItem,
-                                     const GEB::Vec2 &distanceVec,
-                                     const GEB::Boundary &mapBoundary,
-                                     GEB::Structures::Array<Entity *> &candidateItemList)
+    void getCandidateGrids(
+        Entity *detectedItem,
+        const GEB::Vec2 &distanceVec,
+        const GEB::Boundary &mapBoundary,
+        GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids)
     {
-        auto center = detectedItem->center();
-        GEB::Structures::Array<GEB::Pair<int, int>> candidateGrids;
-        gridSystem.getCandidateGrids(detectedItem, distanceVec, mapBoundary, candidateGrids);
-        // use nine grids(center grid and its eight neighbors) to detect potential collisions with items, as grid size is larger than role size.
-        // todo: prune branches in the furture.
-        int candidateGridSize = candidateGrids.size();
-        for (int i = 0; i < candidateGridSize; i++)
-        {
-            auto pos = candidateGrids[i];
-            auto *grid = gridSystem.grid(pos.first, pos.second);
-            if (!grid)
-                continue;
 
-            int len = grid->itemList().size();
-            auto &itemList = grid->itemList();
-            for (int j = 0; j < len; j++)
-            {
-                if (!itemList[j] || itemList[j] == detectedItem)
-                    continue;
-                candidateItemList.pushBack(itemList[j]);
-            }
-        }
+        if (!detectedItem)
+            return;
+        auto aabb = AABB::createAABB(detectedItem, distanceVec, mapBoundary);
+
+        if (aabb.width() <= 0 || aabb.height() <= 0)
+            return;
+
+        getCandidateGridsByAABB(aabb, mapBoundary, candidateGrids);
     }
 
     inline int gridSize() const { return gridSize_; }

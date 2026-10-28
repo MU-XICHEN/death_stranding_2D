@@ -12,8 +12,8 @@ public:
     virtual ~PlayStage() = default;
 
     void addEntityToGridSystem(ItemEntity *itemEntity);
-    void updateEntities(World &world, Layer &layer) override;
-    void renderEntities(World &world, Layer &layer) override;
+    void update(World &world, Layer &layer) override;
+    void render(World &world, Layer &layer) override;
 
     GridSystem &gridSystem() { return gridSystem_; }
     Map &map() { return map_; }
@@ -21,4 +21,5 @@ public:
 private:
     GridSystem gridSystem_;
     Map map_;
+    bool mapUpdated_ = false;
 };

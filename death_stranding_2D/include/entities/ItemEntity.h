@@ -2,11 +2,14 @@
 
 #include "entities/Entity.h"
 #include "entities/State.h"
+#include "structure/Array.h"
 
 struct MapInfo;
 
 class World;
 class Layer;
+class Attack;
+class AttackInfo;
 
 // ItemEntity is used to anything which should consider collision.
 class ItemEntity : public Entity
@@ -14,7 +17,7 @@ class ItemEntity : public Entity
 public:
     ItemEntity(float x, float y, int width, int height, float speed = PIXEL_PER_SEC)
         : Entity(x, y, width, height), speed_(speed) {}
-    virtual ~ItemEntity() = default;
+    virtual ~ItemEntity();
 
     // update method needs to be implemented by derived classes
     virtual void update(World &world, Layer &layer);
@@ -28,6 +31,8 @@ public:
         color_.g = g;
         color_.b = b;
     }
+
+    void updateState(const State &state) { state_ = state; }
 
     void calculateBoundaryTop(GEB::Boundary &boundary, const Entity *barrierItem);
     void calculateBoundaryBottom(GEB::Boundary &boundary, const Entity *barrierItem);
@@ -47,8 +52,19 @@ public:
         Entity **candidateItemHead,
         int size);
 
+    virtual void onAttack(const AttackInfo &attackInfo);
+
+    inline void addAttack(Attack *attack)
+    {
+        attacks_.pushBack(attack);
+    }
+    GEB::Structures::Array<Attack *> &attacks() { return attacks_; }
+
 protected:
     GEB::Color color_{0, 0, 0};
     float speed_;
     State state_;
+    GEB::Direction direction_ = GEB::Direction::None;
+
+    GEB::Structures::Array<Attack *> attacks_;
 };

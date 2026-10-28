@@ -1,0 +1,33 @@
+#pragma once
+#include "structure/Array.h"
+#include "core/GameBase.h"
+#include "GamesEngineeringBase.h"
+
+enum AssetId
+{
+    None = 0,
+    TextSmall = 1,
+    TextMedium = 2,
+    TextLarge = 3,
+    Cover = 4,
+};
+
+struct Asset
+{
+    AssetId id = AssetId::None;
+    GEB::Image *image = nullptr;
+};
+
+class AssetManager
+{
+public:
+    AssetManager() = default;
+    virtual ~AssetManager();
+
+    void loadImages();
+
+    GEB::Image *getImage(AssetId id);
+
+private:
+    GEB::Structures::Array<Asset> assets_;
+};

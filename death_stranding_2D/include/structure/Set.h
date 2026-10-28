@@ -50,13 +50,13 @@ namespace GamesEngineeringBase::Structures
             GEB::Structures::Array<T> *array = buckets_[index];
             for (int i = 0; i < array->size(); i++)
             {
-                if (!array)
+                if (!array || !array->size())
                     return false;
 
                 if ((*array)[i] == value)
                     return false;
             }
-            array->push_back(value);
+            array->pushBack(value);
             size_++;
             return true;
         }

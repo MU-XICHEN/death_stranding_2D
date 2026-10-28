@@ -8,6 +8,7 @@ class Layer;
 class Entity
 {
 public:
+    Entity() : x_(0), y_(0), width_(0), height_(0) {}
     Entity(float x, float y, int width, int height)
         : x_(x), y_(y), width_(width), height_(height) {}
     virtual ~Entity() = default;
@@ -22,10 +23,19 @@ public:
             y_ + height_ / 2.0f,
         };
     }
-    inline void setPos(float x, float y) { x_ = x; y_ = y; }
+    inline void setPos(float x, float y)
+    {
+        x_ = x;
+        y_ = y;
+    }
+    inline void setSize(int width, int height)
+    {
+        width_ = width;
+        height_ = height;
+    }
     inline float x() const { return x_; }
     inline float y() const { return y_; }
-    
+
     inline int width() const { return width_; }
     inline int height() const { return height_; }
 

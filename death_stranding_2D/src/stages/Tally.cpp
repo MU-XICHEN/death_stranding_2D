@@ -1,15 +1,14 @@
 #include "stages/Tally.h"
 #include "world/World.h"
+#include "layers/Layer.h"
+#include "layers/MainLayer.h"
 
-void Tally::handleEvents(World &world)
+void TallyStage::update(World &world, Layer &layer)
 {
+    handleEvents(world, layer);
 }
 
-void Tally::update(World &world, Layer &layer)
-{
-}
-
-void Tally::render(World &world, Layer &layer)
+void TallyStage::render(World &world, Layer &layer)
 {
     auto &canvas = world.canvas();
 

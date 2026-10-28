@@ -1,4 +1,7 @@
 #include "stages/Stage.h"
+#include "world/World.h"
+#include "layers/Layer.h"
+#include "layers/MainLayer.h"
 
 Stage::~Stage()
 {
@@ -19,8 +22,21 @@ void Stage::pushEntity(Entity *entity)
     entityList_.pushBack(entity);
 }
 
+void Stage::handleEvents(World &world, Layer &layer)
+{
+    const auto &canvas = world.canvas();
+    if (Stage::enterState.justPressed(canvas.keyPressed(VK_RETURN)))
+    {
+        auto mainLayer = dynamic_cast<MainLayer *>(&layer);
+        if (mainLayer)
+        {
+            mainLayer->goToNextStageInNextFrame();
+        }
+    }
+}
+
 // Iterate over the list in insertion order, which means the entity added first is updated first.
-void Stage::updateEntities(World &world, Layer &layer)
+void Stage::update(World &world, Layer &layer)
 {
     if (entityList_.size() == 0)
         return;
@@ -33,7 +49,7 @@ void Stage::updateEntities(World &world, Layer &layer)
 }
 
 // Iterate over the list in reverse order, which means the entity pushed last is rendered first.
-void Stage::renderEntities(World &world, Layer &layer)
+void Stage::render(World &world, Layer &layer)
 {
     if (entityList_.size() == 0)
         return;

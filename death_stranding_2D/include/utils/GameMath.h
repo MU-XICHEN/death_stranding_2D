@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include "core/Types.h"
 
 namespace GamesEngineeringBase::Math
@@ -23,7 +24,6 @@ namespace GamesEngineeringBase::Math
         return value >= 0 ? value : -value;
     }
 
-    // Implemented based on Newton–Raphson method
     inline Vec2 normalize(const Vec2 &v)
     {
         Vec2 result;
@@ -35,23 +35,7 @@ namespace GamesEngineeringBase::Math
         float y = v.y / scale;
         float squared = x * x + y * y;
 
-        float length = 2.0f; // Initial guess because result range is [1, 2]
-        const float epsilon = 1e-6f;
-        const int maxIterations = 8;
-
-        for (int i = 0; i < maxIterations; ++i)
-        {
-            float next = 0.5f * (length + squared / length);
-
-            float difference = next - length;
-            if (difference < 0.0f)
-                difference = -difference;
-
-            length = next;
-
-            if (difference <= epsilon * length)
-                break;
-        }
+        float length = std::sqrt(squared);
 
         result.x = x / length;
         result.y = y / length;
@@ -61,6 +45,11 @@ namespace GamesEngineeringBase::Math
     inline float dotProduct(const Vec2 &a, const Vec2 &b)
     {
         return a.x * b.x + a.y * b.y;
+    }
+
+    inline Vec2 perpendicular(const Vec2 &v)
+    {
+        return Vec2{-v.y, v.x};
     }
 
     inline int ceilToInt(float value)
@@ -73,6 +62,18 @@ namespace GamesEngineeringBase::Math
     {
         const int truncated = static_cast<int>(value);
         return value < truncated ? truncated - 1 : truncated;
+    }
+
+    const float Pi = 3.14159265358979323846f;
+
+    inline float toRadians(float degrees)
+    {
+        return degrees * (Pi / 180.0f);
+    }
+
+    inline float toDegrees(float radians)
+    {
+        return radians * (180.0f / Pi);
     }
 
 }

@@ -2,28 +2,29 @@
 
 #include "entities/Entity.h"
 #include "stages/Stage.h"
+#include "utils/KeyState.h"
 
-class Menu : public Entity
-{
-public:
-    using Entity::Entity;
-
-    void update(World &world, Layer &layer) override;
-    void render(World &world, Layer &layer) override;
-
-private:
-    bool started_ = false;
-
-    void handleEvents(World &world);
-};
+class World;
+class Layer;
 
 class MenuStage : public Stage
 {
 public:
-    MenuStage()
-    {
-        Menu *menu = new Menu(0, 0, 50, 50);
-        pushEntity(menu);
-    };
+    MenuStage() = default;
     ~MenuStage() = default;
+
+    void update(World &world, Layer &layer) override;
+    void render(World &world, Layer &layer) override;
+
+    void renderSelection(World &world, Layer &layer);
+
+    void moveSelection(int direction);
+
+private:
+    int selectedIdx_ = 0;
+    int maxIdx_ = 2;
+
+    KeyState wKeyState_;
+    KeyState sKeyState_;
+    KeyState enterKeyState_;
 };

@@ -1,13 +1,7 @@
 #pragma once
 
-class State
+struct State
 {
-public:
-    // explicit State(int id, int health = 0) : id_(id), health_(health) {};
-    State() = default;
-    virtual ~State() = default;
-
-private:
-    unsigned int id_;
-    unsigned int health_;
+    int id = 0;
+    int health = 0;
 };

@@ -30,13 +30,17 @@
 #define PIXEL_PER_SEC 200.0f
 /**
  * ❗Note:
- *  ensure that the role size does not exceed the grid size 
+ *  ensure that the role size does not exceed twice the grid size
  *  for preventing items from spanning multiple grid cells.
+ *  In getCandidateGrids(Grid.h), this is ensured by extending one more grid in all directions.
  */
-#define ROLE_SIZE 60 
+#define ROLE_SIZE 60
 
 // Monster
 #define M_Beast_PIXEL_PER_SEC 150.0f
 #define M_Beast_DANGER_DISTANCE 100.0f
 #define M_Ghost_PIXEL_PER_SEC 175.0f
 #define M_Ghost_DANGER_DISTANCE 50.0f
+
+// Text
+#define HeroTextSep 5

@@ -16,6 +16,9 @@
     <Filter Include="Resource Files\assets">
       <UniqueIdentifier>{9AE24CF9-AF31-4B42-B940-B01E64052DD4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\assets\map">
+      <UniqueIdentifier>{60319D2D-87D7-47F6-93BB-5A0065C95F32}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\entities">
       <UniqueIdentifier>{8D86E330-A335-4B03-9D74-FA8860D72867}</UniqueIdentifier>
     </Filter>
@@ -135,6 +138,9 @@
     <ClCompile Include="src\map\Map.cpp">
       <Filter>Source Files\map</Filter>
     </ClCompile>
+    <ClCompile Include="src\map\MapFactory.cpp">
+      <Filter>Source Files\map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\GamesEngineeringBase.h">
@@ -185,10 +191,16 @@
     <ClInclude Include="include\skills\Attack.h">
       <Filter>Header Files\skills</Filter>
     </ClInclude>
+    <ClInclude Include="include\skills\AttackInfo.h">
+      <Filter>Header Files\skills</Filter>
+    </ClInclude>
     <ClInclude Include="include\skills\AttackHalfCircleSlash.h">
       <Filter>Header Files\skills</Filter>
     </ClInclude>
     <ClInclude Include="include\skills\Skill.h">
+      <Filter>Header Files\skills</Filter>
+    </ClInclude>
+    <ClInclude Include="include\skills\SkillSpeedUp.h">
       <Filter>Header Files\skills</Filter>
     </ClInclude>
     <ClInclude Include="include\stages\Common.h">
@@ -251,5 +263,10 @@
     <ClInclude Include="include\world\World.h">
       <Filter>Header Files\world</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\assets\map\*.txt">
+      <Filter>Resource Files\assets\map</Filter>
+    </None>
   </ItemGroup>
 </Project>

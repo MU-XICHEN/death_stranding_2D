@@ -10,7 +10,9 @@ class World;
 class AttackHalfCircleSlash : public Attack
 {
 public:
-    using Attack::Attack;
+    AttackHalfCircleSlash(int key, float duration)
+        : Attack(key, duration)
+    {}
     virtual ~AttackHalfCircleSlash() = default;
 
     virtual AABB getAttackContainer(World &world) override;

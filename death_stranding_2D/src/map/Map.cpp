@@ -154,7 +154,10 @@ void Map::initialize()
     }
 
     // merge tiles to large pieces
-    mergeTiles(source_.ground, source_.colCnt, source_.rowCnt);
+    GEB::Structures::Array<int> collisionGround(source_.groundCount);
+    for (int i = 0; i < source_.groundCount; ++i)
+        collisionGround[i] = source_.tileDefinitions[source_.ground[i]].collision ? 1 : 0;
+    mergeTiles(collisionGround.head(), source_.colCnt, source_.rowCnt);
 
     cachemap();
 }

@@ -171,6 +171,7 @@
     <ClCompile Include="src\world\Grid.cpp" />
     <ClCompile Include="src\world\AssetManager.cpp" />
     <ClCompile Include="src\map\Map.cpp" />
+    <ClCompile Include="src\map\MapFactory.cpp" />
     <ClCompile Include="src\world\World.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -190,8 +191,10 @@
     <ClInclude Include="include\renderer\TextRenderer.h" />
     <ClInclude Include="include\renderer\SliceRenderer.h" />
     <ClInclude Include="include\skills\Attack.h" />
+    <ClInclude Include="include\skills\AttackInfo.h" />
     <ClInclude Include="include\skills\AttackHalfCircleSlash.h" />
     <ClInclude Include="include\skills\Skill.h" />
+    <ClInclude Include="include\skills\SkillSpeedUp.h" />
     <ClInclude Include="include\stages\Common.h" />
     <ClInclude Include="include\stages\Intro.h" />
     <ClInclude Include="include\stages\Menu.h" />
@@ -212,6 +215,9 @@
     <ClInclude Include="include\map\Tile.h" />
     <ClInclude Include="include\world\Viewport.h" />
     <ClInclude Include="include\world\World.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\assets\map\*.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

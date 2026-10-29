@@ -110,7 +110,7 @@ void Hero::handleMovement(World &world, Layer &layer)
     gridSystem.updateEntityGridIfNeed(oldCenter, this);
 }
 
-void Hero::tryTiggerAttacks(World &world, Layer &layer)
+void Hero::tryTriggerAttacks(World &world, Layer &layer)
 {
     auto &canvas = world.canvas();
     // try begin attacks
@@ -118,13 +118,30 @@ void Hero::tryTiggerAttacks(World &world, Layer &layer)
     {
         if (!attacks_[i])
             continue;
+        if (attacks_[i]->isActive())
+            continue;
+
         if (canvas.keyPressed(attacks_[i]->triggerKey()))
         {
-            if (attacks_[i]->isActive())
-                continue;
-
             // handle different types of attacks
             attacks_[i]->begin();
+        }
+    }
+}
+
+void Hero::tryTriggerSkills(World &world, Layer &layer)
+{
+    auto &canvas = world.canvas();
+    for (int i = 0; i < skills_.size(); ++i)
+    {
+        if (!skills_[i])
+            continue;
+        if (canvas.keyPressed(skills_[i]->triggerKey()))
+        {
+            if (skills_[i]->active())
+                continue;
+
+            skills_[i]->activate(state_);
         }
     }
 }
@@ -150,7 +167,7 @@ AttackInfo Hero::createAttackInfo(Attack *attack)
     if (dynamic_cast<AttackHalfCircleSlash *>(attack))
     {
         GEB::Pair<int, float> props[] = {
-            {AttackInfo::DAMAGE, attack->attackInfo().damage()},
+            {AttackInfo::DAMAGE, 10.0f},
             // lifetime of the attack
             {AttackInfo::DURATION, 0.3f},
             {AttackInfo::HIT_START_TIME, 0.06f},

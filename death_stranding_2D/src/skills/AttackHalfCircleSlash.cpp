@@ -105,6 +105,4 @@ bool AttackHalfCircleSlash::tryHit(World &world, std::uintptr_t entityPtr)
     return false;
 }
 
-void AttackHalfCircleSlash::render(World &world)
-{
-}
+void AttackHalfCircleSlash::render(World &world) {}

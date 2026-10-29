@@ -28,7 +28,8 @@ public:
     virtual ~Hero();
 
     void update(World &world, Layer &layer) override;
-    void tryTiggerAttacks(World &world, Layer &layer) override;
+    void tryTriggerAttacks(World &world, Layer &layer) override;
+    void tryTriggerSkills(World &world, Layer &layer) override;
     void handleMovement(World &world, Layer &layer) override;
     AttackInfo createAttackInfo(Attack *attack) override;
 

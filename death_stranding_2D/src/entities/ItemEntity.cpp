@@ -19,6 +19,12 @@ ItemEntity::~ItemEntity()
             delete attacks_[i];
         attacks_[i] = nullptr;
     }
+    for (int i = 0; i < skills_.size(); i++)
+    {
+        if (skills_[i])
+            delete skills_[i];
+        skills_[i] = nullptr;
+    }
 }
 
 void ItemEntity::update(World &world, Layer &layer)
@@ -59,7 +65,7 @@ void ItemEntity::render(World &world, Layer &layer)
         }
     }
 
-    // draw health
+    // draw health && speed
     if (state_.health() >= 0)
     {
         auto &textRenderer = world.textRenderer();
@@ -69,6 +75,19 @@ void ItemEntity::render(World &world, Layer &layer)
         textRenderer.drawString(
             world,
             healthText.c_str(),
+            targetX,
+            targetY,
+            GEB::TextSizeType::TEXT_SIZE_SMALL);
+    }
+    if (state_.speed() >= 0)
+    {
+        auto &textRenderer = world.textRenderer();
+        auto targetX = static_cast<int>(xRelativeToViewport);
+        auto targetY = static_cast<int>(yRelativeToViewport) - GEB::TextSizeH::TEXT_SIZE_H_SMALL - ROLE_HP_TEXT_SEP - GEB::TextSizeH::TEXT_SIZE_H_SMALL - ROLE_HP_TEXT_SEP;
+        std::string speedText = std::to_string(static_cast<int>(state_.speed()));
+        textRenderer.drawString(
+            world,
+            speedText.c_str(),
             targetX,
             targetY,
             GEB::TextSizeType::TEXT_SIZE_SMALL);
@@ -202,9 +221,34 @@ void ItemEntity::moveWithCollision(
 
 void ItemEntity::handleEvents(World &world, Layer &layer)
 {
-    handleMovement(world, layer);   // handle movement of this frame
-    processAttack(world, layer);    // update items' attack states of this frame
-    tryTiggerAttacks(world, layer); // trigger skill for next frame
+    processSkill(world, layer);      // update items' skill states of this frame
+    handleMovement(world, layer);    // handle movement of this frame
+    processAttack(world, layer);     // update items' attack states of this frame
+    tryTriggerAttacks(world, layer); // trigger skill for next frame
+    tryTriggerSkills(world, layer);  // trigger skills for next frame
+}
+
+void ItemEntity::processSkill(World &world, Layer &layer)
+{
+    auto dt = world.gameInfo().dt();
+
+    for (int i = 0; i < skills_.size(); i++)
+    {
+        auto *skill = skills_[i];
+        if (!skill)
+            continue;
+
+        if (!skill->active())
+            continue;
+
+        skill->updateElapsedTime(dt);
+
+        if (skill->elapsedTime() >= skill->duration())
+        {
+            skill->deactivate(state_);
+            continue;
+        }
+    }
 }
 
 void ItemEntity::processAttack(World &world, Layer &layer)
@@ -237,7 +281,9 @@ void ItemEntity::processAttack(World &world, Layer &layer)
 
         attack->updateElapsedTime(dt);
 
-        if (attack->elapsedTime() >= attack->attackInfo().duration())
+        const auto &attackInfo = attack->attackInfo();
+
+        if (attack->elapsedTime() >= attackInfo.duration())
         {
             attack->end();
             continue;
@@ -261,7 +307,6 @@ void ItemEntity::processAttack(World &world, Layer &layer)
 
             if (hitted)
             {
-                const auto &attackInfo = attack->attackInfo();
                 entity->onAttack(attackInfo);
             }
 
@@ -275,7 +320,10 @@ void ItemEntity::processAttack(World &world, Layer &layer)
 
 void ItemEntity::onAttack(const AttackInfo &attackInfo)
 {
-    state_.setHealth(state_.health() - attackInfo.damage());
+    int realDamage = attackInfo.damage() - state_.defense();
+    if (realDamage < 0)
+        realDamage = 0;
+    state_.setHealth(state_.health() - realDamage);
     if (state_.health() <= 0)
         setActive(false);
 }
@@ -284,6 +332,12 @@ void ItemEntity::addAttack(Attack *attack)
 {
     attack->setOwner(this);
     attacks_.pushBack(attack);
+}
+
+void ItemEntity::addSkill(Skill *skill)
+{
+    skill->setOwner(this);
+    skills_.pushBack(skill);
 }
 
 void ItemEntity::initializeState(GEB::Pair<int, float> *newProp,

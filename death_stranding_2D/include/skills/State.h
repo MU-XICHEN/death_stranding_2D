@@ -6,12 +6,11 @@
 // 1. PropertyIndex enum
 // 2. propCount
 // 3. Getter and setter methods
-static constexpr int propCount = 6;
+static constexpr int cPropCount = 6;
 class State final
 {
 public:
     // update the property count while adding/removing properties.
-
     enum PropertyIndex
     {
         HEALTH = 0,
@@ -22,7 +21,10 @@ public:
         DEFENSE,
     };
 
-    State() : properties_(propCount) {};
+    State()
+        : properties_(cPropCount) {};
+    State(const State &state)
+        : properties_(cPropCount) { *this = state; }
     ~State() = default;
     // properties
     // health
@@ -46,14 +48,12 @@ public:
 
     // methods
     inline const GEB::Structures::Array<float> &properties() const { return properties_; };
-    void initialize(
-        GEB::Pair<int, float> *newProp,
-        int size)
+    void initialize(GEB::Pair<int, float> *newProp, int size)
     {
         for (int i = 0; i < size; i++)
         {
             const int index = newProp[i].first;
-            if (index >= 0 && index < propCount)
+            if (index >= 0 && index < cPropCount)
             {
                 properties_[index] = newProp[i].second;
             }
@@ -71,15 +71,30 @@ public:
         }
         return *this;
     }
-    void apply(const State &state)
+    void apply(const State &sideEffectState)
     {
         const int size = properties_.size();
-        const auto &newProperties = state.properties();
+        const auto &newProperties = sideEffectState.properties();
         if (newProperties.size() != size)
             return;
         for (int i = 0; i < size; i++)
         {
+            if (newProperties[i] == 0.0f)
+                continue;
             properties_[i] += newProperties[i];
+        }
+    }
+    void unDo(const State &sideEffectState)
+    {
+        const int size = properties_.size();
+        const auto &newProperties = sideEffectState.properties();
+        if (newProperties.size() != size)
+            return;
+        for (int i = 0; i < size; i++)
+        {
+            if (newProperties[i] == 0.0f)
+                continue;
+            properties_[i] -= newProperties[i];
         }
     }
 

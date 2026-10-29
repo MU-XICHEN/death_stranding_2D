@@ -7,6 +7,7 @@
 #include "layers/MainLayer.h"
 #include "world/World.h"
 #include "skills/AttackHalfCircleSlash.h"
+#include "skills/SkillSpeedUp.h"
 
 PlayStage::PlayStage()
     : gridSystem_(GRID_ROWCNT, GRID_COLCNT, GRID_SIZE),
@@ -29,8 +30,10 @@ void PlayStage::initialize()
         ROLE_SIZE,
         ROLE_SIZE);
     hero->setColor(255, 0, 0);
-    auto *skill = new AttackHalfCircleSlash('J', true);
-    hero->addAttack(skill);
+    auto *attack = new AttackHalfCircleSlash('J', true);
+    hero->addAttack(attack);
+    auto *speedUpSkill = new SkillSpeedUp('K');
+    hero->addSkill(speedUpSkill);
     addEntityToGridSystem(hero);
 
     auto monster = new Beast(
@@ -48,7 +51,6 @@ void PlayStage::initialize()
         ROLE_SIZE);
     monster2->setColor(0, 255, 0);
     addEntityToGridSystem(monster2);
-    // todo: other sections like information panel.
 }
 
 GEB::Pair<int, int> getGridIndex(float x, float y)

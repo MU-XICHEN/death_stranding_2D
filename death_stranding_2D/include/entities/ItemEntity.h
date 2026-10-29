@@ -4,7 +4,8 @@
 #include "skills/State.h"
 #include "structure/Array.h"
 #include "utils/Utils.h"
-#include "Skills/Attack.h"
+#include "skills/Attack.h"
+#include "skills/Skill.h"
 
 struct MapInfo;
 
@@ -39,7 +40,7 @@ public:
         color_.b = b;
     }
 
-    void initializeState(const float *props, int size);
+    void initializeState(GEB::Pair<int, float> *newProp, int size);
     void updateState(const State &state) { state_ = state; }
 
     void calculateBoundaryTop(GEB::Boundary &boundary, const Entity *barrierItem);
@@ -62,11 +63,17 @@ public:
 
     void handleEvents(World &world, Layer &layer);
     virtual void processAttack(World &world, Layer &layer);
+    virtual void processSkill(World &world, Layer &layer);
     virtual void handleMovement(World &world, Layer &layer) {};
-    virtual void tryTiggerAttacks(World &world, Layer &layer) {};
+    virtual void tryTriggerSkills(World &world, Layer &layer) {};
+    virtual void tryTriggerAttacks(World &world, Layer &layer) {};
     virtual AttackInfo createAttackInfo(Attack *attack) { return AttackInfo{}; };
 
-    void initializeState(GEB::Pair<int, float> *newProp, int size);
+    // relevant to skills
+    void addSkill(Skill *skill);
+    GEB::Structures::Array<Skill *> &skills() { return skills_; }
+    const GEB::Structures::Array<Skill *> &skills() const { return skills_; }
+
     // relevant to attacks
     virtual void onAttack(const AttackInfo &attackInfo);
     void addAttack(Attack *attack);
@@ -85,4 +92,5 @@ protected:
     GEB::Direction direction_ = GEB::Direction::Down;
 
     GEB::Structures::Array<Attack *> attacks_;
+    GEB::Structures::Array<Skill *> skills_;
 };

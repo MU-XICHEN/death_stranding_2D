@@ -5,18 +5,18 @@
 
 void getRotatedHitBoxPoints(const AttackInfo &attackInfo, float elapsedTime, GEB::Vec2 hitBoxPoints[4])
 {
-    GEB::Vec2 originPoint1 = attackInfo.originPoint;
+    GEB::Vec2 originPoint1 = attackInfo.originPoint();
 
-    const auto unitDirVec2 = GEB::Utils::transDirToUnitVec2(attackInfo.direction);
+    const auto unitDirVec2 = GEB::Utils::transDirToUnitVec2(attackInfo.direction());
 
     auto startDirVec2 = unitDirVec2;
     startDirVec2.x = unitDirVec2.y;
     startDirVec2.y = -unitDirVec2.x;
 
-    const auto hitBoxWidth = static_cast<float>(attackInfo.hitBoxWidth);
-    const auto hitBoxHeight = static_cast<float>(attackInfo.hitBoxHeight);
+    const auto hitBoxWidth = static_cast<float>(attackInfo.hitBoxWidth());
+    const auto hitBoxHeight = static_cast<float>(attackInfo.hitBoxHeight());
 
-    GEB::Vec2 originPoint2 = attackInfo.originPoint + (startDirVec2 * hitBoxHeight);
+    GEB::Vec2 originPoint2 = attackInfo.originPoint() + (startDirVec2 * hitBoxHeight);
 
     const auto perpVec2 = GEB::Math::normalize(GEB::Math::perpendicular(startDirVec2));
 
@@ -27,21 +27,21 @@ void getRotatedHitBoxPoints(const AttackInfo &attackInfo, float elapsedTime, GEB
     hitBoxPoints[3] = originPoint2 - (perpVec2 * (hitBoxWidth / 2));
 
     // calcuate progress
-    const float hitDuration = attackInfo.hitEndTime - attackInfo.hitStartTime;
+    const float hitDuration = attackInfo.hitEndTime() - attackInfo.hitStartTime();
     float progress = 0;
     if (hitDuration > 0.0f)
     {
-        progress = GEB::Math::min(1.0f, (elapsedTime - attackInfo.hitStartTime) / hitDuration);
+        progress = GEB::Math::min(1.0f, (elapsedTime - attackInfo.hitStartTime()) / hitDuration);
         progress = GEB::Math::max(0.0f, progress);
     }
 
     const float degree = 180.0f * progress;
 
     // apply rotation
-    hitBoxPoints[0] = GEB::Utils::rotateClockwise(hitBoxPoints[0], attackInfo.originPoint, degree);
-    hitBoxPoints[1] = GEB::Utils::rotateClockwise(hitBoxPoints[1], attackInfo.originPoint, degree);
-    hitBoxPoints[2] = GEB::Utils::rotateClockwise(hitBoxPoints[2], attackInfo.originPoint, degree);
-    hitBoxPoints[3] = GEB::Utils::rotateClockwise(hitBoxPoints[3], attackInfo.originPoint, degree);
+    hitBoxPoints[0] = GEB::Utils::rotateClockwise(hitBoxPoints[0], attackInfo.originPoint(), degree);
+    hitBoxPoints[1] = GEB::Utils::rotateClockwise(hitBoxPoints[1], attackInfo.originPoint(), degree);
+    hitBoxPoints[2] = GEB::Utils::rotateClockwise(hitBoxPoints[2], attackInfo.originPoint(), degree);
+    hitBoxPoints[3] = GEB::Utils::rotateClockwise(hitBoxPoints[3], attackInfo.originPoint(), degree);
 }
 
 AABB AttackHalfCircleSlash::getAttackContainer(World &world)
@@ -80,7 +80,7 @@ bool AttackHalfCircleSlash::tryHit(World &world, std::uintptr_t entityPtr)
     // and hitTargets hasn't contained this id.
     const auto &attackInfo = this->attackInfo();
 
-    if (elapsedTime_ < attackInfo.hitStartTime || elapsedTime_ >= attackInfo.hitEndTime)
+    if (elapsedTime_ < attackInfo.hitStartTime() || elapsedTime_ >= attackInfo.hitEndTime())
         return false;
 
     GEB::Vec2 points[4];
@@ -105,4 +105,6 @@ bool AttackHalfCircleSlash::tryHit(World &world, std::uintptr_t entityPtr)
     return false;
 }
 
-void AttackHalfCircleSlash::render(World &world) {}
+void AttackHalfCircleSlash::render(World &world)
+{
+}

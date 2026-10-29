@@ -6,11 +6,11 @@
 // 1. PropertyIndex enum
 // 2. propCount
 // 3. Getter and setter methods
+static constexpr int propCount = 6;
 class State final
 {
 public:
     // update the property count while adding/removing properties.
-    static constexpr int propCount = 6;
 
     enum PropertyIndex
     {
@@ -22,7 +22,7 @@ public:
         DEFENSE,
     };
 
-    State() : properties_(State::propCount) {};
+    State() : properties_(propCount) {};
     ~State() = default;
     // properties
     // health

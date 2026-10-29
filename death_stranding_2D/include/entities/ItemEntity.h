@@ -11,7 +11,7 @@ struct MapInfo;
 class World;
 class Layer;
 class Attack;
-struct AttackInfo;
+class AttackInfo;
 
 // ItemEntity is used to anything which should consider collision.
 class ItemEntity : public Entity

@@ -48,14 +48,14 @@ Hero::Hero(
     : ItemEntity(x, y, width, height),
       impl_(new HeroImpl(this))
 {
-    GEB::Pair<int, float> props[State::propCount] = {
-        {State::HEALTH, 100.0f},
+    GEB::Pair<int, float> props[] = {
+        {State::HEALTH, HERO_HP},
         {State::SPEED, HERO_PIXEL_PER_SEC},
         {State::PERCEPTION_RANGE, HERO_DANGER_DISTANCE},
         {State::DEFENSE, HERO_DEFENSE},
         {State::DAMAGE, HERO_DAMAGE},
     };
-    initializeState(props, State::propCount);
+    initializeState(props, sizeof(props) / sizeof(props[0]));
 }
 
 Hero::~Hero()
@@ -149,20 +149,22 @@ AttackInfo Hero::createAttackInfo(Attack *attack)
 {
     if (dynamic_cast<AttackHalfCircleSlash *>(attack))
     {
-        const auto &attackInfo = attack->attackInfo();
-        return AttackInfo{
-            .damage = attackInfo.damage,
+        GEB::Pair<int, float> props[] = {
+            {AttackInfo::DAMAGE, attack->attackInfo().damage()},
             // lifetime of the attack
-            .duration = 0.3f,
-            .hitStartTime = 0.06f,
-            .hitEndTime = 0.14f,
+            {AttackInfo::DURATION, 0.3f},
+            {AttackInfo::HIT_START_TIME, 0.06f},
+            {AttackInfo::HIT_END_TIME, 0.14f},
             // hit box dimensions
-            .hitBoxWidth = 80,
-            .hitBoxHeight = 30,
-            // set point and direction of the attack
-            .originPoint = getOriginPoint(),
-            .direction = direction(),
+            {AttackInfo::HIT_BOX_WIDTH, 80.0f},
+            {AttackInfo::HIT_BOX_HEIGHT, 30.0f},
         };
+        int size = 6;
+        AttackInfo attackInfo(props, size);
+        // set point and direction of the attack
+        attackInfo.setOriginPoint(getOriginPoint());
+        attackInfo.setDirection(direction());
+        return attackInfo;
     }
     return AttackInfo{};
 }

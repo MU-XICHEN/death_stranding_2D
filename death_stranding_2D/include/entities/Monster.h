@@ -36,13 +36,13 @@ public:
         : Monster(x, y, width, height)
     {
         // initialize states
-        GEB::Pair<int, float> props[State::propCount] = {
-            {State::HEALTH, 100.0f},
+        GEB::Pair<int, float> props[] = {
+            {State::HEALTH, M_BEAST_HP},
             {State::SPEED, M_BEAST_PIXEL_PER_SEC},
             {State::PERCEPTION_RANGE, M_BEAST_DANGER_DISTANCE},
             {State::DEFENSE, M_BEAST_DEFENSE},
             {State::DAMAGE, M_BEAST_DAMAGE}};
-        initializeState(props, State::propCount);
+        initializeState(props, sizeof(props) / sizeof(props[0]));
     }
 };
 
@@ -53,13 +53,13 @@ public:
         : Monster(x, y, width, height)
     {
         // initialize states
-        GEB::Pair<int, float> props[State::propCount] = {
-            {State::HEALTH, 100.0f},
+        GEB::Pair<int, float> props[] = {
+            {State::HEALTH, M_GHOST_HP},
             {State::SPEED, M_GHOST_PIXEL_PER_SEC},
             {State::PERCEPTION_RANGE, M_GHOST_DANGER_DISTANCE},
             {State::DEFENSE, M_GHOST_DEFENSE},
             {State::DAMAGE, M_GHOST_DAMAGE}};
-        initializeState(props, State::propCount);
+        initializeState(props, sizeof(props) / sizeof(props[0]));
     }
 
     void render(World &world, Layer &layer) override;

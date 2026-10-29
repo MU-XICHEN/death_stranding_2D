@@ -60,12 +60,12 @@ void ItemEntity::render(World &world, Layer &layer)
     }
 
     // draw health
-    if (state_.health() > 0)
+    if (state_.health() >= 0)
     {
         auto &textRenderer = world.textRenderer();
         auto targetX = static_cast<int>(xRelativeToViewport);
         auto targetY = static_cast<int>(yRelativeToViewport) - GEB::TextSizeH::TEXT_SIZE_H_SMALL - ROLE_HP_TEXT_SEP;
-        std::string healthText = std::to_string(state_.health());
+        std::string healthText = std::to_string(static_cast<int>(state_.health()));
         textRenderer.drawString(
             world,
             healthText.c_str(),
@@ -237,7 +237,7 @@ void ItemEntity::processAttack(World &world, Layer &layer)
 
         attack->updateElapsedTime(dt);
 
-        if (attack->elapsedTime() >= attack->attackInfo().duration)
+        if (attack->elapsedTime() >= attack->attackInfo().duration())
         {
             attack->end();
             continue;
@@ -275,7 +275,7 @@ void ItemEntity::processAttack(World &world, Layer &layer)
 
 void ItemEntity::onAttack(const AttackInfo &attackInfo)
 {
-    state_.setHealth(state_.health() - attackInfo.damage);
+    state_.setHealth(state_.health() - attackInfo.damage());
     if (state_.health() <= 0)
         setActive(false);
 }

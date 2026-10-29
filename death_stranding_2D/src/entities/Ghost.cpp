@@ -11,7 +11,7 @@ void Ghost::checkDangerDistance(World &world, Layer &layer)
     float dx = GEB::Math::abs(heroCenter.x - center().x);
     float dy = GEB::Math::abs(heroCenter.y - center().y);
 
-    if (dx <= state_.perceptionRange && dy <= state_.perceptionRange)
+    if (dx <= state_.perceptionRange() && dy <= state_.perceptionRange())
     {
         appear();
         awaken();

@@ -111,7 +111,7 @@
     <ClCompile Include="src\renderer\SlicerRenderer.cpp">
       <Filter>Source Files\renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\skills\HalfCircleSlash.cpp">
+    <ClCompile Include="src\skills\AttackHalfCircleSlash.cpp">
       <Filter>Source Files\skills</Filter>
     </ClCompile>
     <ClCompile Include="src\skills\Attack.cpp">
@@ -164,8 +164,8 @@
     <ClInclude Include="include\entities\Monster.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
-    <ClInclude Include="include\entities\State.h">
-      <Filter>Header Files\entities</Filter>
+    <ClInclude Include="include\skills\State.h">
+      <Filter>Header Files\skills</Filter>
     </ClInclude>
     <ClInclude Include="include\layers\Layer.h">
       <Filter>Header Files\layers</Filter>
@@ -185,7 +185,10 @@
     <ClInclude Include="include\skills\Attack.h">
       <Filter>Header Files\skills</Filter>
     </ClInclude>
-    <ClInclude Include="include\skills\HalfCircleSlash.h">
+    <ClInclude Include="include\skills\AttackHalfCircleSlash.h">
+      <Filter>Header Files\skills</Filter>
+    </ClInclude>
+    <ClInclude Include="include\skills\Skill.h">
       <Filter>Header Files\skills</Filter>
     </ClInclude>
     <ClInclude Include="include\stages\Common.h">
@@ -248,10 +251,5 @@
     <ClInclude Include="include\world\World.h">
       <Filter>Header Files\world</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <CopyFileToFolders Include="src\assets\**\*">
-      <Filter>Resource Files\assets</Filter>
-    </CopyFileToFolders>
   </ItemGroup>
 </Project>

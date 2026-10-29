@@ -64,7 +64,7 @@ void Monster::checkDangerDistance(World &world, Layer &layer)
     float dx = GEB::Math::abs(heroCenter.x - center().x);
     float dy = GEB::Math::abs(heroCenter.y - center().y);
 
-    if (dx <= dangerDistance_ && dy <= dangerDistance_)
+    if (dx <= state_.perceptionRange() && dy <= state_.perceptionRange())
     {
         awaken();
     }
@@ -78,7 +78,7 @@ void Monster::handleMovement(World &world, Layer &layer)
     const MapInfo &map = world.gameInfo().mapInfo();
     auto &canvas = world.canvas();
     float dt = world.gameInfo().dt();
-    float distance = dt * speed_;
+    float distance = dt * state_.speed();
 
     auto &mainLayer = dynamic_cast<MainLayer &>(layer);
 

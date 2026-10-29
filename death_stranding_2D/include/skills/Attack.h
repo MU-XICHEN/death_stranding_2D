@@ -10,7 +10,7 @@ class ItemEntity;
 struct AttackInfo
 {
     // base
-    int damage = 0;
+    float damage = 0;
     float duration = 0.0f;
     float hitStartTime = 0.0f;
     float hitEndTime = 0.0f;

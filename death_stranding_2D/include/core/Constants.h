@@ -1,5 +1,8 @@
 #pragma once
 
+// Text
+#define ROLE_HP_TEXT_SEP 5
+
 // World
 #define MAX_LAYERS 10
 #define MAX_ENTITIES 100
@@ -26,8 +29,8 @@
 #define MAP_HEIGHT (GRID_SIZE * GRID_ROWCNT)
 #define MAX_PATH_LEN 256
 
+// initial States of Role
 // Role
-#define PIXEL_PER_SEC 200.0f
 /**
  * ❗Note:
  *  ensure that the role size does not exceed twice the grid size
@@ -35,12 +38,21 @@
  *  In getCandidateGridsByDisVec2(Grid.h), this is ensured by extending one more grid in all directions.
  */
 #define ROLE_SIZE 60
+// Hero
+#define HERO_PIXEL_PER_SEC 200.0f
+#define HERO_DANGER_DISTANCE 100.0f
+#define HERO_DEFENSE 5.0f
+#define HERO_DAMAGE 10.0f
 
 // Monster
-#define M_Beast_PIXEL_PER_SEC 150.0f
-#define M_Beast_DANGER_DISTANCE 100.0f
-#define M_Ghost_PIXEL_PER_SEC 175.0f
-#define M_Ghost_DANGER_DISTANCE 50.0f
+#define M_BEAST_PIXEL_PER_SEC 130.0f
+#define M_BEAST_DANGER_DISTANCE 100.0f
+#define M_BEAST_DEFENSE 5.0f
+#define M_BEAST_DAMAGE 10.0f
+#define M_BEAST_COLLITION_DAMAGE 5.0f
 
-// Text
-#define HeroTextSep 5
+#define M_GHOST_PIXEL_PER_SEC 150.0f
+#define M_GHOST_DANGER_DISTANCE 50.0f
+#define M_GHOST_DEFENSE 8.0f
+#define M_GHOST_DAMAGE 15.0f
+#define M_GHOST_COLLITION_DAMAGE 10.0f

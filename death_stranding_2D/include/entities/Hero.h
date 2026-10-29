@@ -24,8 +24,7 @@ public:
         float x,
         float y,
         int width,
-        int height,
-        float speed = PIXEL_PER_SEC);
+        int height);
     virtual ~Hero();
 
     void update(World &world, Layer &layer) override;

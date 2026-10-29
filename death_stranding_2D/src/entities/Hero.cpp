@@ -6,7 +6,7 @@
 #include "layers/MainLayer.h"
 #include "stages/Play.h"
 #include "skills/Attack.h"
-#include "skills/HalfCircleSlash.h"
+#include "skills/AttackHalfCircleSlash.h"
 #include "utils/Utils.h"
 
 template <typename T>
@@ -44,10 +44,19 @@ Hero::Hero(
     float x,
     float y,
     int width,
-    int height,
-    float speed)
-    : ItemEntity(x, y, width, height, speed),
-      impl_(new HeroImpl(this)) {}
+    int height)
+    : ItemEntity(x, y, width, height),
+      impl_(new HeroImpl(this))
+{
+    GEB::Pair<int, float> props[State::propCount] = {
+        {State::HEALTH, 100.0f},
+        {State::SPEED, HERO_PIXEL_PER_SEC},
+        {State::PERCEPTION_RANGE, HERO_DANGER_DISTANCE},
+        {State::DEFENSE, HERO_DEFENSE},
+        {State::DAMAGE, HERO_DAMAGE},
+    };
+    initializeState(props, State::propCount);
+}
 
 Hero::~Hero()
 {
@@ -61,7 +70,7 @@ void Hero::handleMovement(World &world, Layer &layer)
     const MapInfo &map = world.gameInfo().mapInfo();
     auto &canvas = world.canvas();
     float dt = world.gameInfo().dt();
-    float distance = dt * speed_;
+    float distance = dt * state_.speed();
 
     auto &mainLayer = dynamic_cast<MainLayer &>(layer);
 
@@ -138,15 +147,19 @@ void Hero::update(World &world, Layer &layer)
 
 AttackInfo Hero::createAttackInfo(Attack *attack)
 {
-    if (dynamic_cast<HalfCircleSlash *>(attack))
+    if (dynamic_cast<AttackHalfCircleSlash *>(attack))
     {
+        const auto &attackInfo = attack->attackInfo();
         return AttackInfo{
-            .damage = 10,
+            .damage = attackInfo.damage,
+            // lifetime of the attack
             .duration = 0.3f,
             .hitStartTime = 0.06f,
             .hitEndTime = 0.14f,
+            // hit box dimensions
             .hitBoxWidth = 80,
             .hitBoxHeight = 30,
+            // set point and direction of the attack
             .originPoint = getOriginPoint(),
             .direction = direction(),
         };

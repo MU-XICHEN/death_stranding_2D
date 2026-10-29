@@ -1,4 +1,4 @@
-#include "skills/HalfCircleSlash.h"
+#include "skills/AttackHalfCircleSlash.h"
 #include "world/World.h"
 #include "utils/Utils.h"
 #include "entities/AABB.h"
@@ -44,7 +44,7 @@ void getRotatedHitBoxPoints(const AttackInfo &attackInfo, float elapsedTime, GEB
     hitBoxPoints[3] = GEB::Utils::rotateClockwise(hitBoxPoints[3], attackInfo.originPoint, degree);
 }
 
-AABB HalfCircleSlash::getAttackContainer(World &world)
+AABB AttackHalfCircleSlash::getAttackContainer(World &world)
 {
     auto &attackInfo = this->attackInfo();
 
@@ -71,7 +71,7 @@ AABB HalfCircleSlash::getAttackContainer(World &world)
     return AABB(minX, minY, static_cast<int>(std::ceil(maxX - minX)), static_cast<int>(std::ceil(maxY - minY)));
 }
 
-bool HalfCircleSlash::tryHit(World &world, std::uintptr_t entityPtr)
+bool AttackHalfCircleSlash::tryHit(World &world, std::uintptr_t entityPtr)
 {
     if (!Attack::tryHit(world, entityPtr))
         return false;
@@ -105,4 +105,4 @@ bool HalfCircleSlash::tryHit(World &world, std::uintptr_t entityPtr)
     return false;
 }
 
-void HalfCircleSlash::render(World &world) {}
+void AttackHalfCircleSlash::render(World &world) {}

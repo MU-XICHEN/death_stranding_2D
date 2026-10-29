@@ -164,7 +164,7 @@
     <ClCompile Include="src\layers\DebugLayer.cpp" />
     <ClCompile Include="src\renderer\TextRenderer.cpp" />
     <ClCompile Include="src\renderer\SlicerRenderer.cpp" />
-    <ClCompile Include="src\skills\HalfCircleSlash.cpp" />
+    <ClCompile Include="src\skills\AttackHalfCircleSlash.cpp" />
     <ClCompile Include="src\skills\Attack.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\world\GameInfo.cpp" />
@@ -183,14 +183,15 @@
     <ClInclude Include="include\entities\Entity.h" />
     <ClInclude Include="include\entities\Hero.h" />
     <ClInclude Include="include\entities\Monster.h" />
-    <ClInclude Include="include\entities\State.h" />
+    <ClInclude Include="include\skills\State.h" />
     <ClInclude Include="include\layers\Layer.h" />
     <ClInclude Include="include\layers\MainLayer.h" />
     <ClInclude Include="include\layers\DebugLayer.h" />
     <ClInclude Include="include\renderer\TextRenderer.h" />
     <ClInclude Include="include\renderer\SliceRenderer.h" />
     <ClInclude Include="include\skills\Attack.h" />
-    <ClInclude Include="include\skills\HalfCircleSlash.h" />
+    <ClInclude Include="include\skills\AttackHalfCircleSlash.h" />
+    <ClInclude Include="include\skills\Skill.h" />
     <ClInclude Include="include\stages\Common.h" />
     <ClInclude Include="include\stages\Intro.h" />
     <ClInclude Include="include\stages\Menu.h" />

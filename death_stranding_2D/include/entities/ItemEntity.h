@@ -1,7 +1,7 @@
 #pragma once
 
 #include "entities/Entity.h"
-#include "entities/State.h"
+#include "skills/State.h"
 #include "structure/Array.h"
 #include "utils/Utils.h"
 #include "Skills/Attack.h"
@@ -17,8 +17,8 @@ struct AttackInfo;
 class ItemEntity : public Entity
 {
 public:
-    ItemEntity(float x, float y, int width, int height, float speed = PIXEL_PER_SEC)
-        : Entity(x, y, width, height), speed_(speed) {}
+    ItemEntity(float x, float y, int width, int height)
+        : Entity(x, y, width, height) {}
     virtual ~ItemEntity();
 
     GEB::Vec2 getOriginPoint() const
@@ -39,6 +39,7 @@ public:
         color_.b = b;
     }
 
+    void initializeState(const float *props, int size);
     void updateState(const State &state) { state_ = state; }
 
     void calculateBoundaryTop(GEB::Boundary &boundary, const Entity *barrierItem);
@@ -65,6 +66,7 @@ public:
     virtual void tryTiggerAttacks(World &world, Layer &layer) {};
     virtual AttackInfo createAttackInfo(Attack *attack) { return AttackInfo{}; };
 
+    void initializeState(GEB::Pair<int, float> *newProp, int size);
     // relevant to attacks
     virtual void onAttack(const AttackInfo &attackInfo);
     void addAttack(Attack *attack);
@@ -79,7 +81,6 @@ public:
 
 protected:
     GEB::Color color_{0, 0, 0};
-    float speed_;
     State state_;
     GEB::Direction direction_ = GEB::Direction::Down;
 

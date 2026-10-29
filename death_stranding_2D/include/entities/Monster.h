@@ -6,10 +6,8 @@
 class Monster : public ItemEntity
 {
 public:
-    Monster(float x, float y, int width, int height,
-            float speed,
-            float distance)
-        : ItemEntity(x, y, width, height, speed), dangerDistance_(distance) {}
+    Monster(float x, float y, int width, int height)
+        : ItemEntity(x, y, width, height) {}
 
     virtual ~Monster() = default;
 
@@ -29,25 +27,40 @@ protected:
     virtual void checkDangerDistance(World &world, Layer &layer);
 
     bool awakened_ = false;
-    float dangerDistance_;
 };
 
 class Beast : public Monster
 {
 public:
-    Beast(float x, float y, int width, int height,
-          float speed = M_Beast_PIXEL_PER_SEC,
-          float distance = M_Beast_DANGER_DISTANCE)
-        : Monster(x, y, width, height, speed, distance) {}
+    Beast(float x, float y, int width, int height)
+        : Monster(x, y, width, height)
+    {
+        // initialize states
+        GEB::Pair<int, float> props[State::propCount] = {
+            {State::HEALTH, 100.0f},
+            {State::SPEED, M_BEAST_PIXEL_PER_SEC},
+            {State::PERCEPTION_RANGE, M_BEAST_DANGER_DISTANCE},
+            {State::DEFENSE, M_BEAST_DEFENSE},
+            {State::DAMAGE, M_BEAST_DAMAGE}};
+        initializeState(props, State::propCount);
+    }
 };
 
 class Ghost : public Monster
 {
 public:
-    Ghost(float x, float y, int width, int height,
-          float speed = M_Ghost_PIXEL_PER_SEC,
-          float distance = M_Ghost_DANGER_DISTANCE)
-        : Monster(x, y, width, height, speed, distance) {}
+    Ghost(float x, float y, int width, int height)
+        : Monster(x, y, width, height)
+    {
+        // initialize states
+        GEB::Pair<int, float> props[State::propCount] = {
+            {State::HEALTH, 100.0f},
+            {State::SPEED, M_GHOST_PIXEL_PER_SEC},
+            {State::PERCEPTION_RANGE, M_GHOST_DANGER_DISTANCE},
+            {State::DEFENSE, M_GHOST_DEFENSE},
+            {State::DAMAGE, M_GHOST_DAMAGE}};
+        initializeState(props, State::propCount);
+    }
 
     void render(World &world, Layer &layer) override;
 

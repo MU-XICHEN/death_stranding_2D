@@ -11,8 +11,11 @@ public:
 
     static AABB createAABB(
         const Entity *item,
-        GEB::Vec2 distanceVec2,
-        const GEB::Boundary &boundary);
+        GEB::Vec2 distanceVec2);
+
+    static AABB createAABB(
+        GEB::Vec2 ori,
+        GEB::Vec2 des);
 
     void update(World &world, Layer &layer) override {}
     void render(World &world, Layer &layer) override {}

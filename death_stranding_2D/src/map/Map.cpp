@@ -98,7 +98,7 @@ Map::~Map()
     }
 }
 
-GEB::Position Map::playerPosition() const
+GEB::Vec2 Map::playerPosition() const
 {
     return center();
 }
@@ -253,8 +253,7 @@ void Map::addCollisionTileToCandiList(Entity *detectedItem,
 
     auto aabb = AABB::createAABB(
         detectedItem,
-        distanceVec,
-        mapBoundary);
+        distanceVec);
 
     for (int i = 0; i < tileBlocks_.size(); i++)
     {

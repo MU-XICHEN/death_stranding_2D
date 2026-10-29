@@ -9,21 +9,25 @@
 class AttackInfo final
 {
 public:
-    // update the property count while adding/removing properties.
-    static constexpr int propCount = 6;
-
     enum PropertyIndex
     {
-        DAMAGE = 0,
-        DURATION,
-        HIT_START_TIME,
-        HIT_END_TIME,
-        HIT_BOX_WIDTH,
-        HIT_BOX_HEIGHT,
+        Damage = 0,
+        Duration,
+        HitStartTime,
+        HitEndTime,
+        HitBoxWidth,
+        HitBoxHeight,
+        RangedAttackSpeed,
+        OriginPointX,
+        OriginPointY,
+        Direction,
+        _END_FLAG_,
     };
+    static constexpr int propCount = static_cast<int>(PropertyIndex::_END_FLAG_);
 
     AttackInfo() : properties_(AttackInfo::propCount) {}
-    AttackInfo(const GEB::Pair<int, float> *newProp, int size) : properties_(AttackInfo::propCount)
+    AttackInfo(const GEB::Pair<int, float> *newProp, int size)
+        : properties_(AttackInfo::propCount)
     {
         for (int i = 0; i < size; i++)
         {
@@ -41,25 +45,30 @@ public:
     ~AttackInfo() = default;
 
     // properties getters and setters
-    float damage() const { return properties_[DAMAGE]; }
-    void setDamage(float damage) { properties_[DAMAGE] = damage; }
-    float duration() const { return properties_[DURATION]; }
-    void setDuration(float duration) { properties_[DURATION] = duration; }
-    float hitStartTime() const { return properties_[HIT_START_TIME]; }
-    void setHitStartTime(float hitStartTime) { properties_[HIT_START_TIME] = hitStartTime; }
-    float hitEndTime() const { return properties_[HIT_END_TIME]; }
-    void setHitEndTime(float hitEndTime) { properties_[HIT_END_TIME] = hitEndTime; }
+    float damage() const { return properties_[Damage]; }
+    void setDamage(float damage) { properties_[Damage] = damage; }
+    float duration() const { return properties_[Duration]; }
+    void setDuration(float duration) { properties_[Duration] = duration; }
+    float hitStartTime() const { return properties_[HitStartTime]; }
+    void setHitStartTime(float hitStartTime) { properties_[HitStartTime] = hitStartTime; }
+    float hitEndTime() const { return properties_[HitEndTime]; }
+    void setHitEndTime(float hitEndTime) { properties_[HitEndTime] = hitEndTime; }
     // actual size of the hit box
-    int hitBoxWidth() const { return static_cast<int>(properties_[HIT_BOX_WIDTH]); }
-    void setHitBoxWidth(int hitBoxWidth) { properties_[HIT_BOX_WIDTH] = static_cast<float>(hitBoxWidth); }
-    int hitBoxHeight() const { return static_cast<int>(properties_[HIT_BOX_HEIGHT]); }
-    void setHitBoxHeight(int hitBoxHeight) { properties_[HIT_BOX_HEIGHT] = static_cast<float>(hitBoxHeight); }
+    int hitBoxWidth() const { return static_cast<int>(properties_[HitBoxWidth]); }
+    void setHitBoxWidth(int hitBoxWidth) { properties_[HitBoxWidth] = static_cast<float>(hitBoxWidth); }
+    int hitBoxHeight() const { return static_cast<int>(properties_[HitBoxHeight]); }
+    void setHitBoxHeight(int hitBoxHeight) { properties_[HitBoxHeight] = static_cast<float>(hitBoxHeight); }
+    float rangedAttackSpeed() const { return properties_[RangedAttackSpeed]; }
+    void setRangedAttackSpeed(float rangedAttackSpeed) { properties_[RangedAttackSpeed] = rangedAttackSpeed; }
 
-    // member variables getters and setters
-    const GEB::Vec2 &originPoint() const { return originPoint_; }
-    void setOriginPoint(const GEB::Vec2 &originPoint) { originPoint_ = originPoint; }
-    GEB::Direction direction() const { return direction_; }
-    void setDirection(GEB::Direction direction) { direction_ = direction; }
+    GEB::Vec2 originPoint() const { return GEB::Vec2{properties_[OriginPointX], properties_[OriginPointY]}; }
+    void setOriginPoint(const GEB::Vec2 &originPoint)
+    {
+        properties_[OriginPointX] = originPoint.x;
+        properties_[OriginPointY] = originPoint.y;
+    }
+    GEB::Direction direction() const { return static_cast<GEB::Direction>(static_cast<int>(properties_[Direction])); }
+    void setDirection(GEB::Direction direction) { properties_[Direction] = static_cast<float>(direction); }
 
     // methods
     inline const GEB::Structures::Array<float> &properties() const { return properties_; }
@@ -70,13 +79,9 @@ public:
         {
             properties_[i] = newProperties[i];
         }
-        originPoint_ = attackInfo.originPoint_;
-        direction_ = attackInfo.direction_;
         return *this;
     }
 
 private:
     GEB::Structures::Array<float> properties_;
-    GEB::Vec2 originPoint_ = {0.0f, 0.0f};
-    GEB::Direction direction_ = GEB::Direction::None;
 };

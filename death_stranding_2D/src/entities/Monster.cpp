@@ -60,7 +60,7 @@ void Monster::checkDangerDistance(World &world, Layer &layer)
 {
     if (awakened_)
         return;
-    GEB::Position heroCenter = world.gameInfo().heroInfo().center();
+    GEB::Vec2 heroCenter = world.gameInfo().heroInfo().center();
     float dx = GEB::Math::abs(heroCenter.x - center().x);
     float dy = GEB::Math::abs(heroCenter.y - center().y);
 
@@ -91,13 +91,7 @@ void Monster::handleMovement(World &world, Layer &layer)
     direction_ = transDirVecToDiretion(distanceVec, direction_);
 
     GEB::Structures::Array<Entity *> candidateItemList;
-    GEB::Boundary mapBoundary{
-        .top = 0,
-        .bottom = static_cast<float>(map.height()),
-        .left = 0,
-        .right = static_cast<float>(map.width()),
-    };
-    gridSystem.getCollisionCandidateListByItem(this, distanceVec, mapBoundary, candidateItemList);
+    gridSystem.getCollisionCandidateListByItem(this, distanceVec, candidateItemList);
 
     // add map tiles which may collide with the hero to the candidate list
     playStage.map().addCollisionTileToCandiList(this,
@@ -112,6 +106,9 @@ void Monster::handleMovement(World &world, Layer &layer)
 
 void Monster::update(World &world, Layer &layer)
 {
+    ItemEntity::coreUpdate(world, layer);
+    if (!active())
+        return;
+
     checkDangerDistance(world, layer);
-    ItemEntity::update(world, layer);
 }

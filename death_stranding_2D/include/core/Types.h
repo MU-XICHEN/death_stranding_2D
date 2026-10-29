@@ -31,12 +31,6 @@ namespace GamesEngineeringBase
         int b = 0;
     };
 
-    struct Position
-    {
-        float x = 0;
-        float y = 0;
-    };
-
     enum Direction
     {
         None,
@@ -119,6 +113,5 @@ namespace GamesEngineeringBase
             return Matrix2{first / scalar, second / scalar};
         }
     };
-
 
 }

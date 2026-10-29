@@ -27,9 +27,18 @@ ItemEntity::~ItemEntity()
     }
 }
 
-void ItemEntity::update(World &world, Layer &layer)
+void ItemEntity::coreUpdate(World &world, Layer &layer)
 {
-    handleEvents(world, layer);
+    if (deactivateIfNeeded(layer))
+        return;
+
+    processSkill(world, layer);   // update items' skill states of this frame
+    handleMovement(world, layer); // handle movement of this frame
+    processAttack(world, layer);  // update items' attack states of this frame
+
+    // attack start this frame, so elapsedTime in Attack should be calculated next frame
+    tryTriggerAttacks(world, layer); // trigger skill for next frame
+    tryTriggerSkills(world, layer);  // trigger skills for next frame
 }
 
 void ItemEntity::render(World &world, Layer &layer)
@@ -227,13 +236,20 @@ void ItemEntity::moveWithCollision(
         moveRight(distanceVec.x, calculateBoundary(map, GEB::Direction::Right, candidateItemHead, size).right);
 }
 
-void ItemEntity::handleEvents(World &world, Layer &layer)
+bool ItemEntity::deactivateIfNeeded(Layer &layer)
 {
-    processSkill(world, layer);      // update items' skill states of this frame
-    handleMovement(world, layer);    // handle movement of this frame
-    processAttack(world, layer);     // update items' attack states of this frame
-    tryTriggerAttacks(world, layer); // trigger skill for next frame
-    tryTriggerSkills(world, layer);  // trigger skills for next frame
+    if (!active_)
+    {
+        // inactive
+        auto &mainLayer = dynamic_cast<MainLayer &>(layer);
+        auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
+        auto &gridSystem = playStage.gridSystem();
+
+        gridSystem.addInactiveItem(this);
+
+        return true;
+    }
+    return false;
 }
 
 void ItemEntity::processSkill(World &world, Layer &layer)
@@ -261,77 +277,24 @@ void ItemEntity::processSkill(World &world, Layer &layer)
 
 void ItemEntity::processAttack(World &world, Layer &layer)
 {
-    auto &canvas = world.canvas();
-
-    auto &mainLayer = dynamic_cast<MainLayer &>(layer);
-    auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
-    auto &gridSystem = playStage.gridSystem();
-
-    auto dt = world.gameInfo().dt();
-
-    GEB::Boundary mapBoundary{
-        .top = 0,
-        .bottom = static_cast<float>(playStage.map().height()),
-        .left = 0,
-        .right = static_cast<float>(playStage.map().width()),
-    };
-
     for (int i = 0; i < attacks_.size(); i++)
     {
         auto *attack = attacks_[i];
         if (!attack)
             continue;
-
         if (!attack->isActive())
             continue;
-
-        attack->updateAttackInfo();
-
-        attack->updateElapsedTime(dt);
-
-        const auto &attackInfo = attack->attackInfo();
-
-        if (attack->elapsedTime() >= attackInfo.duration())
-        {
-            attack->end();
-            continue;
-        }
-
-        // attackContainer is used for filtering candidate itemlist which might handle the attack
-        // The actual hit detection happens in 'virtual Attack::tryHit' method.
-        // pointers in list do not need to be owned, just references to existing entities, like 'this'.
-        AABB attackContainer = attack->getAttackContainer(world);
-        GEB::Structures::Array<Entity *> candidateItemList;
-        gridSystem.getCollisionCandidateListByAABB(this, attackContainer, mapBoundary, candidateItemList);
-
-        // try hit
-        for (int j = 0; j < candidateItemList.size(); ++j)
-        {
-            auto *entity = dynamic_cast<ItemEntity *>(candidateItemList[j]);
-            if (!entity)
-                continue;
-
-            bool hitted = attack->tryHit(world, reinterpret_cast<std::uintptr_t>(entity));
-
-            if (hitted)
-            {
-                entity->onAttack(attackInfo);
-            }
-
-            if (!(entity->active()))
-            {
-                gridSystem.addInactiveItem(entity);
-            }
-        }
+        attack->tryHit(world, layer);
     }
 }
 
-void ItemEntity::onAttack(const AttackInfo &attackInfo)
+void ItemEntity::OnAttacked(const AttackInfo &attackInfo)
 {
     int realDamage = attackInfo.damage() - state_.defense();
     if (realDamage < 0)
         realDamage = 0;
     state_.setHealth(state_.health() - realDamage);
+
     if (state_.health() <= 0)
         setActive(false);
 }

@@ -4,7 +4,7 @@ void GameInfo::updateViewport(const HeroInfo &hero, const MapInfo &map)
 {
     const float halfWidth = VIEWPORT_WIDTH / 2.0f;
     const float halfHeight = VIEWPORT_HEIGHT / 2.0f;
-    GEB::Position heroCenter = hero.center();
+    GEB::Vec2 heroCenter = hero.center();
 
     float viewportIdealX = heroCenter.x - halfWidth;
     float viewportIdealY = heroCenter.y - halfHeight;

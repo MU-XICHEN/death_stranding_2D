@@ -3,29 +3,20 @@
 #include "layers/Layer.h"
 #include "utils/Utils.h"
 #include "entities/AABB.h"
+#include "world/World.h"
+#include "layers/MainLayer.h"
+#include "stages/Play.h"
 
-void getRotatedHitBoxPoints(const AttackInfo &attackInfo, float elapsedTime, GEB::Vec2 hitBoxPoints[4])
+void getRotatedHitBoxPoints(const AttackInfo &attackInfo,
+                            float elapsedTime,
+                            GEB::Vec2 points[4])
 {
-    GEB::Vec2 originPoint1 = attackInfo.originPoint();
-
-    const auto unitDirVec2 = GEB::Utils::transDirToUnitVec2(attackInfo.direction());
-
-    auto startDirVec2 = unitDirVec2;
-    startDirVec2.x = unitDirVec2.y;
-    startDirVec2.y = -unitDirVec2.x;
-
-    const auto hitBoxWidth = static_cast<float>(attackInfo.hitBoxWidth());
-    const auto hitBoxHeight = static_cast<float>(attackInfo.hitBoxHeight());
-
-    GEB::Vec2 originPoint2 = attackInfo.originPoint() + (startDirVec2 * hitBoxWidth);
-
-    const auto perpVec2 = GEB::Math::normalize(GEB::Math::perpendicular(startDirVec2));
-
-    // get hit box points
-    hitBoxPoints[0] = originPoint1 + (perpVec2 * (hitBoxHeight / 2));
-    hitBoxPoints[1] = originPoint1 - (perpVec2 * (hitBoxHeight / 2));
-    hitBoxPoints[2] = originPoint2 + (perpVec2 * (hitBoxHeight / 2));
-    hitBoxPoints[3] = originPoint2 - (perpVec2 * (hitBoxHeight / 2));
+    GEB::Vec2 hitBoxPoints[4];
+    GEB::Utils::getRectByPoint(attackInfo.originPoint(),
+                               attackInfo.direction(),
+                               attackInfo.hitBoxWidth(),
+                               attackInfo.hitBoxHeight(),
+                               hitBoxPoints);
 
     // calcuate progress
     const float hitDuration = attackInfo.hitEndTime() - attackInfo.hitStartTime();
@@ -43,9 +34,11 @@ void getRotatedHitBoxPoints(const AttackInfo &attackInfo, float elapsedTime, GEB
     hitBoxPoints[1] = GEB::Utils::rotateClockwise(hitBoxPoints[1], attackInfo.originPoint(), degree);
     hitBoxPoints[2] = GEB::Utils::rotateClockwise(hitBoxPoints[2], attackInfo.originPoint(), degree);
     hitBoxPoints[3] = GEB::Utils::rotateClockwise(hitBoxPoints[3], attackInfo.originPoint(), degree);
+    memset(points, 0, sizeof(GEB::Vec2) * 4);
+    memcpy(points, hitBoxPoints, sizeof(GEB::Vec2) * 4);
 }
 
-AABB AttackHalfCircleSlash::getAttackContainer(World &world)
+AABB AttackHalfCircleSlash::getAttackContainer(World &world, Layer &layer) const
 {
     auto &attackInfo = this->attackInfo();
 
@@ -72,38 +65,59 @@ AABB AttackHalfCircleSlash::getAttackContainer(World &world)
     return AABB(minX, minY, static_cast<int>(std::ceil(maxX - minX)), static_cast<int>(std::ceil(maxY - minY)));
 }
 
-bool AttackHalfCircleSlash::tryHit(World &world, std::uintptr_t entityPtr)
+void AttackHalfCircleSlash::tryHit(World &world, Layer &layer)
 {
-    if (!Attack::tryHit(world, entityPtr))
-        return false;
+    if (!preTryHit(world, layer))
+        return;
 
-    // After [!Attack::tryHit], it means that the attack is active,
-    // and hitTargets hasn't contained this id.
-    const auto &attackInfo = this->attackInfo();
+    auto &mainLayer = dynamic_cast<MainLayer &>(layer);
+    auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
+    auto &gridSystem = playStage.gridSystem();
 
-    if (elapsedTime_ < attackInfo.hitStartTime() || elapsedTime_ >= attackInfo.hitEndTime())
-        return false;
+    AABB attackContainer = getAttackContainer(world, layer);
+    // pointers in list do not need to be owned, just references to existing entities, like 'this'.
+    GEB::Structures::Array<Entity *> candidateItemList;
+    gridSystem.getCollisionCandidateListByAABB(owner_, attackContainer, candidateItemList);
 
-    GEB::Vec2 points[4];
-    getRotatedHitBoxPoints(attackInfo, elapsedTime_, points);
+    if ((candidateItemList.size() == 0))
+        return;
 
-    // SAT
-    const Entity *entity = reinterpret_cast<const Entity *>(entityPtr);
-    GEB::Vec2 rectA[4] = {points[0], points[1], points[2], points[3]};
-    GEB::Vec2 rectB[4] = {
-        GEB::Vec2{entity->x(), entity->y()},
-        GEB::Vec2{entity->x(), entity->y()} + GEB::Vec2(static_cast<float>(entity->width()), 0),
-        GEB::Vec2{entity->x(), entity->y()} + GEB::Vec2(0, static_cast<float>(entity->height())),
-        GEB::Vec2{entity->x(), entity->y()} + GEB::Vec2(static_cast<float>(entity->width()), static_cast<float>(entity->height())),
-    };
-
-    if (GEB::Utils::SAT(rectA, rectB))
+    // try hit
+    for (int j = 0; j < candidateItemList.size(); ++j)
     {
-        hitTargets_.insert(entityPtr);
-        return true;
-    }
+        if (!candidateItemList[j])
+            continue;
 
-    return false;
+        auto *entity = dynamic_cast<ItemEntity *>(candidateItemList[j]);
+        if (!entity)
+            continue;
+
+        std::uintptr_t entityPtr = reinterpret_cast<std::uintptr_t>(entity);
+        if (hitTargets_.contains(entityPtr))
+            continue;
+
+        const auto &atkInfo = attackInfo();
+        GEB::Vec2 points[4];
+        getRotatedHitBoxPoints(atkInfo, elapsedTime_, points);
+
+        // SAT
+        GEB::Vec2 rectA[4] = {points[0], points[1], points[2], points[3]};
+        GEB::Vec2 rectB[4] = {
+            GEB::Vec2{entity->x(), entity->y()},
+            GEB::Vec2{entity->x(), entity->y()} + GEB::Vec2(static_cast<float>(entity->width()), 0),
+            GEB::Vec2{entity->x(), entity->y()} + GEB::Vec2(0, static_cast<float>(entity->height())),
+            GEB::Vec2{entity->x(), entity->y()} + GEB::Vec2(static_cast<float>(entity->width()), static_cast<float>(entity->height())),
+        };
+
+        GEB::Utils::adaptForSAT(rectA);
+        GEB::Utils::adaptForSAT(rectB);
+
+        if (GEB::Utils::SAT(rectA, rectB))
+        {
+            hitTargets_.insert(entityPtr);
+            entity->OnAttacked(atkInfo);
+        }
+    }
 }
 
 // todo: remove

@@ -3,6 +3,7 @@
 #include <cmath>
 #include "core/GameBase.h"
 #include "GamesEngineeringBase.h"
+#include "entities/Entity.h"
 
 namespace GamesEngineeringBase::Utils
 {
@@ -63,75 +64,6 @@ namespace GamesEngineeringBase::Utils
         default:
             return GEB::Vec2{0.0f, 0.0f};
         }
-    }
-
-    // get projection of a vertex onto a unit axis
-    static float project(const GEB::Vec2 vertex,
-                         const GEB::Vec2 &unitAxis)
-    {
-        return vertex.x * unitAxis.x + vertex.y * unitAxis.y;
-    }
-
-    // get projection interval of a rectangle onto a unit axis
-    static GEB::Pair<float, float> projectRect(const GEB::Vec2 *vertices,
-                                               const GEB::Vec2 &unitAxis)
-    {
-        GEB::Pair<float, float> interval;
-
-        float first = project(vertices[0], unitAxis);
-
-        interval.first = first;  // min
-        interval.second = first; // max
-
-        for (int i = 1; i < 4; ++i)
-        {
-            float value = project(vertices[i], unitAxis);
-
-            interval.first = GEB::Math::min(interval.first, value);
-            interval.second = GEB::Math::max(interval.second, value);
-        }
-
-        return interval;
-    }
-
-    static bool SAT(const GEB::Vec2 *rectA, const GEB::Vec2 *rectB)
-    {
-
-        // Get two edges from each rectangle to form the axes for SAT
-        const GEB::Vec2 edges[4] = {
-            rectA[1] - rectA[0],
-            rectA[2] - rectA[0],
-            rectB[1] - rectB[0],
-            rectB[2] - rectB[0]};
-
-        GEB::Vec2 axes[4];
-
-        for (int i = 0; i < 4; ++i)
-        {
-            if (edges[i].x == 0.0f && edges[i].y == 0.0f)
-                return false;
-
-            // use perpendicular vector as the axis for SAT
-            // as if there is a gap between the rectangles along this axis, their projections on normal will not overlap.
-            axes[i] = GEB::Vec2{-edges[i].y, edges[i].x};
-        }
-
-        for (const GEB::Vec2 &axis : axes)
-        {
-            // caculate the projection
-            const auto projectionA = projectRect(rectA, axis);
-            const auto projectionB = projectRect(rectB, axis);
-
-            const float minA = projectionA.first;
-            const float maxA = projectionA.second;
-            const float minB = projectionB.first;
-            const float maxB = projectionB.second;
-
-            if (maxA < minB || maxB < minA)
-                return false;
-        }
-
-        return true;
     }
 
     static GEB::Direction translateEventsToDirection(const GamesEngineeringBase::Window &canvas, GEB::Direction prevDirection)
@@ -213,5 +145,210 @@ namespace GamesEngineeringBase::Utils
             return GEB::Vec2{1, 0};
 
         return GEB::Vec2{0, 0};
+    }
+
+    // get projection of a vertex onto a unit axis
+    static float project(const GEB::Vec2 vertex,
+                         const GEB::Vec2 &unitAxis)
+    {
+        return vertex.x * unitAxis.x + vertex.y * unitAxis.y;
+    }
+
+    // get projection interval of a rectangle onto a unit axis
+    // make unitAxis is unit vector, which make result from project(dot product) is right.
+    static GEB::Pair<float, float> projectRect(const GEB::Vec2 *vertices,
+                                               const GEB::Vec2 &unitAxis)
+    {
+        GEB::Pair<float, float> interval;
+
+        float first = project(vertices[0], unitAxis);
+
+        interval.first = first;  // min
+        interval.second = first; // max
+
+        for (int i = 1; i < 4; ++i)
+        {
+            float value = project(vertices[i], unitAxis);
+
+            interval.first = GEB::Math::min(interval.first, value);
+            interval.second = GEB::Math::max(interval.second, value);
+        }
+
+        return interval;
+    }
+
+    static GEB::Pair<float, float> projectLine(
+        const GEB::Vec2 &ori,
+        const GEB::Vec2 &des,
+        const GEB::Vec2 &unitAxis)
+    {
+        GEB::Pair<float, float> interval;
+
+        float first = project(ori, unitAxis);
+
+        interval.first = first;  // min
+        interval.second = first; // max
+
+        float value = project(des, unitAxis);
+
+        interval.first = GEB::Math::min(interval.first, value);
+        interval.second = GEB::Math::max(interval.second, value);
+
+        return interval;
+    }
+
+    /**
+     * Make SAT rectangle for SAT collision detection
+     * After returning, users can calculate the axies of the rectangle using:
+     * rectA[1] - rectA[0],
+     * rectA[2] - rectA[0],
+     */
+    static void adaptForSAT(
+        GEB::Vec2 (&rect)[4])
+    {
+        const GEB::Vec2 points[4] = {rect[0], rect[1], rect[2], rect[3]};
+
+        int diagonalIndex = 1;
+        float maxDistanceSquared = 0.0f;
+
+        for (int i = 1; i < 4; ++i)
+        {
+            const GEB::Vec2 offset = points[i] - points[0];
+            const float distanceSquared =
+                offset.x * offset.x + offset.y * offset.y;
+
+            if (distanceSquared > maxDistanceSquared)
+            {
+                maxDistanceSquared = distanceSquared;
+                diagonalIndex = i;
+            }
+        }
+
+        rect[0] = points[0];
+        rect[3] = points[diagonalIndex];
+
+        int index = 1;
+        for (int i = 1; i < 4; ++i)
+        {
+            if (i != diagonalIndex)
+                rect[index++] = points[i];
+        }
+    }
+
+    // detect whehter rectA and rectB is collided
+    static bool SAT(const GEB::Vec2 *rectA, const GEB::Vec2 *rectB)
+    {
+        // Get two edges from each rectangle to form the axes for SAT
+        const GEB::Vec2 edges[4] = {
+            rectA[1] - rectA[0],
+            rectA[2] - rectA[0],
+            rectB[1] - rectB[0],
+            rectB[2] - rectB[0]};
+
+        GEB::Vec2 axes[4];
+
+        for (int i = 0; i < 4; ++i)
+        {
+            if (edges[i].x == 0.0f && edges[i].y == 0.0f)
+                return false;
+
+            // use perpendicular vector as the axis for SAT
+            // as if there is a gap between the rectangles along this axis, their projections on normal will not overlap.
+            axes[i] = GEB::Vec2{-edges[i].y, edges[i].x};
+        }
+
+        for (const GEB::Vec2 &axis : axes)
+        {
+            // caculate the projection
+            const auto projectionA = projectRect(rectA, axis);
+            const auto projectionB = projectRect(rectB, axis);
+
+            const float minA = projectionA.first;
+            const float maxA = projectionA.second;
+            const float minB = projectionB.first;
+            const float maxB = projectionB.second;
+
+            if (maxA < minB || maxB < minA)
+                return false;
+        }
+
+        return true;
+    }
+
+    // detect whether a line(origin to destination) and box(rect) is collided.
+    static bool SATLineBox(const GEB::Vec2 &origin,
+                           const GEB::Vec2 &destination,
+                           const GEB::Vec2 *rect)
+    {
+        const int edgeCount = 3;
+        const GEB::Vec2 edges[edgeCount] = {
+            destination - origin,
+            rect[1] - rect[0],
+            rect[2] - rect[0]};
+
+        GEB::Vec2 axes[edgeCount];
+
+        for (int i = 0; i < edgeCount; ++i)
+        {
+            if (edges[i].x == 0.0f && edges[i].y == 0.0f)
+                return false;
+
+            // use perpendicular vector as the axis for SAT
+            // as if there is a gap between the rectangles along this axis, their projections on normal will not overlap.
+            axes[i] = GEB::Vec2{-edges[i].y, edges[i].x};
+        }
+
+        for (const GEB::Vec2 &axis : axes)
+        {
+            // caculate the projection
+            const auto projectionA = projectLine(origin, destination, axis);
+            const auto projectionB = projectRect(rect, axis);
+
+            const float minA = projectionA.first;
+            const float maxA = projectionA.second;
+            const float minB = projectionB.first;
+            const float maxB = projectionB.second;
+
+            if (maxA < minB || maxB < minA)
+                return false;
+        }
+    }
+
+    static void getRectByPoint(const GEB::Vec2 &originPoint,
+                               const GEB::Direction &direction,
+                               int width,
+                               int height,
+                               GEB::Vec2 hitBoxPoints[4])
+    {
+        GEB::Vec2 originPoint1 = originPoint;
+
+        const auto unitDirVec2 = GEB::Utils::transDirToUnitVec2(direction);
+        const GEB::Vec2 startDirVec2 = GEB::Math::perpendicularCCW(unitDirVec2);
+
+        const auto hitBoxWidth = static_cast<float>(width);
+        const auto hitBoxHeight = static_cast<float>(height);
+
+        GEB::Vec2 originPoint2 = originPoint1 + (startDirVec2 * hitBoxWidth);
+
+        const auto perpVec2 = unitDirVec2;
+
+        // get hit box points
+        hitBoxPoints[0] = originPoint1 + (perpVec2 * (hitBoxHeight / 2));
+        hitBoxPoints[1] = originPoint1 - (perpVec2 * (hitBoxHeight / 2));
+        hitBoxPoints[2] = originPoint2 + (perpVec2 * (hitBoxHeight / 2));
+        hitBoxPoints[3] = originPoint2 - (perpVec2 * (hitBoxHeight / 2));
+    }
+
+    static void getRectByEntity(const Entity *entity, GEB::Vec2 points[4])
+    {
+        GEB::Vec2 rectB[4] = {
+            GEB::Vec2{entity->x(), entity->y()},
+            GEB::Vec2{entity->x(), entity->y()} + GEB::Vec2(static_cast<float>(entity->width()), 0),
+            GEB::Vec2{entity->x(), entity->y()} + GEB::Vec2(0, static_cast<float>(entity->height())),
+            GEB::Vec2{entity->x(), entity->y()} + GEB::Vec2(static_cast<float>(entity->width()), static_cast<float>(entity->height())),
+        };
+
+        memset(points, 0, sizeof(GEB::Vec2) * 4);
+        memcpy(points, rectB, sizeof(GEB::Vec2) * 4);
     }
 };

@@ -36,16 +36,16 @@ GridSystem::GridSystem(int rowCnt, int colCnt, int size)
       gridSize_(size),
       gridMap_(rowCnt * colCnt) {}
 
-GEB::Pair<int, int> GridSystem::getGridIdxPair(const GEB::Position &center)
+GEB::Pair<int, int> GridSystem::getGridIdxPair(const GEB::Vec2 &center)
 {
     int row = GEB::Math::floorToInt(center.y / gridSize_);
     int col = GEB::Math::floorToInt(center.x / gridSize_);
     return {row, col};
 }
 
-void GridSystem::getCandidateGridsByAABB(const AABB &aabb,
-                                         const GEB::Boundary &mapBoundary,
-                                         GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids)
+void GridSystem::getCandidateGridsByAABB(
+    const AABB &aabb,
+    GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids)
 {
     /**
      * [bugfix]:
@@ -69,33 +69,16 @@ void GridSystem::getCandidateGridsByAABB(const AABB &aabb,
 void GridSystem::getCandidateGridsByDisVec2(
     Entity *detectedItem,
     const GEB::Vec2 &distanceVec,
-    const GEB::Boundary &mapBoundary,
     GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids)
 {
-
     if (!detectedItem)
         return;
-    auto aabb = AABB::createAABB(detectedItem, distanceVec, mapBoundary);
+    auto aabb = AABB::createAABB(detectedItem, distanceVec);
 
     if (aabb.width() <= 0 || aabb.height() <= 0)
         return;
 
-    getCandidateGridsByAABB(aabb, mapBoundary, candidateGrids);
-}
-
-void GridSystem::getCollisionCandidateListByAABB(
-    Entity *detectedItem,
-    const AABB &aabb,
-    const GEB::Boundary &mapBoundary,
-    GEB::Structures::Array<Entity *> &candidateItemList)
-{
-    GEB::Structures::Array<GEB::Pair<int, int>> candidateGrids;
-    getCandidateGridsByAABB(aabb, mapBoundary, candidateGrids);
-
-    getCollisionCandidateListByGrids(
-        detectedItem,
-        candidateGrids,
-        candidateItemList);
+    getCandidateGridsByAABB(aabb, candidateGrids);
 }
 
 void GridSystem::getCollisionCandidateListByGrids(
@@ -122,21 +105,34 @@ void GridSystem::getCollisionCandidateListByGrids(
     }
 }
 
+void GridSystem::getCollisionCandidateListByAABB(
+    Entity *detectedItem,
+    const AABB &aabb,
+    GEB::Structures::Array<Entity *> &candidateItemList)
+{
+    GEB::Structures::Array<GEB::Pair<int, int>> candidateGrids;
+    getCandidateGridsByAABB(aabb, candidateGrids);
+
+    getCollisionCandidateListByGrids(
+        detectedItem,
+        candidateGrids,
+        candidateItemList);
+}
+
 void GridSystem::getCollisionCandidateListByItem(
     Entity *detectedItem,
     const GEB::Vec2 &distanceVec,
-    const GEB::Boundary &mapBoundary,
     GEB::Structures::Array<Entity *> &candidateItemList)
 {
     auto center = detectedItem->center();
     GEB::Structures::Array<GEB::Pair<int, int>> candidateGrids;
-    getCandidateGridsByDisVec2(detectedItem, distanceVec, mapBoundary, candidateGrids);
+    getCandidateGridsByDisVec2(detectedItem, distanceVec, candidateGrids);
     getCollisionCandidateListByGrids(detectedItem, candidateGrids, candidateItemList);
 }
 
-void GridSystem::updateEntityGridIfNeed(GEB::Position oldCenter, Entity *item)
+void GridSystem::updateEntityGridIfNeed(GEB::Vec2 oldCenter, Entity *item)
 {
-    GEB::Position newCenter = item->center();
+    GEB::Vec2 newCenter = item->center();
     auto [oldRowIdx, oldColIdx] = getGridIdxPair(oldCenter);
     auto [newRowIdx, newColIdx] = getGridIdxPair(newCenter);
 
@@ -188,7 +184,7 @@ void GridSystem::removeEntity(int rowIdx, int colIdx, Entity *item)
     }
 }
 
-void GridSystem::changeEntityGrid(Entity *item, GEB::Position oldCenter, GEB::Position newCenter)
+void GridSystem::changeEntityGrid(Entity *item, GEB::Vec2 oldCenter, GEB::Vec2 newCenter)
 {
     // remove
     auto [oldRowIdx, oldColIdx] = getGridIdxPair(oldCenter);

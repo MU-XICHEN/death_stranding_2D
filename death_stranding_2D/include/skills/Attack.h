@@ -21,13 +21,15 @@ public:
         : triggerKey_(key), lockDirection_(lockDirection) {};
     virtual ~Attack() = default;
 
+    bool preTryHit(World &world, Layer &layer);
+    virtual void tryHit(World &world, Layer &layer) = 0;
+    virtual void begin(const AttackInfo &initialAttackInfo = AttackInfo{});
+    virtual void end();
     virtual void render(World &world, Layer &layer) = 0;
 
-    virtual AABB getAttackContainer(World &world) = 0; // used for filtering items which might be attacked
-
-    virtual bool tryHit(World &world, std::uintptr_t entityPtr);
-    virtual void begin();
-    virtual void end();
+    // attackContainer is used for filtering candidate itemlist which might handle the attack
+    // The actual hit detection happens in 'virtual Attack::tryHit' method.
+    virtual AABB getAttackContainer(World &world, Layer &layer) const = 0;
 
     void updateAttackInfo();
 

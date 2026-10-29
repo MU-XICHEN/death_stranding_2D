@@ -16,7 +16,7 @@ public:
 
 protected:
     static GEB::Direction transDirVecToDiretion(const GEB::Vec2 &dirVec, GEB::Direction prevDirection);
-    static inline GEB::Vec2 calculateDirVecToHero(GEB::Position monsterCenter, GEB::Position heroCenter)
+    static inline GEB::Vec2 calculateDirVecToHero(GEB::Vec2 monsterCenter, GEB::Vec2 heroCenter)
     {
         float dx = heroCenter.x - monsterCenter.x;
         float dy = heroCenter.y - monsterCenter.y;
@@ -41,7 +41,7 @@ public:
             {State::SPEED, M_BEAST_PIXEL_PER_SEC},
             {State::PERCEPTION_RANGE, M_BEAST_DANGER_DISTANCE},
             {State::DEFENSE, M_BEAST_DEFENSE},
-            {State::DAMAGE, M_BEAST_DAMAGE}};
+            {State::Damage, M_BEAST_DAMAGE}};
         initializeState(props, sizeof(props) / sizeof(props[0]));
     }
 };
@@ -58,7 +58,7 @@ public:
             {State::SPEED, M_GHOST_PIXEL_PER_SEC},
             {State::PERCEPTION_RANGE, M_GHOST_DANGER_DISTANCE},
             {State::DEFENSE, M_GHOST_DEFENSE},
-            {State::DAMAGE, M_GHOST_DAMAGE}};
+            {State::Damage, M_GHOST_DAMAGE}};
         initializeState(props, sizeof(props) / sizeof(props[0]));
     }
 

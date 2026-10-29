@@ -1,13 +1,13 @@
 #include "entities/Hero.h"
+#include "GamesEngineeringBase.h"
 #include "world/World.h"
 #include "core/GameBase.h"
-#include "GamesEngineeringBase.h"
-#include "core/Types.h"
+#include "utils/Utils.h"
 #include "layers/MainLayer.h"
 #include "stages/Play.h"
 #include "skills/Attack.h"
 #include "skills/AttackHalfCircleSlash.h"
-#include "utils/Utils.h"
+#include "skills/AttackRemote.h"
 
 template <typename T>
 using GEBArray = GEB::Structures::Array<T>;
@@ -36,6 +36,48 @@ public:
         return false;
     }
 
+    void tryTriggerAttacks(World &world, Layer &layer)
+    {
+        if (host_ == nullptr)
+            return;
+        auto &canvas = world.canvas();
+        // try begin attacks
+        for (int i = 0; i < host_->attacks_.size(); ++i)
+        {
+            auto *attack = host_->attacks_[i];
+            if (!attack)
+                continue;
+            if (attack->isActive())
+                continue;
+
+            if (canvas.keyPressed(attack->triggerKey()))
+            {
+                // handle different types of attacks
+                auto attackInfo = host_->createAttackInfo(attack);
+                attack->begin(attackInfo);
+            }
+        }
+    }
+
+    void tryTriggerSkills(World &world, Layer &layer)
+    {
+        if (host_ == nullptr)
+            return;
+        auto &canvas = world.canvas();
+        for (int i = 0; i < host_->skills_.size(); ++i)
+        {
+            if (!host_->skills_[i])
+                continue;
+            if (canvas.keyPressed(host_->skills_[i]->triggerKey()))
+            {
+                if (host_->skills_[i]->active())
+                    continue;
+
+                host_->skills_[i]->activate(host_->state_);
+            }
+        }
+    }
+
 private:
     Hero *host_;
 };
@@ -53,7 +95,7 @@ Hero::Hero(
         {State::SPEED, HERO_PIXEL_PER_SEC},
         {State::PERCEPTION_RANGE, HERO_DANGER_DISTANCE},
         {State::DEFENSE, HERO_DEFENSE},
-        {State::DAMAGE, HERO_DAMAGE},
+        {State::Damage, HERO_DAMAGE},
     };
     initializeState(props, sizeof(props) / sizeof(props[0]));
 }
@@ -87,13 +129,7 @@ void Hero::handleMovement(World &world, Layer &layer)
 
     // get candidate items for collision detection
     GEBArray<Entity *> candidateItemList;
-    GEB::Boundary mapBoundary{
-        .top = 0,
-        .bottom = static_cast<float>(map.height()),
-        .left = 0,
-        .right = static_cast<float>(map.width()),
-    };
-    gridSystem.getCollisionCandidateListByItem(this, distanceVec, mapBoundary, candidateItemList);
+    gridSystem.getCollisionCandidateListByItem(this, distanceVec, candidateItemList);
 
     // add map tiles which may collide with the hero to the candidate list
     playStage.map().addCollisionTileToCandiList(this,
@@ -112,43 +148,24 @@ void Hero::handleMovement(World &world, Layer &layer)
 
 void Hero::tryTriggerAttacks(World &world, Layer &layer)
 {
-    auto &canvas = world.canvas();
-    // try begin attacks
-    for (int i = 0; i < attacks_.size(); ++i)
-    {
-        if (!attacks_[i])
-            continue;
-        if (attacks_[i]->isActive())
-            continue;
-
-        if (canvas.keyPressed(attacks_[i]->triggerKey()))
-        {
-            // handle different types of attacks
-            attacks_[i]->begin();
-        }
-    }
+    if (impl_ == nullptr)
+        return;
+    impl_->tryTriggerAttacks(world, layer);
 }
 
 void Hero::tryTriggerSkills(World &world, Layer &layer)
 {
-    auto &canvas = world.canvas();
-    for (int i = 0; i < skills_.size(); ++i)
-    {
-        if (!skills_[i])
-            continue;
-        if (canvas.keyPressed(skills_[i]->triggerKey()))
-        {
-            if (skills_[i]->active())
-                continue;
-
-            skills_[i]->activate(state_);
-        }
-    }
+    if (impl_ == nullptr)
+        return;
+    impl_->tryTriggerSkills(world, layer);
 }
 
 void Hero::update(World &world, Layer &layer)
 {
-    ItemEntity::update(world, layer);
+    ItemEntity::coreUpdate(world, layer);
+
+    if (!active())
+        return;
 
     HeroInfo heroInfo{
         .x = x_,
@@ -164,24 +181,44 @@ void Hero::update(World &world, Layer &layer)
 
 AttackInfo Hero::createAttackInfo(Attack *attack)
 {
+    const auto originPoint = getOriginPoint();
     if (dynamic_cast<AttackHalfCircleSlash *>(attack))
     {
         GEB::Pair<int, float> props[] = {
-            {AttackInfo::DAMAGE, 10.0f},
+            {AttackInfo::Damage, 10.0f},
             // lifetime of the attack
-            {AttackInfo::DURATION, 1.0f},
-            {AttackInfo::HIT_START_TIME, 0.2f},
-            {AttackInfo::HIT_END_TIME, 0.4f},
+            {AttackInfo::Duration, 1.0f},
+            {AttackInfo::HitStartTime, 0.2f},
+            {AttackInfo::HitEndTime, 0.4f},
             // hit box dimensions
-            {AttackInfo::HIT_BOX_WIDTH, 80.0f},
-            {AttackInfo::HIT_BOX_HEIGHT, 30.0f},
+            {AttackInfo::HitBoxWidth, 80.0f},
+            {AttackInfo::HitBoxHeight, 30.0f},
+            // set point and direction of the attack
+            {AttackInfo::OriginPointX, originPoint.x},
+            {AttackInfo::OriginPointY, originPoint.y},
+            {AttackInfo::Direction, static_cast<float>(direction())},
         };
-        int size = 6;
+        int size = sizeof(props) / sizeof(props[0]);
         AttackInfo attackInfo(props, size);
-        // set point and direction of the attack
-        attackInfo.setOriginPoint(getOriginPoint());
-        attackInfo.setDirection(direction());
         return attackInfo;
     }
+
+    if (dynamic_cast<AttackRemote *>(attack))
+    {
+        GEB::Pair<int, float> props[] = {
+            {AttackInfo::Damage, 5.0f},
+            {AttackInfo::Duration, 3.0f},
+            {AttackInfo::HitStartTime, 0.1f},
+            // remote hitEndTime is set to match the duration of the attack
+            {AttackInfo::HitEndTime, 2.0f},
+            {AttackInfo::OriginPointX, originPoint.x},
+            {AttackInfo::OriginPointY, originPoint.y},
+            {AttackInfo::Direction, static_cast<float>(direction())},
+        };
+        int size = sizeof(props) / sizeof(props[0]);
+        AttackInfo attackInfo(props, size);
+        return attackInfo;
+    }
+
     return AttackInfo{};
 }

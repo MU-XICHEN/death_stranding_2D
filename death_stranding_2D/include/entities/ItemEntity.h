@@ -61,7 +61,17 @@ public:
         Entity **candidateItemHead,
         int size);
 
-    void handleEvents(World &world, Layer &layer);
+    // relevant to skills
+    void addSkill(Skill *skill);
+    GEB::Structures::Array<Skill *> &skills() { return skills_; }
+    const GEB::Structures::Array<Skill *> &skills() const { return skills_; }
+
+    // relevant to attacks
+    void addAttack(Attack *attack);
+    GEB::Structures::Array<Attack *> &attacks() { return attacks_; }
+    const GEB::Structures::Array<Attack *> &attacks() const { return attacks_; }
+    virtual void OnAttacked(const AttackInfo &attackInfo);
+
     virtual void processAttack(World &world, Layer &layer);
     virtual void processSkill(World &world, Layer &layer);
     virtual void handleMovement(World &world, Layer &layer) {};
@@ -69,21 +79,9 @@ public:
     virtual void tryTriggerAttacks(World &world, Layer &layer) {};
     virtual AttackInfo createAttackInfo(Attack *attack) { return AttackInfo{}; };
 
-    // relevant to skills
-    void addSkill(Skill *skill);
-    GEB::Structures::Array<Skill *> &skills() { return skills_; }
-    const GEB::Structures::Array<Skill *> &skills() const { return skills_; }
-
-    // relevant to attacks
-    virtual void onAttack(const AttackInfo &attackInfo);
-    void addAttack(Attack *attack);
-    GEB::Structures::Array<Attack *> &attacks() { return attacks_; }
-    const GEB::Structures::Array<Attack *> &attacks() const { return attacks_; }
-
-    // update method needs to be implemented by derived classes
-    virtual void update(World &world, Layer &layer);
-
-    // render mothod is implemented here and can be used by derived classes
+    void coreUpdate(World &world, Layer &layer);
+    // ❗Note: make sure that derived classed call coreUpdate first in their update method
+    virtual void update(World &world, Layer &layer) = 0;
     virtual void render(World &world, Layer &layer) override;
 
 protected:
@@ -93,4 +91,7 @@ protected:
 
     GEB::Structures::Array<Attack *> attacks_;
     GEB::Structures::Array<Skill *> skills_;
+
+private:
+    bool deactivateIfNeeded(Layer &layer);
 };

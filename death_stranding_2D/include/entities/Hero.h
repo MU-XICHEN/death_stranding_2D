@@ -9,7 +9,7 @@ struct HeroInfo
     int width;
     int height;
 
-    GEB::Position center() const { return {x + width / 2.0f, y + height / 2.0f}; }
+    GEB::Vec2 center() const { return {x + width / 2.0f, y + height / 2.0f}; }
 };
 
 class HeroImpl;
@@ -34,6 +34,5 @@ public:
     AttackInfo createAttackInfo(Attack *attack) override;
 
 private:
-    HeroInfo heroInfo_;
     HeroImpl *impl_;
 };

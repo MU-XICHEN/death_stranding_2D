@@ -47,9 +47,16 @@ namespace GamesEngineeringBase::Math
         return a.x * b.x + a.y * b.y;
     }
 
+    // clockwise
     inline Vec2 perpendicular(const Vec2 &v)
     {
         return Vec2{-v.y, v.x};
+    }
+
+    // counter-clockwise
+    inline Vec2 perpendicularCCW(const Vec2 &v)
+    {
+        return Vec2{v.y, -v.x};
     }
 
     inline int ceilToInt(float value)

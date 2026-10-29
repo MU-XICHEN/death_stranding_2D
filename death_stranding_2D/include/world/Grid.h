@@ -28,43 +28,24 @@ public:
 
     virtual ~GridSystem() = default;
 
-    void getCandidateGridsByAABB(const AABB &aabb,
-                                 const GEB::Boundary &mapBoundary,
-                                 GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids);
-
-    GEB::Pair<int, int> getGridIdxPair(const GEB::Position &center);
-
-    void getCandidateGridsByDisVec2(
-        Entity *detectedItem,
-        const GEB::Vec2 &distanceVec,
-        const GEB::Boundary &mapBoundary,
-        GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids);
+    GEB::Pair<int, int> getGridIdxPair(const GEB::Vec2 &center);
 
     void getCollisionCandidateListByAABB(
         Entity *detectedItem,
         const AABB &aabb,
-        const GEB::Boundary &mapBoundary,
-        GEB::Structures::Array<Entity *> &candidateItemList);
-
-    void getCollisionCandidateListByGrids(
-        Entity *detectedItem,
-        const GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids,
         GEB::Structures::Array<Entity *> &candidateItemList);
 
     void getCollisionCandidateListByItem(
         Entity *detectedItem,
         const GEB::Vec2 &distanceVec,
-        const GEB::Boundary &mapBoundary,
         GEB::Structures::Array<Entity *> &candidateItemList);
 
     // update the grid which entity belong to right now.
-    void updateEntityGridIfNeed(GEB::Position oldCenter, Entity *item);
+    void updateEntityGridIfNeed(GEB::Vec2 oldCenter, Entity *item);
 
     void addEntity(int rowIdx, int colIdx, Entity *item);
 
     void removeEntity(int rowIdx, int colIdx, Entity *item);
-
-    Grid *grid(int rowIdx, int colIdx);
 
     inline int gridSize() const { return gridSize_; }
     inline int rowCount() const { return rowCount_; }
@@ -80,7 +61,7 @@ private:
     void addEntityToUpdateList(Entity *item);
     void removeEntityFromUpdateList(Entity *item);
     // This method just moves the item from one grid to another without updating the update list.
-    void changeEntityGrid(Entity *item, GEB::Position oldCenter, GEB::Position newCenter);
+    void changeEntityGrid(Entity *item, GEB::Vec2 oldCenter, GEB::Vec2 newCenter);
 
     int gridSize_;
     int rowCount_;
@@ -98,4 +79,19 @@ private:
      * also, a copy of items which were already in GridMap_
      */
     GEB::Structures::Array<Entity *> inactiveItems_;
+
+    void getCandidateGridsByAABB(const AABB &aabb,
+                                 GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids);
+
+    void getCandidateGridsByDisVec2(
+        Entity *detectedItem,
+        const GEB::Vec2 &distanceVec,
+        GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids);
+
+    void getCollisionCandidateListByGrids(
+        Entity *detectedItem,
+        const GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids,
+        GEB::Structures::Array<Entity *> &candidateItemList);
+
+    Grid *grid(int rowIdx, int colIdx);
 };

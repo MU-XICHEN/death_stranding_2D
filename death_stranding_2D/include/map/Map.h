@@ -15,7 +15,7 @@ public:
     void render(World &world, Layer &layer) override;
 
     const GEB::Structures::Array<TileBlock> &tileBlocks() const { return tileBlocks_; }
-    GEB::Position playerPosition() const;
+    GEB::Vec2 playerPosition() const;
 
     void addCollisionTileToCandiList(Entity *detectedItem,
                                      GEB::Vec2 distanceVec,

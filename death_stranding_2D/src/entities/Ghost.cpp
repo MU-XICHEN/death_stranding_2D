@@ -7,7 +7,7 @@ void Ghost::checkDangerDistance(World &world, Layer &layer)
     if (awakened_)
         return;
 
-    GEB::Position heroCenter = world.gameInfo().heroInfo().center();
+    GEB::Vec2 heroCenter = world.gameInfo().heroInfo().center();
     float dx = GEB::Math::abs(heroCenter.x - center().x);
     float dy = GEB::Math::abs(heroCenter.y - center().y);
 

@@ -165,6 +165,7 @@
     <ClCompile Include="src\renderer\TextRenderer.cpp" />
     <ClCompile Include="src\renderer\SlicerRenderer.cpp" />
     <ClCompile Include="src\skills\AttackHalfCircleSlash.cpp" />
+    <ClCompile Include="src\skills\AttackRemote.cpp" />
     <ClCompile Include="src\skills\Attack.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\world\GameInfo.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="include\skills\Attack.h" />
     <ClInclude Include="include\skills\AttackInfo.h" />
     <ClInclude Include="include\skills\AttackHalfCircleSlash.h" />
+    <ClInclude Include="include\skills\AttackRemote.h" />
     <ClInclude Include="include\skills\Skill.h" />
     <ClInclude Include="include\skills\SkillSpeedUp.h" />
     <ClInclude Include="include\stages\Common.h" />

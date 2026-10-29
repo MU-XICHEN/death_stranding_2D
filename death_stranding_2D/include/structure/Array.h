@@ -28,6 +28,8 @@ namespace GamesEngineeringBase::Structures
 
         inline T *head() { return data_; }
 
+        void clear() { size_ = 0; }
+
         void resize(int newSize)
         {
             if (newSize > capacity_)

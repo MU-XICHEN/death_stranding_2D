@@ -39,10 +39,15 @@ public:
     inline int width() const { return width_; }
     inline int height() const { return height_; }
 
+    inline bool active() const { return active_; }
+    inline void setActive(bool active) { active_ = active; }
+
 protected:
     float x_;
     float y_;
 
     int width_;
     int height_;
+
+    bool active_ = true;
 };

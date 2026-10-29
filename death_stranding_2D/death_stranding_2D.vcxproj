@@ -168,6 +168,7 @@
     <ClCompile Include="src\skills\Attack.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\world\GameInfo.cpp" />
+    <ClCompile Include="src\world\Grid.cpp" />
     <ClCompile Include="src\world\AssetManager.cpp" />
     <ClCompile Include="src\map\Map.cpp" />
     <ClCompile Include="src\world\World.cpp" />
@@ -211,12 +212,15 @@
     <ClInclude Include="include\world\Viewport.h" />
     <ClInclude Include="include\world\World.h" />
   </ItemGroup>
-  <ItemGroup>
-    <CopyFileToFolders Include="src\assets\**\*">
-      <DestinationFolders>$(OutDir)assets\%(RecursiveDir)</DestinationFolders>
-    </CopyFileToFolders>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Target Name="CopyGameAssets" AfterTargets="Build">
+    <ItemGroup>
+      <_GameAsset Include="$(ProjectDir)src\assets\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_GameAsset)"
+          DestinationFiles="@(_GameAsset->'$(OutDir)assets\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+  </Target>
 </Project>

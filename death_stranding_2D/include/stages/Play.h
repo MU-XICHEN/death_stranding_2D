@@ -15,6 +15,7 @@ public:
     void addEntityToGridSystem(ItemEntity *itemEntity);
     void update(World &world, Layer &layer) override;
     void render(World &world, Layer &layer) override;
+    void renderFinished(World &world, Layer &layer) override;
 
     GridSystem &gridSystem() { return gridSystem_; }
     Map &map() { return map_; }

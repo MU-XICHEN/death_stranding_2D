@@ -35,6 +35,7 @@ public:
 
     virtual void update(World &world) override;
     virtual void render(World &world) override;
+    virtual void renderFinished(World &world) override;
 
 private:
     void checkgoToNextStage();

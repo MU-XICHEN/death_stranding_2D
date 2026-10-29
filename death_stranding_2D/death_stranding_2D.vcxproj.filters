@@ -126,6 +126,9 @@
     <ClCompile Include="src\world\GameInfo.cpp">
       <Filter>Source Files\world</Filter>
     </ClCompile>
+    <ClCompile Include="src\world\Grid.cpp">
+      <Filter>Source Files\world</Filter>
+    </ClCompile>
     <ClCompile Include="src\world\AssetManager.cpp">
       <Filter>Source Files\world</Filter>
     </ClCompile>

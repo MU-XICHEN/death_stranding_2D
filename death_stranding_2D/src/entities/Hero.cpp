@@ -97,11 +97,8 @@ void Hero::handleMovement(World &world, Layer &layer)
     // move
     moveWithCollision(distanceVec, map, candidateItemList.head(), candidateItemList.size());
 
-    // calculate new position
-    auto newCenter = center();
-
     // update grid system
-    playStage.gridSystem().updateEntityGridIfNeed(oldCenter, newCenter, this);
+    gridSystem.updateEntityGridIfNeed(oldCenter, this);
 }
 
 void Hero::tryTiggerAttacks(World &world, Layer &layer)

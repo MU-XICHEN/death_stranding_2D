@@ -67,3 +67,9 @@ void MainLayer::render(World &world)
     auto &stage = currentStage();
     stage.render(world, *this);
 };
+
+void MainLayer::renderFinished(World &world)
+{
+    auto &stage = currentStage();
+    stage.renderFinished(world, *this);
+}

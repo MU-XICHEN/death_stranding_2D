@@ -13,6 +13,7 @@ public:
     virtual void handleEvents(World &world, Layer &layer);
     virtual void update(World &world, Layer &layer);
     virtual void render(World &world, Layer &layer);
+    virtual void renderFinished(World &world, Layer &layer);
 
     static inline KeyState enterState{};
 

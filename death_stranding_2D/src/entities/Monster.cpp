@@ -106,9 +106,7 @@ void Monster::handleMovement(World &world, Layer &layer)
 
     moveWithCollision(distanceVec, map, candidateItemList.head(), candidateItemList.size());
 
-    // calculate new position
-    auto newCenter = center();
-    gridSystem.updateEntityGridIfNeed(oldCenter, newCenter, this);
+    gridSystem.updateEntityGridIfNeed(oldCenter, this);
     return;
 }
 

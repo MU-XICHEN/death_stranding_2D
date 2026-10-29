@@ -71,7 +71,7 @@ void PlayStage::addEntityToGridSystem(ItemEntity *item)
 {
     auto center = item->center();
     auto indexPair = getGridIndex(center.x, center.y);
-    gridSystem_.addEntityToGrid(indexPair.first, indexPair.second, item);
+    gridSystem_.addEntity(indexPair.first, indexPair.second, item);
 }
 
 // updateEntities
@@ -112,4 +112,22 @@ void PlayStage::render(World &world, Layer &layer)
         if (item)
             item->render(world, layer);
     }
+}
+
+void PlayStage::renderFinished(World &world, Layer &layer)
+{
+    auto &inactiveItems = gridSystem_.inactiveItems();
+    int inactiveItemCount = inactiveItems.size();
+    for (int i = 0; i < inactiveItemCount; ++i)
+    {
+        auto *item = inactiveItems[i];
+        if (!item)
+            continue;
+        const auto &center = item->center();
+        auto [rowIdx, colIdx] = gridSystem_.getGridIdxPair(center);
+        gridSystem_.removeEntity(rowIdx, colIdx, item);
+    }
+
+    // clear
+    gridSystem_.clearInactiveItems();
 }

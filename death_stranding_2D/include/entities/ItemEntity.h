@@ -21,11 +21,16 @@ public:
         : Entity(x, y, width, height), speed_(speed) {}
     virtual ~ItemEntity();
 
-    // update method needs to be implemented by derived classes
-    virtual void update(World &world, Layer &layer);
+    GEB::Vec2 getOriginPoint() const
+    {
+        auto unitDirVec2 = GEB::Utils::transDirToUnitVec2(direction_);
+        auto centerX = center().x;
+        auto centerY = center().y;
+        return GEB::Vec2{centerX + (unitDirVec2.x * width_ / 2),
+                         centerY + (unitDirVec2.y * height_ / 2)};
+    }
 
-    // render mothod is implemented here and can be used by derived classes
-    virtual void render(World &world, Layer &layer) override;
+    GEB::Direction direction() const { return direction_; }
 
     void setColor(unsigned int r, unsigned int g, unsigned int b)
     {
@@ -66,16 +71,11 @@ public:
     GEB::Structures::Array<Attack *> &attacks() { return attacks_; }
     const GEB::Structures::Array<Attack *> &attacks() const { return attacks_; }
 
-    GEB::Vec2 getOriginPoint() const
-    {
-        auto unitDirVec2 = GEB::Utils::transDirToUnitVec2(direction_);
-        auto centerX = center().x;
-        auto centerY = center().y;
-        return GEB::Vec2{centerX + (unitDirVec2.x * width_ / 2),
-                         centerY + (unitDirVec2.y * height_ / 2)};
-    }
+    // update method needs to be implemented by derived classes
+    virtual void update(World &world, Layer &layer);
 
-    GEB::Direction direction() const { return direction_; }
+    // render mothod is implemented here and can be used by derived classes
+    virtual void render(World &world, Layer &layer) override;
 
 protected:
     GEB::Color color_{0, 0, 0};

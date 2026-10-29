@@ -202,8 +202,8 @@ void ItemEntity::moveWithCollision(
 
 void ItemEntity::handleEvents(World &world, Layer &layer)
 {
-    handleMovement(world, layer);  // handle movement for this frame
-    processAttack(world, layer);   // handle attacks for this frame
+    handleMovement(world, layer);   // handle movement of this frame
+    processAttack(world, layer);    // update items' attack states of this frame
     tryTiggerAttacks(world, layer); // trigger skill for next frame
 }
 
@@ -248,7 +248,7 @@ void ItemEntity::processAttack(World &world, Layer &layer)
         // pointers in list do not need to be owned, just references to existing entities, like 'this'.
         AABB attackContainer = attack->getAttackContainer(world);
         GEB::Structures::Array<Entity *> candidateItemList;
-        gridSystem.getCandidateListByAABB(this, attackContainer, mapBoundary, candidateItemList);
+        gridSystem.getCollisionCandidateListByAABB(this, attackContainer, mapBoundary, candidateItemList);
 
         // try hit
         for (int j = 0; j < candidateItemList.size(); ++j)
@@ -264,6 +264,11 @@ void ItemEntity::processAttack(World &world, Layer &layer)
                 const auto &attackInfo = attack->attackInfo();
                 entity->onAttack(attackInfo);
             }
+
+            if (!(entity->active()))
+            {
+                gridSystem.addInactiveItem(entity);
+            }
         }
     }
 }
@@ -271,6 +276,8 @@ void ItemEntity::processAttack(World &world, Layer &layer)
 void ItemEntity::onAttack(const AttackInfo &attackInfo)
 {
     state_.health -= attackInfo.damage;
+    if (state_.health <= 0)
+        setActive(false);
 }
 
 void ItemEntity::addAttack(Attack *attack)

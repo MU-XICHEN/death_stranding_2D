@@ -1,5 +1,6 @@
 #include "skills/AttackHalfCircleSlash.h"
 #include "world/World.h"
+#include "layers/Layer.h"
 #include "utils/Utils.h"
 #include "entities/AABB.h"
 
@@ -105,4 +106,6 @@ bool AttackHalfCircleSlash::tryHit(World &world, std::uintptr_t entityPtr)
     return false;
 }
 
-void AttackHalfCircleSlash::render(World &world) {}
+void AttackHalfCircleSlash::render(World &world, Layer &layer) {
+    
+}

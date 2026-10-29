@@ -65,12 +65,20 @@ void ItemEntity::render(World &world, Layer &layer)
         }
     }
 
+    // draw attacks effects
+    for (int i = 0; i < attacks_.size(); i++)
+    {
+        if (!attacks_[i] || !(attacks_[i]->isActive()))
+            continue;
+        attacks_[i]->render(world, layer);
+    }
+
     // draw health && speed
     if (state_.health() >= 0)
     {
         auto &textRenderer = world.textRenderer();
         auto targetX = static_cast<int>(xRelativeToViewport);
-        auto targetY = static_cast<int>(yRelativeToViewport) - GEB::TextSizeH::TEXT_SIZE_H_SMALL - ROLE_HP_TEXT_SEP;
+        auto targetY = static_cast<int>(yRelativeToViewport);
         std::string healthText = std::to_string(static_cast<int>(state_.health()));
         textRenderer.drawString(
             world,
@@ -83,7 +91,7 @@ void ItemEntity::render(World &world, Layer &layer)
     {
         auto &textRenderer = world.textRenderer();
         auto targetX = static_cast<int>(xRelativeToViewport);
-        auto targetY = static_cast<int>(yRelativeToViewport) - GEB::TextSizeH::TEXT_SIZE_H_SMALL - ROLE_HP_TEXT_SEP - GEB::TextSizeH::TEXT_SIZE_H_SMALL - ROLE_HP_TEXT_SEP;
+        auto targetY = static_cast<int>(yRelativeToViewport) + GEB::TextSizeH::TEXT_SIZE_H_SMALL + ROLE_HP_TEXT_SEP;
         std::string speedText = std::to_string(static_cast<int>(state_.speed()));
         textRenderer.drawString(
             world,

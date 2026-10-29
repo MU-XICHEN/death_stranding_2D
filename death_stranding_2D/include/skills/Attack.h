@@ -6,8 +6,9 @@
 #include "entities/AABB.h"
 #include "skills/AttackInfo.h"
 
-class World;
 class ItemEntity;
+class World;
+class Layer;
 
 /**
  * Base class for all attacks.
@@ -20,7 +21,7 @@ public:
         : triggerKey_(key), lockDirection_(lockDirection) {};
     virtual ~Attack() = default;
 
-    virtual void render(World &world) = 0;
+    virtual void render(World &world, Layer &layer) = 0;
 
     virtual AABB getAttackContainer(World &world) = 0; // used for filtering items which might be attacked
 

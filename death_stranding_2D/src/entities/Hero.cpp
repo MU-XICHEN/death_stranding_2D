@@ -169,9 +169,9 @@ AttackInfo Hero::createAttackInfo(Attack *attack)
         GEB::Pair<int, float> props[] = {
             {AttackInfo::DAMAGE, 10.0f},
             // lifetime of the attack
-            {AttackInfo::DURATION, 0.3f},
-            {AttackInfo::HIT_START_TIME, 0.06f},
-            {AttackInfo::HIT_END_TIME, 0.14f},
+            {AttackInfo::DURATION, 1.0f},
+            {AttackInfo::HIT_START_TIME, 0.2f},
+            {AttackInfo::HIT_END_TIME, 0.4f},
             // hit box dimensions
             {AttackInfo::HIT_BOX_WIDTH, 80.0f},
             {AttackInfo::HIT_BOX_HEIGHT, 30.0f},

@@ -5,7 +5,6 @@
 #include "structure/Array.h"
 
 class World;
-class Layer;
 
 class Layer
 {
@@ -29,7 +28,7 @@ public:
             itemEntities_[i]->update(world, *this);
         }
     }
-    virtual void render(World &world, Layer &layer)
+    virtual void render(World &world)
     {
         for (int i = 0; i < itemEntities_.size(); ++i)
         {

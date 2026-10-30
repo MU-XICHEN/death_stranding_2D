@@ -45,6 +45,8 @@ void Attack::begin(const AttackInfo &iAtkInfo)
 
 void Attack::end()
 {
+    if (!active_)
+        return;
     hitTargets_.clear();
     active_ = false;
     elapsedTime_ = 0.0f;

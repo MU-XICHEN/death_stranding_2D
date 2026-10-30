@@ -21,4 +21,5 @@ public:
     void render(World &world, Layer &layer) override {}
 
     bool intersects(const AABB &aabb) const;
+    bool contains(const GEB::Vec2 &point) const;
 };

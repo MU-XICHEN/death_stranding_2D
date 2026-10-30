@@ -3,7 +3,6 @@
 #include "layers/Layer.h"
 #include "utils/Utils.h"
 #include "entities/AABB.h"
-#include "world/World.h"
 #include "layers/MainLayer.h"
 #include "stages/Play.h"
 
@@ -23,8 +22,8 @@ void getRotatedHitBoxPoints(const AttackInfo &attackInfo,
     float progress = 0;
     if (hitDuration > 0.0f)
     {
-        progress = GEB::Math::min(1.0f, (elapsedTime - attackInfo.hitStartTime()) / hitDuration);
-        progress = GEB::Math::max(0.0f, progress);
+        progress = std::min(1.0f, (elapsedTime - attackInfo.hitStartTime()) / hitDuration);
+        progress = std::max(0.0f, progress);
     }
 
     const float degree = 180.0f * progress;
@@ -133,8 +132,8 @@ void AttackHalfCircleSlash::render(World &world, Layer &layer)
 
     auto &canvas = world.canvas();
     const auto &viewport = world.gameInfo().viewport();
-    const int visibleWidth = GEB::Math::min(viewport.width(), static_cast<int>(canvas.getWidth()));
-    const int visibleHeight = GEB::Math::min(viewport.height(), static_cast<int>(canvas.getHeight()));
+    const int visibleWidth = std::min(viewport.width(), static_cast<int>(canvas.getWidth()));
+    const int visibleHeight = std::min(viewport.height(), static_cast<int>(canvas.getHeight()));
 
     GEB::Vec2 points[4];
     getRotatedHitBoxPoints(info, elapsedTime_, points);
@@ -152,7 +151,7 @@ void AttackHalfCircleSlash::render(World &world, Layer &layer)
         const float dx = end.x - start.x;
         const float dy = end.y - start.y;
         const int steps = GEB::Math::ceilToInt(
-            GEB::Math::max(GEB::Math::abs(dx), GEB::Math::abs(dy)));
+            std::max(GEB::Math::abs(dx), GEB::Math::abs(dy)));
         if (steps <= 0)
             continue;
 

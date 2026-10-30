@@ -1,3 +1,4 @@
+#include <limits>
 #include "entities/Hero.h"
 #include "GamesEngineeringBase.h"
 #include "world/World.h"
@@ -205,15 +206,18 @@ AttackInfo Hero::createAttackInfo(Attack *attack)
 
     if (dynamic_cast<AttackRemote *>(attack))
     {
-        GEB::Pair<int, float> props[] = {
-            {AttackInfo::Damage, 5.0f},
-            {AttackInfo::Duration, 3.0f},
+        // max float value
+        const float infinityFloat = std::numeric_limits<float>::max();
+        const GEB::Pair<int, float> props[] = {
+            {AttackInfo::Damage, 15.0f},
+            {AttackInfo::Duration, infinityFloat},
             {AttackInfo::HitStartTime, 0.1f},
+            {AttackInfo::HitEndTime, infinityFloat},
             // remote hitEndTime is set to match the duration of the attack
-            {AttackInfo::HitEndTime, 2.0f},
             {AttackInfo::OriginPointX, originPoint.x},
             {AttackInfo::OriginPointY, originPoint.y},
             {AttackInfo::Direction, static_cast<float>(direction())},
+            {AttackInfo::RangedAttackSpeed, 300.0f},
         };
         int size = sizeof(props) / sizeof(props[0]);
         AttackInfo attackInfo(props, size);

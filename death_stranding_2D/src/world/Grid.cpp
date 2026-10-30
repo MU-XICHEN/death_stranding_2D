@@ -52,10 +52,10 @@ void GridSystem::getCandidateGridsByAABB(
      * extend one more grid in all directions
      * to account for items which belong to neighboring grids.
      */
-    int startRow = GEB::Math::max(0, GEB::Math::floorToInt(aabb.y() / gridSize_) - 1);
-    int startCol = GEB::Math::max(0, GEB::Math::floorToInt(aabb.x() / gridSize_) - 1);
-    int endRow = GEB::Math::min(rowCount_ - 1, GEB::Math::floorToInt((aabb.y() + aabb.height()) / gridSize_) + 1);
-    int endCol = GEB::Math::min(colCount_ - 1, GEB::Math::floorToInt((aabb.x() + aabb.width()) / gridSize_) + 1);
+    int startRow = std::max(0, GEB::Math::floorToInt(aabb.y() / gridSize_) - 1);
+    int startCol = std::max(0, GEB::Math::floorToInt(aabb.x() / gridSize_) - 1);
+    int endRow = std::min(rowCount_ - 1, GEB::Math::floorToInt((aabb.y() + aabb.height()) / gridSize_) + 1);
+    int endCol = std::min(colCount_ - 1, GEB::Math::floorToInt((aabb.x() + aabb.width()) / gridSize_) + 1);
 
     for (int row = startRow; row <= endRow; row++)
     {

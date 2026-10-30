@@ -4,6 +4,7 @@
 #include "core/GameBase.h"
 #include "GamesEngineeringBase.h"
 #include "entities/Entity.h"
+#include "entities/AABB.h"
 
 namespace GamesEngineeringBase::Utils
 {
@@ -170,8 +171,8 @@ namespace GamesEngineeringBase::Utils
         {
             float value = project(vertices[i], unitAxis);
 
-            interval.first = GEB::Math::min(interval.first, value);
-            interval.second = GEB::Math::max(interval.second, value);
+            interval.first = std::min(interval.first, value);
+            interval.second = std::max(interval.second, value);
         }
 
         return interval;
@@ -191,8 +192,8 @@ namespace GamesEngineeringBase::Utils
 
         float value = project(des, unitAxis);
 
-        interval.first = GEB::Math::min(interval.first, value);
-        interval.second = GEB::Math::max(interval.second, value);
+        interval.first = std::min(interval.first, value);
+        interval.second = std::max(interval.second, value);
 
         return interval;
     }
@@ -312,6 +313,7 @@ namespace GamesEngineeringBase::Utils
             if (maxA < minB || maxB < minA)
                 return false;
         }
+        return true;
     }
 
     static void getRectByPoint(const GEB::Vec2 &originPoint,
@@ -351,4 +353,86 @@ namespace GamesEngineeringBase::Utils
         memset(points, 0, sizeof(GEB::Vec2) * 4);
         memcpy(points, rectB, sizeof(GEB::Vec2) * 4);
     }
-};
+
+    static GEB::Vec2 getDestination(GEB::Vec2 startPos,
+                                    const GEB::Direction &direction,
+                                    float distance)
+    {
+        GEB::Vec2 unitDirVec2 = GEB::Utils::transDirToUnitVec2(direction);
+        return startPos + (unitDirVec2 * distance);
+    }
+
+    // ips holds up to two line/AABB boundary intersections, ordered along dir.
+    // Return the number of valid points.
+    static int getIntersectionPoints(
+        GEB::Vec2 point,
+        GEB::Vec2 dir,
+        const AABB &aabb,
+        GEB::Vec2 *ips)
+    {
+        if (!ips || (dir.x == 0.0f && dir.y == 0.0f))
+            return 0;
+        /**
+         * Calculate the line equation using the point and direction vector.
+         * For example, point -> (x, y) and dir -> (a, b), we can get offset by 'ay = bx + offset'.
+         */
+        float offset = dir.x * point.y - dir.y * point.x;
+        auto yFunc = [&](float x)
+        {
+            return (dir.y * x + offset) / dir.x;
+        };
+
+        auto xFunc = [&](float y)
+        {
+            return (dir.x * y - offset) / dir.y;
+        };
+
+        float left = aabb.x();
+        float right = left + aabb.width();
+        float top = aabb.y();
+        float bottom = top + aabb.height();
+        int count = 0;
+
+        auto addPoint = [&](float x, float y)
+        {
+            if (x < left || x > right || y < top || y > bottom)
+                return;
+            for (int i = 0; i < count; ++i)
+            {
+                if (ips[i].x == x && ips[i].y == y)
+                    return;
+            }
+
+            if (count < 2)
+                ips[count++] = {x, y};
+        };
+
+        if (dir.x != 0.0f)
+        {
+            addPoint(left, yFunc(left));
+            addPoint(right, yFunc(right));
+        }
+        if (dir.y != 0.0f)
+        {
+            addPoint(xFunc(top), top);
+            addPoint(xFunc(bottom), bottom);
+        }
+
+        // zero or one
+        if (count != 2)
+            return count;
+
+        // two points, make sure the first is nearest.
+        // make sure that the first is nearest.
+        GEB::Vec2 firstToSecond = ips[1] - ips[0];
+        bool needsSwap = GEB::Math::dotProduct(firstToSecond, dir) < 0.0f;
+        if (needsSwap)
+        {
+            GEB::Vec2 temp = ips[0];
+            ips[0] = ips[1];
+            ips[1] = temp;
+        }
+        return count;
+    }
+
+}

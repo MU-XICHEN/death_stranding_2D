@@ -115,22 +115,22 @@ void ItemEntity::render(World &world, Layer &layer)
 void ItemEntity::moveUp(float distance, float topBoundary)
 {
     float resPos = y_ - distance;
-    y_ = GEB::Math::min(y_, GEB::Math::max(resPos, topBoundary));
+    y_ = std::min(y_, std::max(resPos, topBoundary));
 }
 void ItemEntity::moveDown(float distance, float bottomBoundary)
 {
     float resPos = y_ + distance;
-    y_ = GEB::Math::max(y_, GEB::Math::min(resPos, bottomBoundary - height_));
+    y_ = std::max(y_, std::min(resPos, bottomBoundary - height_));
 }
 void ItemEntity::moveLeft(float distance, float leftBoundary)
 {
     float resPos = x_ - distance;
-    x_ = GEB::Math::min(x_, GEB::Math::max(resPos, leftBoundary));
+    x_ = std::min(x_, std::max(resPos, leftBoundary));
 }
 void ItemEntity::moveRight(float distance, float rightBoundary)
 {
     float resPos = x_ + distance;
-    x_ = GEB::Math::max(x_, GEB::Math::min(resPos, rightBoundary - width_));
+    x_ = std::max(x_, std::min(resPos, rightBoundary - width_));
 }
 
 void ItemEntity::calculateBoundaryTop(GEB::Boundary &boundary, const Entity *barrierItem)
@@ -142,7 +142,7 @@ void ItemEntity::calculateBoundaryTop(GEB::Boundary &boundary, const Entity *bar
         return;
 
     if (barrierBottom <= y_)
-        boundary.top = GEB::Math::max(boundary.top, barrierBottom);
+        boundary.top = std::max(boundary.top, barrierBottom);
 }
 
 void ItemEntity::calculateBoundaryBottom(GEB::Boundary &boundary, const Entity *barrierItem)
@@ -153,7 +153,7 @@ void ItemEntity::calculateBoundaryBottom(GEB::Boundary &boundary, const Entity *
         return;
 
     if (barrierItem->y() >= y_ + height_)
-        boundary.bottom = GEB::Math::min(boundary.bottom, barrierItem->y());
+        boundary.bottom = std::min(boundary.bottom, barrierItem->y());
 }
 
 void ItemEntity::calculateBoundaryLeft(GEB::Boundary &boundary, const Entity *barrierItem)
@@ -164,7 +164,7 @@ void ItemEntity::calculateBoundaryLeft(GEB::Boundary &boundary, const Entity *ba
         return;
 
     if (barrierRight <= x_)
-        boundary.left = GEB::Math::max(boundary.left, barrierRight);
+        boundary.left = std::max(boundary.left, barrierRight);
 }
 
 void ItemEntity::calculateBoundaryRight(GEB::Boundary &boundary, const Entity *barrierItem)
@@ -174,7 +174,7 @@ void ItemEntity::calculateBoundaryRight(GEB::Boundary &boundary, const Entity *b
         return;
 
     if (barrierItem->x() >= x_ + width_)
-        boundary.right = GEB::Math::min(boundary.right, barrierItem->x());
+        boundary.right = std::min(boundary.right, barrierItem->x());
 }
 
 void ItemEntity::calculateBoundaryImpl(GEB::Boundary &boundary, const Entity *barrierItem, GEB::Direction direction)
@@ -290,7 +290,7 @@ void ItemEntity::processAttack(World &world, Layer &layer)
 
 void ItemEntity::OnAttacked(const AttackInfo &attackInfo)
 {
-    int realDamage = attackInfo.damage() - state_.defense();
+    int realDamage = static_cast<int>(attackInfo.damage() - state_.defense());
     if (realDamage < 0)
         realDamage = 0;
     state_.setHealth(state_.health() - realDamage);

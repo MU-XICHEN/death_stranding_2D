@@ -210,11 +210,11 @@ void Map::render(World &world, Layer &layer)
     const int viewportWidth = viewport.width();
     const int viewportHeight = viewport.height();
 
-    const int mapStartX = GEB::Math::max(static_cast<int>(viewport.x()), 0);
-    const int mapStartY = GEB::Math::max(static_cast<int>(viewport.y()), 0);
+    const int mapStartX = std::max(static_cast<int>(viewport.x()), 0);
+    const int mapStartY = std::max(static_cast<int>(viewport.y()), 0);
 
-    const int mapEndX = GEB::Math::min(mapStartX + viewportWidth, width_);
-    const int mapEndY = GEB::Math::min(mapStartY + viewportHeight, height_);
+    const int mapEndX = std::min(mapStartX + viewportWidth, width_);
+    const int mapEndY = std::min(mapStartY + viewportHeight, height_);
 
     if (mapStartX >= mapEndX || mapStartY >= mapEndY)
         return;

@@ -15,6 +15,7 @@ class Layer;
  * - AttackInfo::OriginPointX
  * - AttackInfo::OriginPointY
  * - AttackInfo::Direction
+ * - AttackInfo::RangedAttackSpeed
  */
 class AttackRemote : public Attack
 {
@@ -29,13 +30,17 @@ public:
 
     virtual void begin(const AttackInfo &initialAttackInfo = AttackInfo{}) override
     {
+        if (active_)
+            return;
+        Attack::begin(initialAttackInfo);
         startDirection_ = initialAttackInfo.direction();
         lastPos_ = initialAttackInfo.originPoint();
     }
     virtual void end() override
     {
+        if (!active_)
+            return;
         Attack::end();
-
         startDirection_ = GEB::Direction::None;
         lastPos_ = {0, 0};
     }

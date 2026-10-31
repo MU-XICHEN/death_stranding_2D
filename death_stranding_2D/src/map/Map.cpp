@@ -179,9 +179,9 @@ void Map::cachemap()
             if (!image || !image->data || image->width == 0 || image->height == 0)
                 continue;
 
-            for (int x = 0; x < source_.tileSize; ++x)
+            for (int y = 0; y < source_.tileSize; ++y)
             {
-                for (int y = 0; y < source_.tileSize; ++y)
+                for (int x = 0; x < source_.tileSize; ++x)
                 {
                     const int mapX = col * source_.tileSize + x;
                     const int mapY = row * source_.tileSize + y;
@@ -237,9 +237,24 @@ void Map::render(World &world, Layer &layer)
     }
 }
 
-void Map::addCollisionTileToCandiList(Entity *detectedItem,
-                                      GEB::Vec2 distanceVec,
-                                      GEB::Structures::Array<Entity *> &candidateItemList)
+void Map::addCollisionTileToCandiListByAABB(Entity *detectedItem,
+                                            const AABB &aabb,
+                                            GEB::Structures::Array<Entity *> &candidateItemList)
+{
+    for (int i = 0; i < tileBlocks_.size(); i++)
+    {
+        auto &tileBlock = tileBlocks_[i];
+        bool intersected = aabb.intersects(AABB(tileBlock.x(), tileBlock.y(), tileBlock.width(), tileBlock.height()));
+        if (intersected)
+        {
+            candidateItemList.pushBack(&tileBlock);
+        }
+    }
+}
+
+void Map::addCollisionTileToCandiListByDisVec(Entity *detectedItem,
+                                              GEB::Vec2 distanceVec,
+                                              GEB::Structures::Array<Entity *> &candidateItemList)
 {
     if (!detectedItem)
         return;
@@ -255,13 +270,5 @@ void Map::addCollisionTileToCandiList(Entity *detectedItem,
         detectedItem,
         distanceVec);
 
-    for (int i = 0; i < tileBlocks_.size(); i++)
-    {
-        auto &tileBlock = tileBlocks_[i];
-        bool intersected = aabb.intersects(AABB(tileBlock.x(), tileBlock.y(), tileBlock.width(), tileBlock.height()));
-        if (intersected)
-        {
-            candidateItemList.pushBack(&tileBlock);
-        }
-    }
+    addCollisionTileToCandiListByAABB(detectedItem, aabb, candidateItemList);
 }

@@ -94,9 +94,9 @@ void Monster::handleMovement(World &world, Layer &layer)
     gridSystem.getCollisionCandidateListByItem(this, distanceVec, candidateItemList);
 
     // add map tiles which may collide with the hero to the candidate list
-    playStage.map().addCollisionTileToCandiList(this,
-                                                distanceVec,
-                                                candidateItemList);
+    playStage.map().addCollisionTileToCandiListByDisVec(this,
+                                                        distanceVec,
+                                                        candidateItemList);
 
     moveWithCollision(distanceVec, map, candidateItemList.head(), candidateItemList.size());
 

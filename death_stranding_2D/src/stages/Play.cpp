@@ -7,7 +7,7 @@
 #include "layers/MainLayer.h"
 #include "world/World.h"
 #include "skills/AttackHalfCircleSlash.h"
-#include "skills/AttackRemote.h"
+#include "skills/AttackRemoteMulti.h"
 #include "skills/SkillSpeedUp.h"
 
 PlayStage::PlayStage()
@@ -31,10 +31,12 @@ void PlayStage::initialize()
         ROLE_SIZE,
         ROLE_SIZE);
     hero->setColor(255, 0, 0);
+    // attacks
     auto *attack = new AttackHalfCircleSlash('J', true);
     hero->addAttack(attack);
-    auto *remoteAttack = new AttackRemote('K');
+    auto *remoteAttack = new AttackRemoteMulti('K', 0.3f);
     hero->addAttack(remoteAttack);
+    // skills
     auto *speedUpSkill = new SkillSpeedUp('L');
     hero->addSkill(speedUpSkill);
     addEntityToGridSystem(hero);

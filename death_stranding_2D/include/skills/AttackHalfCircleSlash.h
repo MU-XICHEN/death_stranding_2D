@@ -28,7 +28,7 @@ public:
         : Attack(key, lockDirection) {}
     virtual ~AttackHalfCircleSlash() = default;
 
-    virtual AABB getAttackContainer(World &world, Layer &layer) const override;
+    virtual AABB getAttackContainer(World &world, Layer &layer) const;
     virtual void tryHit(World &world, Layer &layer) override;
     virtual void render(World &world, Layer &layer) override;
 };

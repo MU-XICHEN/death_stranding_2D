@@ -55,12 +55,12 @@ void ItemEntity::render(World &world, Layer &layer)
         xRelativeToViewport + width_ <= 0 || yRelativeToViewport + height_ <= 0)
         return;
 
-    for (int i = 0; i < width_; i++)
+    for (int y = 0; y < height_; y++)
     {
-        for (int j = 0; j < height_; j++)
+        for (int x = 0; x < width_; x++)
         {
-            float targetX = xRelativeToViewport + i;
-            float targetY = yRelativeToViewport + j;
+            float targetX = xRelativeToViewport + x;
+            float targetY = yRelativeToViewport + y;
 
             if (targetX < 0 || targetY < 0 ||
                 targetX >= visibleWidth || targetY >= visibleHeight)
@@ -265,13 +265,7 @@ void ItemEntity::processSkill(World &world, Layer &layer)
         if (!skill->active())
             continue;
 
-        skill->updateElapsedTime(dt);
-
-        if (skill->elapsedTime() >= skill->duration())
-        {
-            skill->deactivate(state_);
-            continue;
-        }
+        skill->onProcessed(dt, state_);
     }
 }
 

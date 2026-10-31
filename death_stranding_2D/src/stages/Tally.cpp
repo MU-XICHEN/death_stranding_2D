@@ -13,11 +13,11 @@ void TallyStage::render(World &world, Layer &layer)
     auto &canvas = world.canvas();
 
     int size = 50;
-    for (int i = 0; i < size; i++)
+    for (int y = 0; y < size; y++)
     {
-        for (int j = 0; j < size; j++)
+        for (int x = 0; x < size; x++)
         {
-            canvas.draw(i, j, 0, 0, 255);
+            canvas.draw(x, y, 0, 0, 255);
         }
     }
 }

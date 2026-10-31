@@ -120,6 +120,9 @@
     <ClCompile Include="src\skills\AttackRemote.cpp">
       <Filter>Source Files\skills</Filter>
     </ClCompile>
+    <ClCompile Include="src\skills\AttackRemoteMulti.cpp">
+      <Filter>Source Files\skills</Filter>
+    </ClCompile>
     <ClCompile Include="src\skills\Attack.cpp">
       <Filter>Source Files\skills</Filter>
     </ClCompile>
@@ -201,6 +204,9 @@
       <Filter>Header Files\skills</Filter>
     </ClInclude>
     <ClInclude Include="include\skills\AttackRemote.h">
+      <Filter>Header Files\skills</Filter>
+    </ClInclude>
+    <ClInclude Include="include\skills\AttackRemoteMulti.h">
       <Filter>Header Files\skills</Filter>
     </ClInclude>
     <ClInclude Include="include\skills\Skill.h">

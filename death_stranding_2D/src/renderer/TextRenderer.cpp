@@ -51,16 +51,16 @@ void TextRenderer::drawCharacter(World &world,
     const int validWidth = world.canvas().getWidth();
     const int validHeight = world.canvas().getHeight();
 
-    for (int i = 0; i < fontWidth; i++)
+    for (int pixelY = 0; pixelY < fontHeight; pixelY++)
     {
-        for (int j = 0; j < fontHeight; j++)
+        for (int pixelX = 0; pixelX < fontWidth; pixelX++)
         {
-            const int targetX = x + i;
-            const int targetY = y + j;
+            const int targetX = x + pixelX;
+            const int targetY = y + pixelY;
             if (targetX >= 0 && targetX < validWidth && targetY >= 0 && targetY < validHeight)
             {
-                if (fontImage->alphaAt(charXInImage + i, charYInImage + j))
-                    canvas.draw(targetX, targetY, fontImage->at(charXInImage + i, charYInImage + j));
+                if (fontImage->alphaAt(charXInImage + pixelX, charYInImage + pixelY))
+                    canvas.draw(targetX, targetY, fontImage->at(charXInImage + pixelX, charYInImage + pixelY));
             }
         }
     }

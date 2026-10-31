@@ -60,7 +60,6 @@ public:
     void setHitBoxHeight(int hitBoxHeight) { properties_[HitBoxHeight] = static_cast<float>(hitBoxHeight); }
     float rangedAttackSpeed() const { return properties_[RangedAttackSpeed]; }
     void setRangedAttackSpeed(float rangedAttackSpeed) { properties_[RangedAttackSpeed] = rangedAttackSpeed; }
-
     GEB::Vec2 originPoint() const { return GEB::Vec2{properties_[OriginPointX], properties_[OriginPointY]}; }
     void setOriginPoint(const GEB::Vec2 &originPoint)
     {

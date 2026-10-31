@@ -2,6 +2,10 @@
 
 #include "State.h"
 #include "entities/ItemEntity.h"
+
+/**
+ * Skill is used to add sideEffect to character's state, not for damaging.
+ */
 class Skill
 {
 public:
@@ -10,6 +14,19 @@ public:
     virtual ~Skill() = default;
 
     void setOwner(ItemEntity *owner) { owner_ = owner; }
+
+    void onProcessed(float dt, State &targetState)
+    {
+        if (!active())
+            return;
+
+        updateElapsedTime(dt);
+
+        if (elapsedTime() >= duration())
+        {
+            deactivate(targetState);
+        }
+    }
 
     void activate(State &targetState)
     {

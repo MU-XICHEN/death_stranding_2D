@@ -2,6 +2,7 @@
 
 #include "Attack.h"
 #include "skills/AttackInfo.h"
+#include "structure/DoublyLinkedList.h"
 
 class World;
 class Layer;
@@ -24,28 +25,15 @@ public:
         : Attack(key) {}
     virtual ~AttackRemote() = default;
 
-    virtual AABB getAttackContainer(World &world, Layer &layer) const override;
-    virtual void tryHit(World &world, Layer &layer);
+    virtual AABB getAttackContainer(World &world, Layer &layer) const;
+    virtual void tryHit(World &world, Layer &layer) override;
     virtual void render(World &world, Layer &layer) override;
 
-    virtual void begin(const AttackInfo &initialAttackInfo = AttackInfo{}) override
-    {
-        if (active_)
-            return;
-        Attack::begin(initialAttackInfo);
-        startDirection_ = initialAttackInfo.direction();
-        lastPos_ = initialAttackInfo.originPoint();
-    }
-    virtual void end() override
-    {
-        if (!active_)
-            return;
-        Attack::end();
-        startDirection_ = GEB::Direction::None;
-        lastPos_ = {0, 0};
-    }
+    virtual void tryBegin(World &world, Layer &layer) override;
+    virtual void end() override;
 
 private:
-    GEB::Direction startDirection_ = GEB::Direction::None;
-    GEB::Vec2 lastPos_{0, 0};
+    GEB::Direction direction_ = GEB::Direction::None;
+    GEB::Vec2 startPos_{0, 0};
+    GEB::Vec2 desPos_{0, 0};
 };

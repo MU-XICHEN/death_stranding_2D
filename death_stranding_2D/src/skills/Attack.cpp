@@ -33,14 +33,25 @@ bool Attack::preTryHit(World &world, Layer &layer)
     return true;
 }
 
-void Attack::begin(const AttackInfo &iAtkInfo)
+void Attack::begin()
 {
     if (active_)
         return;
 
     active_ = true;
     elapsedTime_ = 0.0f;
-    attackInfo_ = iAtkInfo;
+    updateAttackInfo();
+}
+
+void Attack::tryBegin(World &world, Layer &layer)
+{
+    if (active_ || !owner_)
+        return;
+    const auto &canvas = world.canvas();
+    if (canvas.keyPressed(triggerKey_))
+    {
+        begin();
+    }
 }
 
 void Attack::end()

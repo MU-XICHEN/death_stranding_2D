@@ -8,7 +8,7 @@
 #include "stages/Play.h"
 #include "skills/Attack.h"
 #include "skills/AttackHalfCircleSlash.h"
-#include "skills/AttackRemote.h"
+#include "skills/AttackRemoteMulti.h"
 
 template <typename T>
 using GEBArray = GEB::Structures::Array<T>;
@@ -41,22 +41,13 @@ public:
     {
         if (host_ == nullptr)
             return;
-        auto &canvas = world.canvas();
         // try begin attacks
         for (int i = 0; i < host_->attacks_.size(); ++i)
         {
             auto *attack = host_->attacks_[i];
             if (!attack)
                 continue;
-            if (attack->isActive())
-                continue;
-
-            if (canvas.keyPressed(attack->triggerKey()))
-            {
-                // handle different types of attacks
-                auto attackInfo = host_->createAttackInfo(attack);
-                attack->begin(attackInfo);
-            }
+            attack->tryBegin(world, layer);
         }
     }
 
@@ -133,9 +124,9 @@ void Hero::handleMovement(World &world, Layer &layer)
     gridSystem.getCollisionCandidateListByItem(this, distanceVec, candidateItemList);
 
     // add map tiles which may collide with the hero to the candidate list
-    playStage.map().addCollisionTileToCandiList(this,
-                                                distanceVec,
-                                                candidateItemList);
+    playStage.map().addCollisionTileToCandiListByDisVec(this,
+                                                        distanceVec,
+                                                        candidateItemList);
 
     // get old position
     auto oldCenter = center();
@@ -204,14 +195,14 @@ AttackInfo Hero::createAttackInfo(Attack *attack)
         return attackInfo;
     }
 
-    if (dynamic_cast<AttackRemote *>(attack))
+    if (dynamic_cast<AttackRemoteMulti *>(attack) || dynamic_cast<AttackRemote *>(attack))
     {
         // max float value
         const float infinityFloat = std::numeric_limits<float>::max();
         const GEB::Pair<int, float> props[] = {
             {AttackInfo::Damage, 15.0f},
             {AttackInfo::Duration, infinityFloat},
-            {AttackInfo::HitStartTime, 0.1f},
+            {AttackInfo::HitStartTime, 0.0f},
             {AttackInfo::HitEndTime, infinityFloat},
             // remote hitEndTime is set to match the duration of the attack
             {AttackInfo::OriginPointX, originPoint.x},

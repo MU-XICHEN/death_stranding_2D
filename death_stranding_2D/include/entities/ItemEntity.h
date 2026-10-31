@@ -42,6 +42,8 @@ public:
 
     void initializeState(GEB::Pair<int, float> *newProp, int size);
     void updateState(const State &state) { state_ = state; }
+    State &state() { return state_; }
+    const State &state() const { return state_; }
 
     void calculateBoundaryTop(GEB::Boundary &boundary, const Entity *barrierItem);
     void calculateBoundaryBottom(GEB::Boundary &boundary, const Entity *barrierItem);

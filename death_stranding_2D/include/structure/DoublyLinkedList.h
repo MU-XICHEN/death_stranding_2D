@@ -29,10 +29,7 @@ namespace GamesEngineeringBase::Structures
         DoublyLinkedList() : head_(nullptr), tail_(nullptr), size_(0) {}
         virtual ~DoublyLinkedList()
         {
-            while (!empty())
-            {
-                removeFirst();
-            }
+            clear();
         }
 
         // Avoid different lists' head_ or tail_ points to same memory.
@@ -42,7 +39,17 @@ namespace GamesEngineeringBase::Structures
         ListNode<T> *back() { return tail_; }
         ListNode<T> *front() { return head_; }
 
+        int size() { return size_; }
         bool empty() { return size_ == 0; }
+
+        // Delete nodes; pointer elements do not own the objects they point to.
+        void clear()
+        {
+            while (!empty())
+            {
+                removeFirst();
+            }
+        }
 
         void pushBack(const T &data)
         {
@@ -108,6 +115,25 @@ namespace GamesEngineeringBase::Structures
 
             delete temp;
             size_--;
+        }
+
+        void insertBefore(ListNode<T> *item, const T &data)
+        {
+            if (!item)
+                return;
+            ListNode<T> *newNode = new ListNode<T>(data);
+            newNode->next = item;
+            newNode->prev = item->prev;
+            if (item->prev)
+            {
+                item->prev->next = newNode;
+            }
+            else
+            {
+                head_ = newNode;
+            }
+            item->prev = newNode;
+            size_++;
         }
 
         void removeNode(ListNode<T> *item)

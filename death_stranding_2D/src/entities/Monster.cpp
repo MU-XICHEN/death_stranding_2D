@@ -91,7 +91,7 @@ void Monster::handleMovement(World &world, Layer &layer)
     direction_ = transDirVecToDiretion(distanceVec, direction_);
 
     GEB::Structures::Array<Entity *> candidateItemList;
-    gridSystem.getCollisionCandidateListByItem(this, distanceVec, candidateItemList);
+    gridSystem.getCandidateListByItem(this, distanceVec, candidateItemList);
 
     // add map tiles which may collide with the hero to the candidate list
     playStage.map().addCollisionTileToCandiListByDisVec(this,

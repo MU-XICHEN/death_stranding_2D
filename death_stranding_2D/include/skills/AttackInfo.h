@@ -3,12 +3,18 @@
 #include "core/GameBase.h"
 #include "structure/Array.h"
 
-// update three sections when adding/removing properties:
-// 1. PropertyIndex enum
-// 3. Getter and setter methods
+/**
+ * Note:
+ * Properties in AttackInfo are preferred to be passed by users.
+ * For example, different characters use this attack with different values.
+ * Otherwise, if this property has little changes, then set it in Attack Class itself.
+ */
 class AttackInfo final
 {
 public:
+    // update three sections when adding/removing properties:
+    // 1. PropertyIndex enum
+    // 3. Getter and setter methods
     enum PropertyIndex
     {
         Damage = 0,
@@ -21,6 +27,9 @@ public:
         OriginPointX,
         OriginPointY,
         Direction,
+        RequiredMana,
+        AttackedCount,
+        AttackRaidus,
         _END_FLAG_,
     };
     static constexpr int propCount = static_cast<int>(PropertyIndex::_END_FLAG_);
@@ -68,6 +77,12 @@ public:
     }
     GEB::Direction direction() const { return static_cast<GEB::Direction>(static_cast<int>(properties_[Direction])); }
     void setDirection(GEB::Direction direction) { properties_[Direction] = static_cast<float>(direction); }
+    float requiredMana() const { return properties_[RequiredMana]; }
+    void setRequiredMana(float requiredMana) { properties_[RequiredMana] = requiredMana; }
+    float attackRadius() const { return properties_[AttackRaidus]; }
+    void setAttackRadius(float attackRadius) { properties_[AttackRaidus] = attackRadius; }
+    int attackedCount() const { return static_cast<int>(properties_[AttackedCount]); }
+    void setAttackedCount(int attackedCount) { properties_[AttackedCount] = static_cast<float>(attackedCount); }
 
     // methods
     inline const GEB::Structures::Array<float> &properties() const { return properties_; }

@@ -167,6 +167,7 @@
     <ClCompile Include="src\skills\AttackHalfCircleSlash.cpp" />
     <ClCompile Include="src\skills\AttackRemote.cpp" />
     <ClCompile Include="src\skills\AttackRemoteMulti.cpp" />
+    <ClCompile Include="src\skills\AttackAutoTargetingMagic.cpp" />
     <ClCompile Include="src\skills\Attack.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\world\GameInfo.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="include\skills\AttackHalfCircleSlash.h" />
     <ClInclude Include="include\skills\AttackRemote.h" />
     <ClInclude Include="include\skills\AttackRemoteMulti.h" />
+    <ClInclude Include="include\skills\AttackAutoTargetingMagic.h" />
     <ClInclude Include="include\skills\Skill.h" />
     <ClInclude Include="include\skills\SkillSpeedUp.h" />
     <ClInclude Include="include\stages\Common.h" />

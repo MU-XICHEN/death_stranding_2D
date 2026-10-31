@@ -8,6 +8,7 @@
 #include "world/World.h"
 #include "skills/AttackHalfCircleSlash.h"
 #include "skills/AttackRemoteMulti.h"
+#include "skills/AttackAutoTargetingMagic.h"
 #include "skills/SkillSpeedUp.h"
 
 PlayStage::PlayStage()
@@ -34,10 +35,12 @@ void PlayStage::initialize()
     // attacks
     auto *attack = new AttackHalfCircleSlash('J', true);
     hero->addAttack(attack);
-    auto *remoteAttack = new AttackRemoteMulti('K', 0.3f);
+    auto *remoteAttack = new AttackRemoteMulti('K', 0.5f);
     hero->addAttack(remoteAttack);
+    auto *autoTargetingMagic = new AttackAutoTargetingMagic('L');
+    hero->addAttack(autoTargetingMagic);
     // skills
-    auto *speedUpSkill = new SkillSpeedUp('L');
+    auto *speedUpSkill = new SkillSpeedUp('U');
     hero->addSkill(speedUpSkill);
     addEntityToGridSystem(hero);
 

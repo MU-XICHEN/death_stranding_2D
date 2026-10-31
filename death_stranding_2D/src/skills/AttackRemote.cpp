@@ -53,7 +53,7 @@ void AttackRemote::tryHit(World &world, Layer &layer)
     AABB attackContainer = getAttackContainer(world, layer);
     // pointers in list do not need to be owned, just references to existing entities, like 'this'.
     GEB::Structures::Array<Entity *> candidateItemList;
-    gridSystem.getCollisionCandidateListByAABB(owner_, attackContainer, candidateItemList);
+    gridSystem.getCandidateListByAABB(owner_, attackContainer, candidateItemList);
     // add map tiles which may collide with the hero to the candidate list
     playStage.map().addCollisionTileToCandiListByAABB(owner_,
                                                       attackContainer,

@@ -40,6 +40,7 @@
 #define ROLE_SIZE 60
 // Hero
 #define HERO_HP 100.0f
+#define HERO_MANA 100.0f
 #define HERO_PIXEL_PER_SEC 200.0f
 #define HERO_DANGER_DISTANCE 100.0f
 #define HERO_DEFENSE 5.0f

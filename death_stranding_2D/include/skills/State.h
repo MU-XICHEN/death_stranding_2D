@@ -6,7 +6,6 @@
 // 1. PropertyIndex enum
 // 2. propCount
 // 3. Getter and setter methods
-static constexpr int cPropCount = 6;
 class State final
 {
 public:
@@ -19,12 +18,15 @@ public:
         COLLITION_DAMAGE,
         PERCEPTION_RANGE,
         DEFENSE,
+        MANA,
+        _END_FLAG_
     };
+    static constexpr int propCount = static_cast<int>(PropertyIndex::_END_FLAG_);
 
     State()
-        : properties_(cPropCount) {};
+        : properties_(propCount) {};
     State(const State &state)
-        : properties_(cPropCount) { *this = state; }
+        : properties_(propCount) { *this = state; }
     ~State() = default;
     // properties
     // health
@@ -46,6 +48,9 @@ public:
     float collitionDamage() const { return properties_[COLLITION_DAMAGE]; }
     void setCollitionDamage(float collitionDamage) { properties_[COLLITION_DAMAGE] = collitionDamage; }
 
+    float mana() const { return properties_[MANA]; }
+    void setMana(float mana) { properties_[MANA] = mana; }
+
     // methods
     inline const GEB::Structures::Array<float> &properties() const { return properties_; };
     void initialize(GEB::Pair<int, float> *newProp, int size)
@@ -53,7 +58,7 @@ public:
         for (int i = 0; i < size; i++)
         {
             const int index = newProp[i].first;
-            if (index >= 0 && index < cPropCount)
+            if (index >= 0 && index < propCount)
             {
                 properties_[index] = newProp[i].second;
             }

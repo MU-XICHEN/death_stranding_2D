@@ -30,12 +30,12 @@ public:
 
     GEB::Pair<int, int> getGridIdxPair(const GEB::Vec2 &center);
 
-    void getCollisionCandidateListByAABB(
+    void getCandidateListByAABB(
         Entity *detectedItem,
         const AABB &aabb,
         GEB::Structures::Array<Entity *> &candidateItemList);
 
-    void getCollisionCandidateListByItem(
+    void getCandidateListByItem(
         Entity *detectedItem,
         const GEB::Vec2 &distanceVec,
         GEB::Structures::Array<Entity *> &candidateItemList);
@@ -88,7 +88,7 @@ private:
         const GEB::Vec2 &distanceVec,
         GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids);
 
-    void getCollisionCandidateListByGrids(
+    void getCandidateListByGrids(
         Entity *detectedItem,
         const GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids,
         GEB::Structures::Array<Entity *> &candidateItemList);

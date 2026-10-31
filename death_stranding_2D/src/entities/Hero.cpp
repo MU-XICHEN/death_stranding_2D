@@ -9,6 +9,7 @@
 #include "skills/Attack.h"
 #include "skills/AttackHalfCircleSlash.h"
 #include "skills/AttackRemoteMulti.h"
+#include "skills/AttackAutoTargetingMagic.h"
 
 template <typename T>
 using GEBArray = GEB::Structures::Array<T>;
@@ -88,6 +89,7 @@ Hero::Hero(
         {State::PERCEPTION_RANGE, HERO_DANGER_DISTANCE},
         {State::DEFENSE, HERO_DEFENSE},
         {State::Damage, HERO_DAMAGE},
+        {State::MANA, HERO_MANA},
     };
     initializeState(props, sizeof(props) / sizeof(props[0]));
 }
@@ -121,7 +123,7 @@ void Hero::handleMovement(World &world, Layer &layer)
 
     // get candidate items for collision detection
     GEBArray<Entity *> candidateItemList;
-    gridSystem.getCollisionCandidateListByItem(this, distanceVec, candidateItemList);
+    gridSystem.getCandidateListByItem(this, distanceVec, candidateItemList);
 
     // add map tiles which may collide with the hero to the candidate list
     playStage.map().addCollisionTileToCandiListByDisVec(this,
@@ -195,7 +197,7 @@ AttackInfo Hero::createAttackInfo(Attack *attack)
         return attackInfo;
     }
 
-    if (dynamic_cast<AttackRemoteMulti *>(attack) || dynamic_cast<AttackRemote *>(attack))
+    if (dynamic_cast<AttackRemote *>(attack))
     {
         // max float value
         const float infinityFloat = std::numeric_limits<float>::max();
@@ -209,6 +211,22 @@ AttackInfo Hero::createAttackInfo(Attack *attack)
             {AttackInfo::OriginPointY, originPoint.y},
             {AttackInfo::Direction, static_cast<float>(direction())},
             {AttackInfo::RangedAttackSpeed, 300.0f},
+        };
+        int size = sizeof(props) / sizeof(props[0]);
+        AttackInfo attackInfo(props, size);
+        return attackInfo;
+    }
+
+    if (dynamic_cast<AttackAutoTargetingMagic *>(attack))
+    {
+        GEB::Pair<int, float> props[] = {
+            {AttackInfo::Damage, 20.0f},
+            {AttackInfo::Duration, 1.0f},
+            {AttackInfo::HitStartTime, 0.1f},
+            {AttackInfo::HitEndTime, 0.5f},
+            {AttackInfo::AttackRaidus, 200.0f},
+            {AttackInfo::AttackedCount, 3},
+            {AttackInfo::RequiredMana, 10},
         };
         int size = sizeof(props) / sizeof(props[0]);
         AttackInfo attackInfo(props, size);

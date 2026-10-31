@@ -19,10 +19,10 @@ public:
         auto aabbY = center.y - radius;
 
         return AABB(
-            static_cast<int>(aabbX),
-            static_cast<int>(aabbY),
-            2 * radius,
-            2 * radius);
+            aabbX,
+            aabbY,
+            static_cast<int>(2 * radius),
+            static_cast<int>(2 * radius));
     }
 
     void addItemToItemsInorder(ItemEntity *item, float health)
@@ -159,7 +159,6 @@ void AttackAutoTargetingMagic::tryHit(World &world, Layer &layer)
         head = head->next;
     }
 }
-
 
 // todo: remove
 void AttackAutoTargetingMagic::render(World &world, Layer &layer)

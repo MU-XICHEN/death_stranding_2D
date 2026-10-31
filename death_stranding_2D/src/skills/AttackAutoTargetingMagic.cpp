@@ -160,4 +160,49 @@ void AttackAutoTargetingMagic::tryHit(World &world, Layer &layer)
     }
 }
 
-void AttackAutoTargetingMagic::render(World &world, Layer &layer) {}
+
+// todo: remove
+void AttackAutoTargetingMagic::render(World &world, Layer &layer)
+{
+    if (!isActive() || !triggerOnce_)
+        return;
+
+    const auto &info = attackInfo();
+    if (elapsedTime_ < info.hitStartTime() || elapsedTime_ >= info.hitEndTime())
+        return;
+
+    auto &canvas = world.canvas();
+    const auto &viewport = world.gameInfo().viewport();
+    const int visibleWidth = std::min(viewport.width(), static_cast<int>(canvas.getWidth()));
+    const int visibleHeight = std::min(viewport.height(), static_cast<int>(canvas.getHeight()));
+    const float borderWidth = 3.0f;
+
+    auto *head = itemsWithMaxHealth_.front();
+    while (head)
+    {
+        auto *target = head->data;
+        head = head->next;
+        if (!target || !target->active() || target->width() <= 0 || target->height() <= 0)
+            continue;
+
+        float targetX = target->x() - viewport.x();
+        float targetY = target->y() - viewport.y();
+        float targetRight = targetX + target->width();
+        float targetBottom = targetY + target->height();
+        int left = std::max(0, GEB::Math::floorToInt(targetX - borderWidth));
+        int right = std::min(visibleWidth, GEB::Math::ceilToInt(targetRight + borderWidth));
+        int top = std::max(0, GEB::Math::floorToInt(targetY - borderWidth));
+        int bottom = std::min(visibleHeight, GEB::Math::ceilToInt(targetBottom + borderWidth));
+
+        // Keep the orange border outside the body so later entity draws do not cover it.
+        for (int y = top; y < bottom; ++y)
+        {
+            for (int x = left; x < right; ++x)
+            {
+                if (x >= targetX && x < targetRight && y >= targetY && y < targetBottom)
+                    continue;
+                canvas.draw(x, y, 255, 140, 0);
+            }
+        }
+    }
+}

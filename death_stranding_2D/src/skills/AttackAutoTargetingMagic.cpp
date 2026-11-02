@@ -149,7 +149,7 @@ void AttackAutoTargetingMagic::tryHit(World &world, Layer &layer)
             head = head->next;
             continue;
         }
-        head->data->OnAttacked(atkInfo);
+        head->data->onAttacked(atkInfo);
         head = head->next;
     }
 }

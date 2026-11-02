@@ -155,6 +155,7 @@
     <ClCompile Include="src\entities\Hero.cpp" />
     <ClCompile Include="src\entities\Monster.cpp" />
     <ClCompile Include="src\entities\Potion.cpp" />
+    <ClCompile Include="src\entities\Track.cpp" />
     <ClCompile Include="src\entities\Ghost.cpp" />
     <ClCompile Include="src\stages\Intro.cpp" />
     <ClCompile Include="src\stages\Menu.cpp" />
@@ -166,6 +167,7 @@
     <ClCompile Include="src\renderer\TextRenderer.cpp" />
     <ClCompile Include="src\renderer\SlicerRenderer.cpp" />
     <ClCompile Include="src\skills\AttackHalfCircleSlash.cpp" />
+    <ClCompile Include="src\skills\AttackCollision.cpp" />
     <ClCompile Include="src\skills\AttackRemote.cpp" />
     <ClCompile Include="src\skills\AttackRemoteMulti.cpp" />
     <ClCompile Include="src\skills\AttackAutoTargetingMagic.cpp" />
@@ -191,6 +193,7 @@
     <ClInclude Include="include\entities\ManaPotion.h" />
     <ClInclude Include="include\entities\Monster.h" />
     <ClInclude Include="include\entities\Potion.h" />
+    <ClInclude Include="include\entities\Track.h" />
     <ClInclude Include="include\skills\State.h" />
     <ClInclude Include="include\layers\Layer.h" />
     <ClInclude Include="include\layers\MainLayer.h" />
@@ -200,6 +203,7 @@
     <ClInclude Include="include\skills\Attack.h" />
     <ClInclude Include="include\skills\AttackInfo.h" />
     <ClInclude Include="include\skills\AttackHalfCircleSlash.h" />
+    <ClInclude Include="include\skills\AttackCollision.h" />
     <ClInclude Include="include\skills\AttackRemote.h" />
     <ClInclude Include="include\skills\AttackRemoteMulti.h" />
     <ClInclude Include="include\skills\AttackAutoTargetingMagic.h" />
@@ -228,7 +232,7 @@
     <ClInclude Include="include\world\World.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\assets\map\*.txt" />
+    <None Include="src\assets\map\**\*.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

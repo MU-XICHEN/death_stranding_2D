@@ -130,7 +130,7 @@ void AttackRemote::tryHit(World &world, Layer &layer)
         // hit characters
         if (auto *itemEntity = dynamic_cast<ItemEntity *>(hitEntities[targetIndex]))
         {
-            itemEntity->OnAttacked(atkInfo);
+            itemEntity->onAttacked(atkInfo);
         }
 
         end();

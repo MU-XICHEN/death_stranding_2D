@@ -9,13 +9,13 @@
 
 // Grid
 // Due to GridSystem for now, the grid size must be larger than or equal to the role size
-#define GRID_SIZE 64
+#define GRID_SIZE 128
 #define GRID_ROWCNT 10
 #define GRID_COLCNT 15
 
 // Window
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 600
+#define WINDOW_WIDTH 1024
+#define WINDOW_HEIGHT 768
 
 // Information Panel
 #define INFORMATION_PANEL_HEIGHT 0

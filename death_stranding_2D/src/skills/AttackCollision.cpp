@@ -4,7 +4,6 @@
 
 void AttackCollision::tryHit(World &world, Layer &layer)
 {
-
     if (!preTryHit(world, layer))
         return;
 
@@ -26,5 +25,24 @@ void AttackCollision::tryHit(World &world, Layer &layer)
     GEB::Structures::Array<Entity *> candidateItemList;
     gridSystem.getCandidateListByAABB(owner_, aabb, candidateItemList);
 
-    
+    if (!(candidateItemList.size() > 0))
+        return;
+
+    for (size_t i = 0; i < candidateItemList.size(); ++i)
+    {
+        if (!candidateItemList[i])
+            continue;
+
+        auto *entity = candidateItemList[i];
+        if (!entity)
+            continue;
+
+        if (aabb.intersects(*entity))
+        {
+            auto *item = dynamic_cast<ItemEntity *>(entity);
+            if (!item)
+                return;
+            item->onAttacked(atkInfo);
+        }
+    }
 }

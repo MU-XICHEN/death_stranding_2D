@@ -87,6 +87,9 @@
     <ClCompile Include="src\entities\Potion.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
+    <ClCompile Include="src\entities\Track.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
     <ClCompile Include="src\entities\Ghost.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
@@ -118,6 +121,9 @@
       <Filter>Source Files\renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\skills\AttackHalfCircleSlash.cpp">
+      <Filter>Source Files\skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src\skills\AttackCollision.cpp">
       <Filter>Source Files\skills</Filter>
     </ClCompile>
     <ClCompile Include="src\skills\AttackRemote.cpp">
@@ -191,6 +197,9 @@
     <ClInclude Include="include\entities\Potion.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
+    <ClInclude Include="include\entities\Track.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
     <ClInclude Include="include\skills\State.h">
       <Filter>Header Files\skills</Filter>
     </ClInclude>
@@ -216,6 +225,9 @@
       <Filter>Header Files\skills</Filter>
     </ClInclude>
     <ClInclude Include="include\skills\AttackHalfCircleSlash.h">
+      <Filter>Header Files\skills</Filter>
+    </ClInclude>
+    <ClInclude Include="include\skills\AttackCollision.h">
       <Filter>Header Files\skills</Filter>
     </ClInclude>
     <ClInclude Include="include\skills\AttackRemote.h">
@@ -298,7 +310,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\assets\map\*.txt">
+    <None Include="src\assets\map\**\*.txt">
       <Filter>Resource Files\assets\map</Filter>
     </None>
   </ItemGroup>

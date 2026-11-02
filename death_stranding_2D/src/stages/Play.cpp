@@ -12,6 +12,8 @@
 #include "skills/SkillSpeedUp.h"
 #include "entities/HealthPotion.h"
 #include "entities/ManaPotion.h"
+#include "entities/Track.h"
+#include "skills/AttackCollision.h"
 
 PlayStage::PlayStage()
     : gridSystem_(GRID_ROWCNT, GRID_COLCNT, GRID_SIZE),
@@ -24,13 +26,13 @@ void PlayStage::initialize()
 {
     mapUpdated_ = true;
 
-    auto mapcenter = map_.center();
+    auto mapCenter = map_.center();
 
     // add Items
     // [new] items will be recycled by the grid system
     auto hero = new Hero(
-        mapcenter.x,
-        mapcenter.y,
+        mapCenter.x,
+        mapCenter.y,
         ROLE_SIZE,
         ROLE_SIZE);
     hero->setColor(255, 0, 0);
@@ -47,36 +49,42 @@ void PlayStage::initialize()
     addEntityToGridSystem(hero);
 
     // // potions
-    // auto *healthPotion = new HealthPotion();
+    // auto *manaPotion = new ManaPotion(
+    //     mapCenter.x - 100,
+    //     mapCenter.y - 100);
+    // manaPotion->setColor(100, 100, 100);
+    // addEntityToGridSystem(manaPotion);
+
+    // auto *healthPotion = new HealthPotion(
+    //     mapCenter.x - 50,
+    //     mapCenter.y - 50);
+    // healthPotion->setColor(200, 200, 200);
     // addEntityToGridSystem(healthPotion);
 
-    auto *manaPotion = new ManaPotion(
-        mapcenter.x - 100,
-        mapcenter.y - 100);
-    manaPotion->setColor(100, 100, 100);
-    addEntityToGridSystem(manaPotion);
-
-    auto *healthPotion = new HealthPotion(
-        mapcenter.x - 50,
-        mapcenter.y - 50);
-    healthPotion->setColor(200, 200, 200);
-    addEntityToGridSystem(healthPotion);
-
+    // // monsters
     // auto monster = new Beast(
-    //     heroPosition.x + 100,
-    //     heroPosition.y + 100,
+    //     mapCenter.x + 100,
+    //     mapCenter.y + 100,
     //     ROLE_SIZE,
     //     ROLE_SIZE);
     // monster->setColor(0, 255, 0);
     // addEntityToGridSystem(monster);
 
     // auto monster2 = new Beast(
-    //     heroPosition.x - 100,
-    //     heroPosition.y - 100,
+    //     mapCenter.x - 100,
+    //     mapCenter.y - 100,
     //     ROLE_SIZE,
     //     ROLE_SIZE);
     // monster2->setColor(0, 255, 0);
     // addEntityToGridSystem(monster2);
+
+    auto track1 = new Track(
+        mapCenter.x - 100,
+        mapCenter.y - 100,
+        ROLE_SIZE,
+        ROLE_SIZE);
+    track1->setColor(0, 255, 0);
+    addEntityToGridSystem(track1);
 }
 
 GEB::Pair<int, int> getGridIndex(float x, float y)

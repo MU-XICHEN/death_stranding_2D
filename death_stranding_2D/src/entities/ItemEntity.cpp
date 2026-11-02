@@ -283,7 +283,7 @@ void ItemEntity::processAttack(World &world, Layer &layer)
     }
 }
 
-void ItemEntity::OnAttacked(const AttackInfo &attackInfo)
+void ItemEntity::onAttacked(const AttackInfo &attackInfo)
 {
     int realDamage = static_cast<int>(attackInfo.damage() - state_.defense());
     if (realDamage < 0)

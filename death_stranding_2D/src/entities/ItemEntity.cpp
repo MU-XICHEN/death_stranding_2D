@@ -244,9 +244,11 @@ bool ItemEntity::deactivateIfNeeded(Layer &layer)
         // inactive
         auto &mainLayer = dynamic_cast<MainLayer &>(layer);
         auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
-        auto &gridSystem = playStage.gridSystem();
+        auto *gridSystem = playStage.gridSystem();
+        if (!gridSystem)
+            return true;
 
-        gridSystem.addInactiveItem(this);
+        gridSystem->addInactiveItem(this);
 
         return true;
     }

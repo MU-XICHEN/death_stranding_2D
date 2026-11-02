@@ -17,10 +17,18 @@ void MenuStage::moveSelection(int direction)
 
 void MenuStage::update(World &world, Layer &layer)
 {
-    Stage::handleEvents(world, layer);
+
+    const auto &canvas = world.canvas();
+    if (Stage::enterState.justPressed(canvas.keyPressed(VK_RETURN)))
+    {
+        auto mainLayer = dynamic_cast<MainLayer *>(&layer);
+        if (mainLayer)
+        {
+            mainLayer->goToNextStageInNextFrame();
+        }
+    }
 
     // handle current events
-    const auto &canvas = world.canvas();
     if (wKeyState_.justPressed(canvas.keyPressed('W')) || wKeyState_.justPressed(canvas.keyPressed(VK_UP)))
         moveSelection(-1);
     else if (sKeyState_.justPressed(canvas.keyPressed('S')) || sKeyState_.justPressed(canvas.keyPressed(VK_DOWN)))

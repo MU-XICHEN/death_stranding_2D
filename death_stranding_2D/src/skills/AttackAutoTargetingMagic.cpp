@@ -91,6 +91,12 @@ void AttackAutoTargetingMagic::end()
 
 void AttackAutoTargetingMagic::tryHit(World &world, Layer &layer)
 {
+    auto &mainLayer = dynamic_cast<MainLayer &>(layer);
+    auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
+    auto *gridSystem = playStage.gridSystem();
+    if (!gridSystem)
+        return;
+
     const auto &atkInfo = attackInfo();
     if (atkInfo.requiredMana() > owner_->state().mana())
         return;
@@ -105,13 +111,9 @@ void AttackAutoTargetingMagic::tryHit(World &world, Layer &layer)
     float oldMana = owner_->state().mana();
     owner_->state().setMana(oldMana - atkInfo.requiredMana());
 
-    auto &mainLayer = dynamic_cast<MainLayer &>(layer);
-    auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
-    auto &gridSystem = playStage.gridSystem();
-
     auto aabbCtn = impl_->getAttackContainer();
     GEB::Structures::Array<Entity *> candidateItemList;
-    gridSystem.getCandidateListByAABB(owner_, aabbCtn, candidateItemList);
+    gridSystem->getCandidateListByAABB(owner_, aabbCtn, candidateItemList);
 
     if ((candidateItemList.size() == 0))
         return;

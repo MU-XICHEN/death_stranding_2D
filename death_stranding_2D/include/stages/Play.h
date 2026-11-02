@@ -9,7 +9,10 @@ class PlayStage : public Stage
 {
 public:
     PlayStage();
-    virtual ~PlayStage() = default;
+    virtual ~PlayStage() override;
+
+    PlayStage(const PlayStage &) = delete;
+    PlayStage &operator=(const PlayStage &) = delete;
 
     void initialize();
     void addEntityToGridSystem(ItemEntity *itemEntity);
@@ -17,11 +20,10 @@ public:
     void render(World &world, Layer &layer) override;
     void renderFinished(World &world, Layer &layer) override;
 
-    GridSystem &gridSystem() { return gridSystem_; }
-    Map &map() { return map_; }
+    GridSystem *gridSystem() { return gridSystem_; }
+    Map *map() { return map_; }
 
 private:
-    GridSystem gridSystem_;
-    Map map_;
-    bool mapUpdated_ = false;
+    GridSystem *gridSystem_ = nullptr;
+    Map *map_ = nullptr;
 };

@@ -5,7 +5,6 @@
 
 void TallyStage::update(World &world, Layer &layer)
 {
-    handleEvents(world, layer);
 }
 
 void TallyStage::render(World &world, Layer &layer)

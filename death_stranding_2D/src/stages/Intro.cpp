@@ -6,7 +6,15 @@
 
 void IntroStage::update(World &world, Layer &layer)
 {
-    handleEvents(world, layer);
+    const auto &canvas = world.canvas();
+    if (Stage::enterState.justPressed(canvas.keyPressed(VK_RETURN)))
+    {
+        auto mainLayer = dynamic_cast<MainLayer *>(&layer);
+        if (mainLayer)
+        {
+            mainLayer->goToNextStageInNextFrame();
+        }
+    }
 }
 
 void IntroStage::render(World &world, Layer &layer)

@@ -22,19 +22,6 @@ void Stage::pushEntity(Entity *entity)
     entityList_.pushBack(entity);
 }
 
-void Stage::handleEvents(World &world, Layer &layer)
-{
-    const auto &canvas = world.canvas();
-    if (Stage::enterState.justPressed(canvas.keyPressed(VK_RETURN)))
-    {
-        auto mainLayer = dynamic_cast<MainLayer *>(&layer);
-        if (mainLayer)
-        {
-            mainLayer->goToNextStageInNextFrame();
-        }
-    }
-}
-
 // Iterate over the list in insertion order, which means the entity added first is updated first.
 void Stage::update(World &world, Layer &layer)
 {

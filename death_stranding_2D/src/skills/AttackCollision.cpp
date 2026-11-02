@@ -4,6 +4,12 @@
 
 void AttackCollision::tryHit(World &world, Layer &layer)
 {
+    auto &mainLayer = dynamic_cast<MainLayer &>(layer);
+    auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
+    auto *gridSystem = playStage.gridSystem();
+    if (!gridSystem)
+        return;
+
     if (!preTryHit(world, layer))
         return;
 
@@ -19,16 +25,13 @@ void AttackCollision::tryHit(World &world, Layer &layer)
         width,
         height};
 
-    auto &mainLayer = dynamic_cast<MainLayer &>(layer);
-    auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
-    auto &gridSystem = playStage.gridSystem();
     GEB::Structures::Array<Entity *> candidateItemList;
-    gridSystem.getCandidateListByAABB(owner_, aabb, candidateItemList);
+    gridSystem->getCandidateListByAABB(owner_, aabb, candidateItemList);
 
     if (!(candidateItemList.size() > 0))
         return;
 
-    for (size_t i = 0; i < candidateItemList.size(); ++i)
+    for (int i = 0; i < candidateItemList.size(); ++i)
     {
         if (!candidateItemList[i])
             continue;

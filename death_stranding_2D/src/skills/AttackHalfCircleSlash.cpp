@@ -66,17 +66,19 @@ AABB AttackHalfCircleSlash::getAttackContainer(World &world, Layer &layer) const
 
 void AttackHalfCircleSlash::tryHit(World &world, Layer &layer)
 {
-    if (!preTryHit(world, layer))
-        return;
-
     auto &mainLayer = dynamic_cast<MainLayer &>(layer);
     auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
-    auto &gridSystem = playStage.gridSystem();
+    auto *gridSystem = playStage.gridSystem();
+    if (!gridSystem)
+        return;
+
+    if (!preTryHit(world, layer))
+        return;
 
     AABB attackContainer = getAttackContainer(world, layer);
     // pointers in list do not need to be owned, just references to existing entities, like 'this'.
     GEB::Structures::Array<Entity *> candidateItemList;
-    gridSystem.getCandidateListByAABB(owner_, attackContainer, candidateItemList);
+    gridSystem->getCandidateListByAABB(owner_, attackContainer, candidateItemList);
 
     if ((candidateItemList.size() == 0))
         return;

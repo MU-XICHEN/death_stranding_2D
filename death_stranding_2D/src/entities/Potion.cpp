@@ -31,9 +31,11 @@ void Potion::update(World &world, Layer &layer)
 
     auto &mainLayer = dynamic_cast<MainLayer &>(layer);
     auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
-    auto &gridSystem = playStage.gridSystem();
+    auto *gridSystem = playStage.gridSystem();
+    if (!gridSystem)
+        return;
 
-    gridSystem.getCandidateListByAABB(this, aabb, candidateItemList);
+    gridSystem->getCandidateListByAABB(this, aabb, candidateItemList);
 
     for (int i = 0; i < candidateItemList.size(); i++)
     {

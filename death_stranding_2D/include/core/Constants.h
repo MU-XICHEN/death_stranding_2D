@@ -37,7 +37,7 @@
  *  for preventing items from spanning multiple grid cells.
  *  In getCandidateGridsByDisVec2(Grid.h), this is ensured by extending one more grid in all directions.
  */
-#define ROLE_SIZE 60
+#define ROLE_SIZE 64
 // Hero
 #define HERO_HP 100.0f
 #define HERO_MANA 100.0f

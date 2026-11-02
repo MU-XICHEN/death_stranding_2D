@@ -3,7 +3,6 @@
 #include "entities/Hero.h"
 #include "entities/Monster.h"
 #include "map/Map.h"
-#include "map/MapFactory.h"
 #include "layers/MainLayer.h"
 #include "world/World.h"
 #include "skills/AttackHalfCircleSlash.h"
@@ -16,17 +15,29 @@
 #include "skills/AttackCollision.h"
 
 PlayStage::PlayStage()
-    : gridSystem_(GRID_ROWCNT, GRID_COLCNT, GRID_SIZE),
-      map_(MapType::Chapter1)
 {
+    map_ = new Map(MapType::Chapter1);
+    if (!map_)
+        return;
+    gridSystem_ = new GridSystem(
+        map_->height() / GRID_SIZE,
+        map_->width() / GRID_SIZE,
+        GRID_SIZE);
+
     initialize();
+}
+
+PlayStage::~PlayStage()
+{
+    delete map_;
+    delete gridSystem_;
 }
 
 void PlayStage::initialize()
 {
-    mapUpdated_ = true;
-
-    auto mapCenter = map_.center();
+    if (!gridSystem_ || !map_)
+        return;
+    auto mapCenter = map_->center();
 
     // add Items
     // [new] items will be recycled by the grid system
@@ -47,44 +58,6 @@ void PlayStage::initialize()
     auto *speedUpSkill = new SkillSpeedUp('U');
     hero->addSkill(speedUpSkill);
     addEntityToGridSystem(hero);
-
-    // // potions
-    // auto *manaPotion = new ManaPotion(
-    //     mapCenter.x - 100,
-    //     mapCenter.y - 100);
-    // manaPotion->setColor(100, 100, 100);
-    // addEntityToGridSystem(manaPotion);
-
-    // auto *healthPotion = new HealthPotion(
-    //     mapCenter.x - 50,
-    //     mapCenter.y - 50);
-    // healthPotion->setColor(200, 200, 200);
-    // addEntityToGridSystem(healthPotion);
-
-    // // monsters
-    // auto monster = new Beast(
-    //     mapCenter.x + 100,
-    //     mapCenter.y + 100,
-    //     ROLE_SIZE,
-    //     ROLE_SIZE);
-    // monster->setColor(0, 255, 0);
-    // addEntityToGridSystem(monster);
-
-    // auto monster2 = new Beast(
-    //     mapCenter.x - 100,
-    //     mapCenter.y - 100,
-    //     ROLE_SIZE,
-    //     ROLE_SIZE);
-    // monster2->setColor(0, 255, 0);
-    // addEntityToGridSystem(monster2);
-
-    auto track1 = new Track(
-        mapCenter.x - 100,
-        mapCenter.y - 100,
-        ROLE_SIZE,
-        ROLE_SIZE);
-    track1->setColor(0, 255, 0);
-    addEntityToGridSystem(track1);
 }
 
 GEB::Pair<int, int> getGridIndex(float x, float y)
@@ -100,25 +73,25 @@ GEB::Pair<int, int> getGridIndex(float x, float y)
 
 void PlayStage::addEntityToGridSystem(ItemEntity *item)
 {
+    if (!gridSystem_ || !item)
+        return;
+
     auto center = item->center();
     auto indexPair = getGridIndex(center.x, center.y);
-    gridSystem_.addEntity(indexPair.first, indexPair.second, item);
+    gridSystem_->addEntity(indexPair.first, indexPair.second, item);
 }
 
 // updateEntities
 void PlayStage::update(World &world, Layer &layer)
 {
-    Stage::handleEvents(world, layer);
+    if (!gridSystem_ || !map_)
+        return;
 
-    if (mapUpdated_)
-    {
-        world.gameInfo().updateMapInfo(map_);
-        mapUpdated_ = false;
-    }
+    world.gameInfo().updateMapInfo(*map_);
 
     Stage::update(world, layer); // update sections like information panels
 
-    auto &itemsToUpdate = gridSystem_.itemsToUpdate();
+    auto &itemsToUpdate = gridSystem_->itemsToUpdate();
     int itemCount = itemsToUpdate.size();
     for (int i = 0; i < itemCount; ++i)
     {
@@ -131,11 +104,14 @@ void PlayStage::update(World &world, Layer &layer)
 // renderEntities
 void PlayStage::render(World &world, Layer &layer)
 {
-    map_.render(world, layer);
+    if (!gridSystem_ || !map_)
+        return;
+
+    map_->render(world, layer);
 
     Stage::render(world, layer);
 
-    auto &itemsToUpdate = gridSystem_.itemsToUpdate();
+    auto &itemsToUpdate = gridSystem_->itemsToUpdate();
     int itemCount = itemsToUpdate.size();
     for (int i = 0; i < itemCount; ++i)
     {
@@ -147,7 +123,10 @@ void PlayStage::render(World &world, Layer &layer)
 
 void PlayStage::renderFinished(World &world, Layer &layer)
 {
-    auto &inactiveItems = gridSystem_.inactiveItems();
+    if (!gridSystem_)
+        return;
+
+    auto &inactiveItems = gridSystem_->inactiveItems();
     int inactiveItemCount = inactiveItems.size();
     for (int i = 0; i < inactiveItemCount; ++i)
     {
@@ -155,10 +134,10 @@ void PlayStage::renderFinished(World &world, Layer &layer)
         if (!item)
             continue;
         const auto &center = item->center();
-        auto [rowIdx, colIdx] = gridSystem_.getGridIdxPair(center);
-        gridSystem_.removeEntity(rowIdx, colIdx, item);
+        auto [rowIdx, colIdx] = gridSystem_->getGridIdxPair(center);
+        gridSystem_->removeEntity(rowIdx, colIdx, item);
     }
 
     // clear
-    gridSystem_.clearInactiveItems();
+    gridSystem_->clearInactiveItems();
 }

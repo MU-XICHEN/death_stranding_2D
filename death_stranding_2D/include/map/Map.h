@@ -4,13 +4,32 @@
 #include "entities/AABB.h"
 #include "structure/Array.h"
 #include "Tile.h"
-#include "MapFactory.h"
+
+enum MapType
+{
+    Chapter1 = 0,
+    Chapter2 = 1,
+    Chapter3 = 2,
+    Chapter4 = 3,
+    Chapter5 = 4
+};
+
+struct MapSource
+{
+    int colCnt;
+    int rowCnt;
+    int tileSize;
+    int pixelWidth;
+    int pixelHeight;
+    const int *ground;
+    int groundCount;
+};
 
 class Map : public Entity
 {
 public:
-    explicit Map(MapType mapType);
-    ~Map();
+    Map(MapType type);
+    ~Map() override = default;
 
     void update(World &world, Layer &layer) override;
     void render(World &world, Layer &layer) override;
@@ -26,13 +45,15 @@ public:
                                            GEB::Structures::Array<Entity *> &candidateItemList);
 
 private:
-    void initialize();
+    void loadChapterMap(MapType type);
+    void loadMapSource(MapType type);
     void cachemap();
     void mergeTiles(const int *ground, int colCnt, int rowCnt);
 
-    const MapSource &source_;
+    MapType mapType_;
+    MapSource source_{};
+    GEB::Structures::Array<int> ground_;
 
-    GEB::Structures::Array<GEB::Image *> images_; // load images by map self for now
     GEB::Structures::Array<unsigned char> mapCache_;
     GEB::Structures::Array<TileBlock> tileBlocks_; // need collision detection
 };

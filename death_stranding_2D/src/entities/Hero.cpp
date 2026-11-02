@@ -111,7 +111,10 @@ void Hero::handleMovement(World &world, Layer &layer)
 
     auto &mainLayer = dynamic_cast<MainLayer &>(layer);
     auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
-    auto &gridSystem = playStage.gridSystem();
+    auto *gridSystem = playStage.gridSystem();
+    auto *stageMap = playStage.map();
+    if (!gridSystem || !stageMap)
+        return;
 
     bool lockDirection = impl_->checkLockDirection();
 
@@ -122,12 +125,12 @@ void Hero::handleMovement(World &world, Layer &layer)
 
     // get candidate items for collision detection
     GEBArray<Entity *> candidateItemList;
-    gridSystem.getCandidateListByItem(this, distanceVec, candidateItemList);
+    gridSystem->getCandidateListByItem(this, distanceVec, candidateItemList);
 
     // add map tiles which may collide with the hero to the candidate list
-    playStage.map().addCollisionTileToCandiListByDisVec(this,
-                                                        distanceVec,
-                                                        candidateItemList);
+    stageMap->addCollisionTileToCandiListByDisVec(this,
+                                                  distanceVec,
+                                                  candidateItemList);
 
     // get old position
     auto oldCenter = center();
@@ -136,7 +139,7 @@ void Hero::handleMovement(World &world, Layer &layer)
     moveWithCollision(distanceVec, map, candidateItemList.head(), candidateItemList.size());
 
     // update grid system
-    gridSystem.updateEntityGridIfNeed(oldCenter, this);
+    gridSystem->updateEntityGridIfNeed(oldCenter, this);
 }
 
 void Hero::tryTriggerAttacks(World &world, Layer &layer)

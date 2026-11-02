@@ -156,9 +156,6 @@
     <ClCompile Include="src\map\Map.cpp">
       <Filter>Source Files\map</Filter>
     </ClCompile>
-    <ClCompile Include="src\map\MapFactory.cpp">
-      <Filter>Source Files\map</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\GamesEngineeringBase.h">
@@ -285,9 +282,6 @@
       <Filter>Header Files\utils</Filter>
     </ClInclude>
     <ClInclude Include="include\map\Map.h">
-      <Filter>Header Files\map</Filter>
-    </ClInclude>
-    <ClInclude Include="include\map\MapFactory.h">
       <Filter>Header Files\map</Filter>
     </ClInclude>
     <ClInclude Include="include\map\Tile.h">

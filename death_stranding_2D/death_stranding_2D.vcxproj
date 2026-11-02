@@ -177,7 +177,6 @@
     <ClCompile Include="src\world\Grid.cpp" />
     <ClCompile Include="src\world\AssetManager.cpp" />
     <ClCompile Include="src\map\Map.cpp" />
-    <ClCompile Include="src\map\MapFactory.cpp" />
     <ClCompile Include="src\world\World.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -226,7 +225,6 @@
     <ClInclude Include="include\world\AssetManager.h" />
     <ClInclude Include="include\world\Grid.h" />
     <ClInclude Include="include\map\Map.h" />
-    <ClInclude Include="include\map\MapFactory.h" />
     <ClInclude Include="include\map\Tile.h" />
     <ClInclude Include="include\world\Viewport.h" />
     <ClInclude Include="include\world\World.h" />

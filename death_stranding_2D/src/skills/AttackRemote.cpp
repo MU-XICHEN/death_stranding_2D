@@ -32,6 +32,13 @@ void AttackRemote::end()
 
 void AttackRemote::tryHit(World &world, Layer &layer)
 {
+    auto &mainLayer = dynamic_cast<MainLayer &>(layer);
+    auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
+    auto *gridSystem = playStage.gridSystem();
+    auto *stageMap = playStage.map();
+    if (!gridSystem || !stageMap)
+        return;
+
     if (!preTryHit(world, layer))
         return;
 
@@ -46,16 +53,12 @@ void AttackRemote::tryHit(World &world, Layer &layer)
         return;
     }
 
-    auto &mainLayer = dynamic_cast<MainLayer &>(layer);
-    auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
-    auto &gridSystem = playStage.gridSystem();
-
     AABB attackContainer = getAttackContainer(world, layer);
     // pointers in list do not need to be owned, just references to existing entities, like 'this'.
     GEB::Structures::Array<Entity *> candidateItemList;
-    gridSystem.getCandidateListByAABB(owner_, attackContainer, candidateItemList);
+    gridSystem->getCandidateListByAABB(owner_, attackContainer, candidateItemList);
     // add map tiles which may collide with the hero to the candidate list
-    playStage.map().addCollisionTileToCandiListByAABB(owner_,
+    stageMap->addCollisionTileToCandiListByAABB(owner_,
                                                       attackContainer,
                                                       candidateItemList);
 

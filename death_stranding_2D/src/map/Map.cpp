@@ -2,6 +2,226 @@
 #include "map/Map.h"
 #include "entities/AABB.h"
 #include <cstring>
+#include <fstream>
+#include <limits>
+#include <stdexcept>
+
+GEB::Pair<bool, int> tileProcessed(int tileIndexX, int tileIndexY, int tileSize,
+                                   const GEB::Structures::Array<TileBlock> &tileRects);
+int expandTileRectSizeImpl(int direction, int tileIndexX, int tileIndexY,
+                           int maxColCnt, const int *ground, int colCnt, int tileSize,
+                           const GEB::Structures::Array<TileBlock> &tileRects);
+int expandTileRectSize(TileBlock &tileRect, int tileIndexX, int tileIndexY,
+                       const int *ground, int colCnt, int rowCnt, int tileSize,
+                       const GEB::Structures::Array<TileBlock> &tileRects);
+
+void getMapPath(MapType type, const char **path);
+
+Map::Map(MapType type)
+    : Entity(0, 0, 0, 0), mapType_(type)
+{
+    loadChapterMap(type);
+}
+
+void Map::loadChapterMap(MapType type)
+{
+    mapType_ = type;
+    mapCache_.clear();
+    tileBlocks_.clear();
+    ground_.clear();
+    source_ = {};
+    width_ = 0;
+    height_ = 0;
+
+    loadMapSource(type);
+    cachemap();
+    // Ground values describe collision only: 0 is walkable, nonzero is blocked.
+    mergeTiles(source_.ground, source_.colCnt, source_.rowCnt);
+}
+
+void Map::loadMapSource(MapType type)
+{
+    const char *path = nullptr;
+    getMapPath(type, &path);
+
+    if (!path)
+        throw std::runtime_error("Map path not found");
+
+    std::ifstream file(std::string(path) + ".txt");
+    if (!file)
+        throw std::runtime_error("Cannot open map file");
+
+    file >> source_.tileSize;
+    if (!file || source_.tileSize <= 0)
+        throw std::runtime_error("Invalid tile size");
+
+    file >> source_.rowCnt >> source_.colCnt;
+    if (!file || source_.rowCnt <= 0 || source_.colCnt <= 0)
+        throw std::runtime_error("Invalid ground dimensions");
+
+    const auto maxSize = (std::numeric_limits<int>::max)();
+    if (source_.colCnt > maxSize / source_.tileSize ||
+        source_.rowCnt > maxSize / source_.tileSize ||
+        source_.rowCnt > maxSize / source_.colCnt)
+        throw std::runtime_error("Map dimensions are too large");
+
+    source_.pixelWidth = source_.colCnt * source_.tileSize;
+    source_.pixelHeight = source_.rowCnt * source_.tileSize;
+    source_.groundCount = source_.rowCnt * source_.colCnt;
+    if (source_.pixelWidth > maxSize / 3 / source_.pixelHeight)
+        throw std::runtime_error("Map cache is too large");
+
+    for (int row = 0; row < source_.rowCnt; ++row)
+    {
+        for (int col = 0; col < source_.colCnt; ++col)
+        {
+            int ground = 0;
+            if (!(file >> ground) || ground < 0)
+                throw std::runtime_error("Invalid ground tile");
+            ground_.pushBack(ground);
+        }
+    }
+
+    file >> std::ws;
+    if (!file.eof() || file.bad())
+        throw std::runtime_error("Unexpected content after map");
+
+    source_.ground = ground_.head();
+}
+
+void Map::cachemap()
+{
+    const char *path = nullptr;
+    getMapPath(mapType_, &path);
+
+    const std::string imagePath = std::string(path) + ".png";
+    std::ifstream imageFile(imagePath, std::ios::binary);
+    if (!imageFile)
+        throw std::runtime_error("Cannot open map image");
+    imageFile.close();
+
+    GEB::Image image;
+    if (!image.load(imagePath) || !image.data)
+        throw std::runtime_error("Cannot load map image");
+    if (image.channels != 3)
+        throw std::runtime_error("Map image must have 3 channels");
+    if (image.width != static_cast<unsigned int>(source_.pixelWidth) ||
+        image.height != static_cast<unsigned int>(source_.pixelHeight))
+        throw std::runtime_error("Map image dimensions do not match ground dimensions");
+
+    width_ = source_.pixelWidth;
+    height_ = source_.pixelHeight;
+    mapCache_.resize(width_ * height_ * 3);
+    std::memcpy(mapCache_.head(), image.data, mapCache_.size());
+}
+
+void Map::mergeTiles(const int *ground, int colCnt, int rowCnt)
+{
+    tileBlocks_.resize(0);
+    if (!ground || colCnt <= 0 || rowCnt <= 0)
+        return;
+
+    for (int i = 0; i < rowCnt; i++)
+    {
+        for (int j = 0; j < colCnt; j++)
+        {
+            //  skip tiles, which do not need collision detection.
+            if (ground[i * colCnt + j] == 0)
+                continue;
+
+            auto res = tileProcessed(j, i, source_.tileSize, tileBlocks_);
+            if (res.first)
+            {
+                j = res.second - 1;
+                continue;
+            }
+
+            // if not processed, create a new tile block.
+            TileBlock newTile;
+            const int mergedColCount = expandTileRectSize(
+                newTile, j, i, ground, colCnt, rowCnt, source_.tileSize, tileBlocks_);
+
+            tileBlocks_.pushBack(newTile);
+            j += mergedColCount - 1;
+        }
+    }
+}
+
+void Map::update(World &world, Layer &layer) {}
+
+void Map::render(World &world, Layer &layer)
+{
+    if (mapCache_.size() == 0)
+        return;
+
+    auto &canvas = world.canvas();
+    const Viewport &viewport = world.gameInfo().viewport();
+
+    const int viewportWidth = viewport.width();
+    const int viewportHeight = viewport.height();
+
+    const int mapStartX = std::max(static_cast<int>(viewport.x()), 0);
+    const int mapStartY = std::max(static_cast<int>(viewport.y()), 0);
+
+    const int mapEndX = std::min(mapStartX + viewportWidth, width_);
+    const int mapEndY = std::min(mapStartY + viewportHeight, height_);
+
+    if (mapStartX >= mapEndX || mapStartY >= mapEndY)
+        return;
+
+    const int rowBytes = (mapEndX - mapStartX) * 3;
+
+    for (int mapY = mapStartY; mapY < mapEndY; ++mapY)
+    {
+        const int canvasX = 0;
+        const int canvasY = mapY - mapStartY;
+
+        const int cacheIndex = (mapY * width_ + mapStartX) * 3;
+
+        const int canvasIndex = (canvasY * viewportWidth + canvasX) * 3;
+
+        auto *canvasPixels = canvas.getBackBuffer();
+
+        // speed up, copy a whole row of pixels at once.
+        std::memcpy(&canvasPixels[canvasIndex], &mapCache_[cacheIndex], rowBytes);
+    }
+}
+
+void Map::addCollisionTileToCandiListByAABB(Entity *detectedItem,
+                                            const AABB &aabb,
+                                            GEB::Structures::Array<Entity *> &candidateItemList)
+{
+    for (int i = 0; i < tileBlocks_.size(); i++)
+    {
+        auto &tileBlock = tileBlocks_[i];
+        bool intersected = aabb.intersects(tileBlock);
+        if (intersected)
+        {
+            candidateItemList.pushBack(&tileBlock);
+        }
+    }
+}
+
+void Map::addCollisionTileToCandiListByDisVec(Entity *detectedItem,
+                                              GEB::Vec2 distanceVec,
+                                              GEB::Structures::Array<Entity *> &candidateItemList)
+{
+    if (!detectedItem)
+        return;
+
+    GEB::Boundary mapBoundary{
+        .top = 0,
+        .bottom = static_cast<float>(height_),
+        .left = 0,
+        .right = static_cast<float>(width_),
+    };
+
+    auto aabb = AABB::createAABB(
+        detectedItem,
+        distanceVec);
+
+    addCollisionTileToCandiListByAABB(detectedItem, aabb, candidateItemList);
+}
 
 GEB::Pair<bool, int> tileProcessed(int tileIndexX, int tileIndexY, int tileSize,
                                    const GEB::Structures::Array<TileBlock> &tileRects)
@@ -83,187 +303,27 @@ int expandTileRectSize(TileBlock &tileRect, int tileIndexX, int tileIndexY,
     return maxColCnt;
 }
 
-Map::Map(MapType mapType)
-    : Entity(0, 0, 0, 0),
-      source_(MapFactory::fetchMapSource(mapType))
+void getMapPath(MapType type, const char **path)
 {
-    initialize();
-}
-
-Map::~Map()
-{
-    for (int i = 0; i < images_.size(); ++i)
+    switch (type)
     {
-        delete images_[i];
+    case MapType::Chapter1:
+        *path = "assets/map/chapter1/chapter1";
+        break;
+    case MapType::Chapter2:
+        *path = "assets/map/chapter2/chapter2";
+        break;
+    case MapType::Chapter3:
+        *path = "assets/map/chapter3/chapter3";
+        break;
+    case MapType::Chapter4:
+        *path = "assets/map/chapter4/chapter4";
+        break;
+    case MapType::Chapter5:
+        *path = "assets/map/chapter5/chapter5";
+        break;
+    default:
+        throw std::runtime_error("Invalid map type");
+        break;
     }
-}
-
-void Map::mergeTiles(const int *ground, int colCnt, int rowCnt)
-{
-    tileBlocks_.resize(0);
-    if (!ground || colCnt <= 0 || rowCnt <= 0)
-        return;
-
-    for (int i = 0; i < rowCnt; i++)
-    {
-        for (int j = 0; j < colCnt; j++)
-        {
-            //  skip tiles, which do not need collision detection.
-            if (ground[i * colCnt + j] == 0)
-                continue;
-
-            auto res = tileProcessed(j, i, source_.tileSize, tileBlocks_);
-            if (res.first)
-            {
-                j = res.second - 1;
-                continue;
-            }
-
-            // if not processed, create a new tile block.
-            TileBlock newTile;
-            const int mergedColCount = expandTileRectSize(
-                newTile, j, i, ground, colCnt, rowCnt, source_.tileSize, tileBlocks_);
-
-            tileBlocks_.pushBack(newTile);
-            j += mergedColCount - 1;
-        }
-    }
-}
-
-void Map::initialize()
-{
-    width_ = source_.pixelWidth;
-    height_ = source_.pixelHeight;
-
-    // load images
-    for (int i = 0; i < source_.imageCount; ++i)
-    {
-        GEB::Image *image = new GEB::Image();
-        if (!image->load(source_.images[i]))
-        {
-            delete image;
-            image = nullptr;
-        }
-
-        images_.pushBack(image);
-    }
-
-    // merge tiles to large pieces
-    GEB::Structures::Array<int> collisionGround(source_.groundCount);
-    for (int i = 0; i < source_.groundCount; ++i)
-        collisionGround[i] = source_.tileDefinitions[source_.ground[i]].collision ? 1 : 0;
-    mergeTiles(collisionGround.head(), source_.colCnt, source_.rowCnt);
-
-    cachemap();
-}
-
-void Map::cachemap()
-{
-    mapCache_.resize(width_ * height_ * 3);
-
-    std::memset(mapCache_.head(), 0, mapCache_.size());
-
-    for (int row = 0; row < source_.rowCnt; ++row)
-    {
-        for (int col = 0; col < source_.colCnt; ++col)
-        {
-            const int tileIndex = source_.ground[row * source_.colCnt + col];
-            const int imageIndex = source_.tileDefinitions[tileIndex].imageIndex;
-            const auto *image = images_[imageIndex];
-
-            if (!image || !image->data || image->width == 0 || image->height == 0)
-                continue;
-
-            for (int y = 0; y < source_.tileSize; ++y)
-            {
-                for (int x = 0; x < source_.tileSize; ++x)
-                {
-                    const int mapX = col * source_.tileSize + x;
-                    const int mapY = row * source_.tileSize + y;
-
-                    const int cacheIndex = (mapY * width_ + mapX) * 3;
-                    const auto *pixel = image->at(x, y);
-                    mapCache_[cacheIndex] = pixel[0];
-                    mapCache_[cacheIndex + 1] = pixel[1];
-                    mapCache_[cacheIndex + 2] = pixel[2];
-                }
-            }
-        }
-    }
-}
-
-void Map::update(World &world, Layer &layer) {}
-
-void Map::render(World &world, Layer &layer)
-{
-    if (mapCache_.size() == 0)
-        return;
-
-    auto &canvas = world.canvas();
-    const Viewport &viewport = world.gameInfo().viewport();
-
-    const int viewportWidth = viewport.width();
-    const int viewportHeight = viewport.height();
-
-    const int mapStartX = std::max(static_cast<int>(viewport.x()), 0);
-    const int mapStartY = std::max(static_cast<int>(viewport.y()), 0);
-
-    const int mapEndX = std::min(mapStartX + viewportWidth, width_);
-    const int mapEndY = std::min(mapStartY + viewportHeight, height_);
-
-    if (mapStartX >= mapEndX || mapStartY >= mapEndY)
-        return;
-
-    const int rowBytes = (mapEndX - mapStartX) * 3;
-
-    for (int mapY = mapStartY; mapY < mapEndY; ++mapY)
-    {
-        const int canvasX = 0;
-        const int canvasY = mapY - mapStartY;
-
-        const int cacheIndex = (mapY * width_ + mapStartX) * 3;
-
-        const int canvasIndex = (canvasY * viewportWidth + canvasX) * 3;
-
-        auto *canvasPixels = canvas.getBackBuffer();
-
-        // speed up, copy a whole row of pixels at once.
-        std::memcpy(&canvasPixels[canvasIndex], &mapCache_[cacheIndex], rowBytes);
-    }
-}
-
-void Map::addCollisionTileToCandiListByAABB(Entity *detectedItem,
-                                            const AABB &aabb,
-                                            GEB::Structures::Array<Entity *> &candidateItemList)
-{
-    for (int i = 0; i < tileBlocks_.size(); i++)
-    {
-        auto &tileBlock = tileBlocks_[i];
-        bool intersected = aabb.intersects(tileBlock);
-        if (intersected)
-        {
-            candidateItemList.pushBack(&tileBlock);
-        }
-    }
-}
-
-void Map::addCollisionTileToCandiListByDisVec(Entity *detectedItem,
-                                              GEB::Vec2 distanceVec,
-                                              GEB::Structures::Array<Entity *> &candidateItemList)
-{
-    if (!detectedItem)
-        return;
-
-    GEB::Boundary mapBoundary{
-        .top = 0,
-        .bottom = static_cast<float>(height_),
-        .left = 0,
-        .right = static_cast<float>(width_),
-    };
-
-    auto aabb = AABB::createAABB(
-        detectedItem,
-        distanceVec);
-
-    addCollisionTileToCandiListByAABB(detectedItem, aabb, candidateItemList);
 }

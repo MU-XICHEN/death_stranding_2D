@@ -35,6 +35,7 @@ public:
             itemEntities_[i]->render(world, *this);
         }
     };
+    virtual void renderFinished(World &world) {}
 
     inline void pushEntity(Entity *entity)
     {

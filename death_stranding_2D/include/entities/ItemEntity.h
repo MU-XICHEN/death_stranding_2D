@@ -1,9 +1,11 @@
 #pragma once
 
 #include "entities/Entity.h"
-#include "entities/State.h"
+#include "skills/State.h"
 #include "structure/Array.h"
 #include "utils/Utils.h"
+#include "skills/Attack.h"
+#include "skills/Skill.h"
 
 struct MapInfo;
 
@@ -16,15 +18,20 @@ class AttackInfo;
 class ItemEntity : public Entity
 {
 public:
-    ItemEntity(float x, float y, int width, int height, float speed = PIXEL_PER_SEC)
-        : Entity(x, y, width, height), speed_(speed) {}
+    ItemEntity(float x, float y, int width, int height)
+        : Entity(x, y, width, height) {}
     virtual ~ItemEntity();
 
-    // update method needs to be implemented by derived classes
-    virtual void update(World &world, Layer &layer);
+    GEB::Vec2 getOriginPoint() const
+    {
+        auto unitDirVec2 = GEB::Utils::transDirToUnitVec2(direction_);
+        auto centerX = center().x;
+        auto centerY = center().y;
+        return GEB::Vec2{centerX + (unitDirVec2.x * width_ / 2),
+                         centerY + (unitDirVec2.y * height_ / 2)};
+    }
 
-    // render mothod is implemented here and can be used by derived classes
-    virtual void render(World &world, Layer &layer) override;
+    GEB::Direction direction() const { return direction_; }
 
     void setColor(unsigned int r, unsigned int g, unsigned int b)
     {
@@ -33,7 +40,10 @@ public:
         color_.b = b;
     }
 
+    void initializeState(GEB::Pair<int, float> *newProp, int size);
     void updateState(const State &state) { state_ = state; }
+    State &state() { return state_; }
+    const State &state() const { return state_; }
 
     void calculateBoundaryTop(GEB::Boundary &boundary, const Entity *barrierItem);
     void calculateBoundaryBottom(GEB::Boundary &boundary, const Entity *barrierItem);
@@ -53,25 +63,37 @@ public:
         Entity **candidateItemHead,
         int size);
 
-    GEB::Vec2 getOriginPoint() const
-    {
-        auto unitDirVec2 = GEB::Utils::transDirToUnitVec2(direction_);
-        auto centerX = center().x;
-        auto centerY = center().y;
-        return GEB::Vec2{centerX + (unitDirVec2.x * width_ / 2),
-                         centerY + (unitDirVec2.y * height_ / 2)};
-    }
+    // relevant to skills
+    void addSkill(Skill *skill);
+    GEB::Structures::Array<Skill *> &skills() { return skills_; }
+    const GEB::Structures::Array<Skill *> &skills() const { return skills_; }
 
-    virtual void onAttack(const AttackInfo &attackInfo);
-    inline void addAttack(Attack *attack) { attacks_.pushBack(attack); }
+    // relevant to attacks
+    void addAttack(Attack *attack);
     GEB::Structures::Array<Attack *> &attacks() { return attacks_; }
     const GEB::Structures::Array<Attack *> &attacks() const { return attacks_; }
+    virtual void OnAttacked(const AttackInfo &attackInfo);
+
+    virtual void processAttack(World &world, Layer &layer);
+    virtual void processSkill(World &world, Layer &layer);
+    virtual void handleMovement(World &world, Layer &layer) {};
+    virtual void tryTriggerSkills(World &world, Layer &layer) {};
+    virtual void tryTriggerAttacks(World &world, Layer &layer) {};
+    virtual AttackInfo createAttackInfo(Attack *attack) { return AttackInfo{}; };
+
+    void coreUpdate(World &world, Layer &layer);
+    // ❗Note: make sure that derived classed call coreUpdate first in their update method
+    virtual void update(World &world, Layer &layer) = 0;
+    virtual void render(World &world, Layer &layer) override;
 
 protected:
     GEB::Color color_{0, 0, 0};
-    float speed_;
     State state_;
     GEB::Direction direction_ = GEB::Direction::Down;
 
     GEB::Structures::Array<Attack *> attacks_;
+    GEB::Structures::Array<Skill *> skills_;
+
+private:
+    bool deactivateIfNeeded(Layer &layer);
 };

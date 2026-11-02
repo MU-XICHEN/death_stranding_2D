@@ -98,7 +98,7 @@ Map::~Map()
     }
 }
 
-GEB::Position Map::playerPosition() const
+GEB::Vec2 Map::playerPosition() const
 {
     return center();
 }
@@ -154,7 +154,10 @@ void Map::initialize()
     }
 
     // merge tiles to large pieces
-    mergeTiles(source_.ground, source_.colCnt, source_.rowCnt);
+    GEB::Structures::Array<int> collisionGround(source_.groundCount);
+    for (int i = 0; i < source_.groundCount; ++i)
+        collisionGround[i] = source_.tileDefinitions[source_.ground[i]].collision ? 1 : 0;
+    mergeTiles(collisionGround.head(), source_.colCnt, source_.rowCnt);
 
     cachemap();
 }
@@ -176,9 +179,9 @@ void Map::cachemap()
             if (!image || !image->data || image->width == 0 || image->height == 0)
                 continue;
 
-            for (int x = 0; x < source_.tileSize; ++x)
+            for (int y = 0; y < source_.tileSize; ++y)
             {
-                for (int y = 0; y < source_.tileSize; ++y)
+                for (int x = 0; x < source_.tileSize; ++x)
                 {
                     const int mapX = col * source_.tileSize + x;
                     const int mapY = row * source_.tileSize + y;
@@ -207,11 +210,11 @@ void Map::render(World &world, Layer &layer)
     const int viewportWidth = viewport.width();
     const int viewportHeight = viewport.height();
 
-    const int mapStartX = GEB::Math::max(static_cast<int>(viewport.x()), 0);
-    const int mapStartY = GEB::Math::max(static_cast<int>(viewport.y()), 0);
+    const int mapStartX = std::max(static_cast<int>(viewport.x()), 0);
+    const int mapStartY = std::max(static_cast<int>(viewport.y()), 0);
 
-    const int mapEndX = GEB::Math::min(mapStartX + viewportWidth, width_);
-    const int mapEndY = GEB::Math::min(mapStartY + viewportHeight, height_);
+    const int mapEndX = std::min(mapStartX + viewportWidth, width_);
+    const int mapEndY = std::min(mapStartY + viewportHeight, height_);
 
     if (mapStartX >= mapEndX || mapStartY >= mapEndY)
         return;
@@ -234,9 +237,24 @@ void Map::render(World &world, Layer &layer)
     }
 }
 
-void Map::addCollisionTileToCandiList(Entity *detectedItem,
-                                      GEB::Vec2 distanceVec,
-                                      GEB::Structures::Array<Entity *> &candidateItemList)
+void Map::addCollisionTileToCandiListByAABB(Entity *detectedItem,
+                                            const AABB &aabb,
+                                            GEB::Structures::Array<Entity *> &candidateItemList)
+{
+    for (int i = 0; i < tileBlocks_.size(); i++)
+    {
+        auto &tileBlock = tileBlocks_[i];
+        bool intersected = aabb.intersects(AABB(tileBlock.x(), tileBlock.y(), tileBlock.width(), tileBlock.height()));
+        if (intersected)
+        {
+            candidateItemList.pushBack(&tileBlock);
+        }
+    }
+}
+
+void Map::addCollisionTileToCandiListByDisVec(Entity *detectedItem,
+                                              GEB::Vec2 distanceVec,
+                                              GEB::Structures::Array<Entity *> &candidateItemList)
 {
     if (!detectedItem)
         return;
@@ -250,16 +268,7 @@ void Map::addCollisionTileToCandiList(Entity *detectedItem,
 
     auto aabb = AABB::createAABB(
         detectedItem,
-        distanceVec,
-        mapBoundary);
+        distanceVec);
 
-    for (int i = 0; i < tileBlocks_.size(); i++)
-    {
-        auto &tileBlock = tileBlocks_[i];
-        bool intersected = aabb.intersects(AABB(tileBlock.x(), tileBlock.y(), tileBlock.width(), tileBlock.height()));
-        if (intersected)
-        {
-            candidateItemList.pushBack(&tileBlock);
-        }
-    }
+    addCollisionTileToCandiListByAABB(detectedItem, aabb, candidateItemList);
 }

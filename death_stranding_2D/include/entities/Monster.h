@@ -6,22 +6,17 @@
 class Monster : public ItemEntity
 {
 public:
-    Monster(float x, float y, int width, int height,
-            float speed,
-            float distance)
-        : ItemEntity(x, y, width, height, speed), dangerDistance_(distance) {}
+    Monster(float x, float y, int width, int height)
+        : ItemEntity(x, y, width, height) {}
 
     virtual ~Monster() = default;
 
-    // virtual void moveWithCollision(
-    //     GEB::Vec2 distanceVec,
-    //     const MapInfo &map,
-    //     Entity **candidateItemHead,
-    //     int size) override;
+    virtual void update(World &world, Layer &layer) override;
+    virtual void handleMovement(World &world, Layer &layer) override;
 
 protected:
     static GEB::Direction transDirVecToDiretion(const GEB::Vec2 &dirVec, GEB::Direction prevDirection);
-    static inline GEB::Vec2 calculateDirVecToHero(GEB::Position monsterCenter, GEB::Position heroCenter)
+    static inline GEB::Vec2 calculateDirVecToHero(GEB::Vec2 monsterCenter, GEB::Vec2 heroCenter)
     {
         float dx = heroCenter.x - monsterCenter.x;
         float dy = heroCenter.y - monsterCenter.y;
@@ -29,36 +24,44 @@ protected:
     }
 
     void awaken() { awakened_ = true; }
-    virtual void move(World &world, Layer &layer) = 0;
     virtual void checkDangerDistance(World &world, Layer &layer);
-    virtual void handleMovement(World &world, Layer &layer);
 
     bool awakened_ = false;
-    float dangerDistance_;
 };
 
 class Beast : public Monster
 {
 public:
-    Beast(float x, float y, int width, int height,
-          float speed = M_Beast_PIXEL_PER_SEC,
-          float distance = M_Beast_DANGER_DISTANCE)
-        : Monster(x, y, width, height, speed, distance) {}
-
-    void move(World &world, Layer &layer) override;
-    void update(World &world, Layer &layer) override;
+    Beast(float x, float y, int width, int height)
+        : Monster(x, y, width, height)
+    {
+        // initialize states
+        GEB::Pair<int, float> props[] = {
+            {State::HEALTH, M_BEAST_HP},
+            {State::SPEED, M_BEAST_PIXEL_PER_SEC},
+            {State::PERCEPTION_RANGE, M_BEAST_DANGER_DISTANCE},
+            {State::DEFENSE, M_BEAST_DEFENSE},
+            {State::Damage, M_BEAST_DAMAGE}};
+        initializeState(props, sizeof(props) / sizeof(props[0]));
+    }
 };
 
 class Ghost : public Monster
 {
 public:
-    Ghost(float x, float y, int width, int height,
-          float speed = M_Ghost_PIXEL_PER_SEC,
-          float distance = M_Ghost_DANGER_DISTANCE)
-        : Monster(x, y, width, height, speed, distance) {}
+    Ghost(float x, float y, int width, int height)
+        : Monster(x, y, width, height)
+    {
+        // initialize states
+        GEB::Pair<int, float> props[] = {
+            {State::HEALTH, M_GHOST_HP},
+            {State::SPEED, M_GHOST_PIXEL_PER_SEC},
+            {State::PERCEPTION_RANGE, M_GHOST_DANGER_DISTANCE},
+            {State::DEFENSE, M_GHOST_DEFENSE},
+            {State::Damage, M_GHOST_DAMAGE}};
+        initializeState(props, sizeof(props) / sizeof(props[0]));
+    }
 
-    void move(World &world, Layer &layer) override;
-    void update(World &world, Layer &layer) override;
     void render(World &world, Layer &layer) override;
 
 protected:

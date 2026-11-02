@@ -1,4 +1,5 @@
 #pragma once
+#include <stdexcept>
 
 /**
  * DoublyLinkedList
@@ -14,7 +15,7 @@ namespace GamesEngineeringBase::Structures
     template <typename T>
     class DoublyLinkedList
     {
-
+    public:
         template <typename T>
         struct ListNode
         {
@@ -25,14 +26,10 @@ namespace GamesEngineeringBase::Structures
             ListNode(const T &data) : data(data), next(nullptr), prev(nullptr) {}
         };
 
-    public:
         DoublyLinkedList() : head_(nullptr), tail_(nullptr), size_(0) {}
         virtual ~DoublyLinkedList()
         {
-            while (!empty())
-            {
-                pop_front();
-            }
+            clear();
         }
 
         // Avoid different lists' head_ or tail_ points to same memory.
@@ -42,9 +39,19 @@ namespace GamesEngineeringBase::Structures
         ListNode<T> *back() { return tail_; }
         ListNode<T> *front() { return head_; }
 
+        int size() { return size_; }
         bool empty() { return size_ == 0; }
 
-        void push_back(const T &data)
+        // Delete nodes; pointer elements do not own the objects they point to.
+        void clear()
+        {
+            while (!empty())
+            {
+                removeFirst();
+            }
+        }
+
+        void pushBack(const T &data)
         {
             ListNode<T> *newNode = new ListNode<T>(data);
             if (!head_)
@@ -61,7 +68,23 @@ namespace GamesEngineeringBase::Structures
             size_++;
         }
 
-        void push_front(const T &data)
+        void popBack()
+        {
+            if (!tail_)
+                return;
+
+            ListNode<T> *temp = tail_;
+            tail_ = tail_->prev;
+            if (tail_)
+                tail_->next = nullptr;
+            else
+                head_ = nullptr;
+
+            delete temp;
+            size_--;
+        }
+
+        void addFirst(const T &data)
         {
             ListNode<T> *newNode = new ListNode<T>(data);
             if (!head_)
@@ -78,23 +101,7 @@ namespace GamesEngineeringBase::Structures
             size_++;
         }
 
-        void pop_back()
-        {
-            if (!tail_)
-                return;
-
-            ListNode<T> *temp = tail_;
-            tail_ = tail_->prev;
-            if (tail_)
-                tail_->next = nullptr;
-            else
-                head_ = nullptr;
-
-            delete temp;
-            size_--;
-        }
-
-        void pop_front()
+        void removeFirst()
         {
             if (!head_)
                 return;
@@ -107,6 +114,49 @@ namespace GamesEngineeringBase::Structures
                 tail_ = nullptr;
 
             delete temp;
+            size_--;
+        }
+
+        void insertBefore(ListNode<T> *item, const T &data)
+        {
+            if (!item)
+                return;
+            ListNode<T> *newNode = new ListNode<T>(data);
+            newNode->next = item;
+            newNode->prev = item->prev;
+            if (item->prev)
+            {
+                item->prev->next = newNode;
+            }
+            else
+            {
+                head_ = newNode;
+            }
+            item->prev = newNode;
+            size_++;
+        }
+
+        void removeNode(ListNode<T> *item)
+        {
+            if (!item)
+                return;
+            if (item->prev)
+            {
+                item->prev->next = item->next;
+            }
+            else
+            {
+                head_ = item->next;
+            }
+            if (item->next)
+            {
+                item->next->prev = item->prev;
+            }
+            else
+            {
+                tail_ = item->prev;
+            }
+            delete item;
             size_--;
         }
 

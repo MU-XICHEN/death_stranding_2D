@@ -1,6 +1,7 @@
 #pragma once
 #include "core/GameBase.h"
 #include "entities/Entity.h"
+#include "entities/AABB.h"
 #include "structure/Array.h"
 #include "Tile.h"
 #include "MapFactory.h"
@@ -15,11 +16,15 @@ public:
     void render(World &world, Layer &layer) override;
 
     const GEB::Structures::Array<TileBlock> &tileBlocks() const { return tileBlocks_; }
-    GEB::Position playerPosition() const;
+    GEB::Vec2 playerPosition() const;
 
-    void addCollisionTileToCandiList(Entity *detectedItem,
-                                     GEB::Vec2 distanceVec,
-                                     GEB::Structures::Array<Entity *> &candidateItemList);
+    void addCollisionTileToCandiListByDisVec(Entity *detectedItem,
+                                             GEB::Vec2 distanceVec,
+                                             GEB::Structures::Array<Entity *> &candidateItemList);
+
+    void addCollisionTileToCandiListByAABB(Entity *detectedItem,
+                                           const AABB &aabb,
+                                           GEB::Structures::Array<Entity *> &candidateItemList);
 
 private:
     void initialize();

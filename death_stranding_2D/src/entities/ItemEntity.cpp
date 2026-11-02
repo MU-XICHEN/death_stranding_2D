@@ -1,4 +1,3 @@
-#include <iostream>
 #include <string>
 
 #include "entities/ItemEntity.h"
@@ -6,9 +5,11 @@
 #include "world/World.h"
 #include "map/Map.h"
 #include "layers/Layer.h"
+#include "layers/MainLayer.h"
 #include "stages/Play.h"
 #include "entities/AABB.h"
 #include "skills/Attack.h"
+#include "structure/Array.h"
 
 ItemEntity::~ItemEntity()
 {
@@ -18,9 +19,27 @@ ItemEntity::~ItemEntity()
             delete attacks_[i];
         attacks_[i] = nullptr;
     }
+    for (int i = 0; i < skills_.size(); i++)
+    {
+        if (skills_[i])
+            delete skills_[i];
+        skills_[i] = nullptr;
+    }
 }
 
-void ItemEntity::update(World &world, Layer &layer) {}
+void ItemEntity::coreUpdate(World &world, Layer &layer)
+{
+    if (deactivateIfNeeded(layer))
+        return;
+
+    processSkill(world, layer);   // update items' skill states of this frame
+    handleMovement(world, layer); // handle movement of this frame
+    processAttack(world, layer);  // update items' attack states of this frame
+
+    // attack start this frame, so elapsedTime in Attack should be calculated next frame
+    tryTriggerAttacks(world, layer); // trigger skill for next frame
+    tryTriggerSkills(world, layer);  // trigger skills for next frame
+}
 
 void ItemEntity::render(World &world, Layer &layer)
 {
@@ -36,12 +55,12 @@ void ItemEntity::render(World &world, Layer &layer)
         xRelativeToViewport + width_ <= 0 || yRelativeToViewport + height_ <= 0)
         return;
 
-    for (int i = 0; i < width_; i++)
+    for (int y = 0; y < height_; y++)
     {
-        for (int j = 0; j < height_; j++)
+        for (int x = 0; x < width_; x++)
         {
-            float targetX = xRelativeToViewport + i;
-            float targetY = yRelativeToViewport + j;
+            float targetX = xRelativeToViewport + x;
+            float targetY = yRelativeToViewport + y;
 
             if (targetX < 0 || targetY < 0 ||
                 targetX >= visibleWidth || targetY >= visibleHeight)
@@ -55,16 +74,37 @@ void ItemEntity::render(World &world, Layer &layer)
         }
     }
 
-    // draw health
-    if (state_.health > 0)
+    // draw attacks effects
+    for (int i = 0; i < attacks_.size(); i++)
+    {
+        if (!attacks_[i] || !(attacks_[i]->isActive()))
+            continue;
+        attacks_[i]->render(world, layer);
+    }
+
+    // draw health && speed
+    if (state_.health() >= 0)
     {
         auto &textRenderer = world.textRenderer();
         auto targetX = static_cast<int>(xRelativeToViewport);
-        auto targetY = static_cast<int>(yRelativeToViewport) - GEB::TextSizeH::TEXT_SIZE_H_SMALL - HeroTextSep;
-        std::string healthText = std::to_string(state_.health);
+        auto targetY = static_cast<int>(yRelativeToViewport);
+        std::string healthText = std::to_string(static_cast<int>(state_.health()));
         textRenderer.drawString(
             world,
             healthText.c_str(),
+            targetX,
+            targetY,
+            GEB::TextSizeType::TEXT_SIZE_SMALL);
+    }
+    if (state_.speed() >= 0)
+    {
+        auto &textRenderer = world.textRenderer();
+        auto targetX = static_cast<int>(xRelativeToViewport);
+        auto targetY = static_cast<int>(yRelativeToViewport) + GEB::TextSizeH::TEXT_SIZE_H_SMALL + ROLE_HP_TEXT_SEP;
+        std::string speedText = std::to_string(static_cast<int>(state_.speed()));
+        textRenderer.drawString(
+            world,
+            speedText.c_str(),
             targetX,
             targetY,
             GEB::TextSizeType::TEXT_SIZE_SMALL);
@@ -75,22 +115,22 @@ void ItemEntity::render(World &world, Layer &layer)
 void ItemEntity::moveUp(float distance, float topBoundary)
 {
     float resPos = y_ - distance;
-    y_ = GEB::Math::min(y_, GEB::Math::max(resPos, topBoundary));
+    y_ = std::min(y_, std::max(resPos, topBoundary));
 }
 void ItemEntity::moveDown(float distance, float bottomBoundary)
 {
     float resPos = y_ + distance;
-    y_ = GEB::Math::max(y_, GEB::Math::min(resPos, bottomBoundary - height_));
+    y_ = std::max(y_, std::min(resPos, bottomBoundary - height_));
 }
 void ItemEntity::moveLeft(float distance, float leftBoundary)
 {
     float resPos = x_ - distance;
-    x_ = GEB::Math::min(x_, GEB::Math::max(resPos, leftBoundary));
+    x_ = std::min(x_, std::max(resPos, leftBoundary));
 }
 void ItemEntity::moveRight(float distance, float rightBoundary)
 {
     float resPos = x_ + distance;
-    x_ = GEB::Math::max(x_, GEB::Math::min(resPos, rightBoundary - width_));
+    x_ = std::max(x_, std::min(resPos, rightBoundary - width_));
 }
 
 void ItemEntity::calculateBoundaryTop(GEB::Boundary &boundary, const Entity *barrierItem)
@@ -102,7 +142,7 @@ void ItemEntity::calculateBoundaryTop(GEB::Boundary &boundary, const Entity *bar
         return;
 
     if (barrierBottom <= y_)
-        boundary.top = GEB::Math::max(boundary.top, barrierBottom);
+        boundary.top = std::max(boundary.top, barrierBottom);
 }
 
 void ItemEntity::calculateBoundaryBottom(GEB::Boundary &boundary, const Entity *barrierItem)
@@ -113,7 +153,7 @@ void ItemEntity::calculateBoundaryBottom(GEB::Boundary &boundary, const Entity *
         return;
 
     if (barrierItem->y() >= y_ + height_)
-        boundary.bottom = GEB::Math::min(boundary.bottom, barrierItem->y());
+        boundary.bottom = std::min(boundary.bottom, barrierItem->y());
 }
 
 void ItemEntity::calculateBoundaryLeft(GEB::Boundary &boundary, const Entity *barrierItem)
@@ -124,7 +164,7 @@ void ItemEntity::calculateBoundaryLeft(GEB::Boundary &boundary, const Entity *ba
         return;
 
     if (barrierRight <= x_)
-        boundary.left = GEB::Math::max(boundary.left, barrierRight);
+        boundary.left = std::max(boundary.left, barrierRight);
 }
 
 void ItemEntity::calculateBoundaryRight(GEB::Boundary &boundary, const Entity *barrierItem)
@@ -134,7 +174,7 @@ void ItemEntity::calculateBoundaryRight(GEB::Boundary &boundary, const Entity *b
         return;
 
     if (barrierItem->x() >= x_ + width_)
-        boundary.right = GEB::Math::min(boundary.right, barrierItem->x());
+        boundary.right = std::min(boundary.right, barrierItem->x());
 }
 
 void ItemEntity::calculateBoundaryImpl(GEB::Boundary &boundary, const Entity *barrierItem, GEB::Direction direction)
@@ -196,7 +236,77 @@ void ItemEntity::moveWithCollision(
         moveRight(distanceVec.x, calculateBoundary(map, GEB::Direction::Right, candidateItemHead, size).right);
 }
 
-void ItemEntity::onAttack(const AttackInfo &attackInfo)
+bool ItemEntity::deactivateIfNeeded(Layer &layer)
 {
-    state_.health -= attackInfo.damage;
+    if (!active_)
+    {
+        // inactive
+        auto &mainLayer = dynamic_cast<MainLayer &>(layer);
+        auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
+        auto &gridSystem = playStage.gridSystem();
+
+        gridSystem.addInactiveItem(this);
+
+        return true;
+    }
+    return false;
+}
+
+void ItemEntity::processSkill(World &world, Layer &layer)
+{
+    auto dt = world.gameInfo().dt();
+
+    for (int i = 0; i < skills_.size(); i++)
+    {
+        auto *skill = skills_[i];
+        if (!skill)
+            continue;
+
+        if (!skill->active())
+            continue;
+
+        skill->onProcessed(dt, state_);
+    }
+}
+
+void ItemEntity::processAttack(World &world, Layer &layer)
+{
+    for (int i = 0; i < attacks_.size(); i++)
+    {
+        auto *attack = attacks_[i];
+        if (!attack)
+            continue;
+        if (!attack->isActive())
+            continue;
+        attack->tryHit(world, layer);
+    }
+}
+
+void ItemEntity::OnAttacked(const AttackInfo &attackInfo)
+{
+    int realDamage = static_cast<int>(attackInfo.damage() - state_.defense());
+    if (realDamage < 0)
+        realDamage = 0;
+    state_.setHealth(state_.health() - realDamage);
+
+    if (state_.health() <= 0)
+        setActive(false);
+}
+
+void ItemEntity::addAttack(Attack *attack)
+{
+    attack->setOwner(this);
+    attacks_.pushBack(attack);
+}
+
+void ItemEntity::addSkill(Skill *skill)
+{
+    skill->setOwner(this);
+    skills_.pushBack(skill);
+}
+
+void ItemEntity::initializeState(GEB::Pair<int, float> *newProp,
+                                 int size)
+{
+    state_.initialize(newProp, size);
 }

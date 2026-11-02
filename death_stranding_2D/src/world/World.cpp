@@ -96,6 +96,13 @@ bool World::frameFinished()
     if (layerList_.size() == 0)
         return result;
 
+    // handle updates for some things that shouldn't be updated in frameDraw()
+    // eg. itemEntities' removal from the list
+    for (int i = 0; i < layerList_.size(); ++i)
+    {
+        auto *layer = layerList_[i];
+        layer->renderFinished(*this);
+    }
     return result;
 }
 

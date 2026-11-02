@@ -60,3 +60,5 @@ void Stage::render(World &world, Layer &layer)
             entityList_[i]->render(world, layer);
     }
 }
+
+void Stage::renderFinished(World &world, Layer &layer) {}

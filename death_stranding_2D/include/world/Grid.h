@@ -9,33 +9,11 @@ class Grid
 {
 public:
     Grid() = default;
-    virtual ~Grid()
-    {
-        for (int i = 0; i < itemList_.size(); ++i)
-        {
-            if (itemList_[i])
-                delete itemList_[i];
-        }
-    }
+    virtual ~Grid();
 
-    void addEntity(Entity *item)
-    {
-        itemList_.pushBack(item);
-    }
+    void addEntity(Entity *item);
 
-    void removeEntity(const Entity *item)
-    {
-        for (int i = 0; i < itemList_.size(); ++i)
-        {
-            if (itemList_[i] == item)
-            {
-                // do not delete the item(ItemEntity *), just remove it from the list。
-                // all memory management of the item is handled in ~Grid().
-                itemList_.removeAt(i);
-                break;
-            }
-        }
-    }
+    void removeEntity(const Entity *item);
 
     inline GEB::Structures::Array<Entity *> &itemList() { return itemList_; }
 
@@ -46,191 +24,45 @@ private:
 class GridSystem
 {
 public:
-    explicit GridSystem(int rowCnt, int colCnt, int size)
-        : rowCount_(rowCnt),
-          colCount_(colCnt),
-          gridSize_(size),
-          gridMap_(rowCnt * colCnt) {}
+    explicit GridSystem(int rowCnt, int colCnt, int size);
 
     virtual ~GridSystem() = default;
+
+    GEB::Pair<int, int> getGridIdxPair(const GEB::Vec2 &center);
 
     void getCandidateListByAABB(
         Entity *detectedItem,
         const AABB &aabb,
-        const GEB::Boundary &mapBoundary,
-        GEB::Structures::Array<Entity *> &candidateItemList)
-    {
-        GEB::Structures::Array<GEB::Pair<int, int>> candidateGrids;
-        getCandidateGridsByAABB(aabb, mapBoundary, candidateGrids);
+        GEB::Structures::Array<Entity *> &candidateItemList);
 
-        getCollisionCandidateListByGrids(
-            detectedItem,
-            candidateGrids,
-            candidateItemList);
-    }
-
-    void getCollisionCandidateListByGrids(
-        Entity *detectedItem,
-        const GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids,
-        GEB::Structures::Array<Entity *> &candidateItemList)
-    {
-        int candidateGridSize = candidateGrids.size();
-        for (int i = 0; i < candidateGridSize; i++)
-        {
-            auto pos = candidateGrids[i];
-            auto *gridPtr = grid(pos.first, pos.second);
-            if (!gridPtr)
-                continue;
-
-            int len = gridPtr->itemList().size();
-            auto &itemList = gridPtr->itemList();
-            for (int j = 0; j < len; j++)
-            {
-                if (!itemList[j] || itemList[j] == detectedItem)
-                    continue;
-                candidateItemList.pushBack(itemList[j]);
-            }
-        }
-    }
-
-    void getCollisionCandidateListByItem(
+    void getCandidateListByItem(
         Entity *detectedItem,
         const GEB::Vec2 &distanceVec,
-        const GEB::Boundary &mapBoundary,
-        GEB::Structures::Array<Entity *> &candidateItemList)
-    {
-        auto center = detectedItem->center();
-        GEB::Structures::Array<GEB::Pair<int, int>> candidateGrids;
-        getCandidateGrids(detectedItem, distanceVec, mapBoundary, candidateGrids);
-        getCollisionCandidateListByGrids(detectedItem, candidateGrids, candidateItemList);
-    }
+        GEB::Structures::Array<Entity *> &candidateItemList);
 
-    void updateEntityGridIfNeed(GEB::Position oldCenter, GEB::Position newCenter, Entity *item)
-    {
-        int oldRowIdx = GEB::Math::floorToInt(oldCenter.y / gridSize_);
-        int oldColIdx = GEB::Math::floorToInt(oldCenter.x / gridSize_);
-        int newRowIdx = GEB::Math::floorToInt(newCenter.y / gridSize_);
-        int newColIdx = GEB::Math::floorToInt(newCenter.x / gridSize_);
+    // update the grid which entity belong to right now.
+    void updateEntityGridIfNeed(GEB::Vec2 oldCenter, Entity *item);
 
-        if (!item || !grid(oldRowIdx, oldColIdx) || !grid(newRowIdx, newColIdx))
-            return;
+    void addEntity(int rowIdx, int colIdx, Entity *item);
 
-        if (oldRowIdx == newRowIdx && oldColIdx == newColIdx)
-            return;
-
-        changeEntityGrid(item, oldCenter, newCenter);
-    }
-
-    // todo: be careful when updating the itemsToUpdate_ in the game loop to avoid modifying elements while iterating.
-    void addEntityToUpdateList(Entity *item)
-    {
-        if (item)
-            itemsToUpdate_.pushBack(item);
-    }
-
-    void removeEntityFromUpdateList(Entity *item)
-    {
-        for (int i = 0; i < itemsToUpdate_.size(); ++i)
-        {
-            if (itemsToUpdate_[i] == item)
-            {
-                itemsToUpdate_.removeAt(i);
-                break;
-            }
-        }
-    }
-
-    void addEntityToGrid(int rowIdx, int colIdx, Entity *item)
-    {
-        auto *targetGrid = grid(rowIdx, colIdx);
-        if (targetGrid && item)
-        {
-            targetGrid->addEntity(item);
-            addEntityToUpdateList(item); // sysc the updated items
-        }
-    }
-
-    void removeEntityFromGrid(int rowIdx, int colIdx, Entity *item)
-    {
-        auto *targetGrid = grid(rowIdx, colIdx);
-
-        if (targetGrid && item)
-        {
-            targetGrid->removeEntity(item);
-            removeEntityFromUpdateList(item);
-        }
-    }
-
-    // This method just moves the item from one grid to another without updating the update list.
-    void changeEntityGrid(Entity *item, GEB::Position oldCenter, GEB::Position newCenter)
-    {
-        // remove
-        auto *fromGird = grid(GEB::Math::floorToInt(oldCenter.y / gridSize_),
-                              GEB::Math::floorToInt(oldCenter.x / gridSize_));
-        if (fromGird && item)
-            fromGird->removeEntity(item);
-
-        // add
-        auto *toGrid = grid(GEB::Math::floorToInt(newCenter.y / gridSize_),
-                            GEB::Math::floorToInt(newCenter.x / gridSize_));
-        if (toGrid && item)
-            toGrid->addEntity(item);
-    }
-
-    Grid *grid(int rowIdx, int colIdx)
-    {
-        if (rowIdx < 0 || rowIdx >= rowCount_ || colIdx < 0 || colIdx >= colCount_)
-            return nullptr;
-
-        return &gridMap_[rowIdx * colCount_ + colIdx];
-    }
-
-    void getCandidateGridsByAABB(const AABB &aabb,
-                                 const GEB::Boundary &mapBoundary,
-                                 GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids)
-    {
-        /**
-         * [bugfix]:
-         * extend one more grid in all directions
-         * to account for items which belong to neighboring grids.
-         */
-        int startRow = GEB::Math::max(0, GEB::Math::floorToInt(aabb.y() / gridSize_) - 1);
-        int startCol = GEB::Math::max(0, GEB::Math::floorToInt(aabb.x() / gridSize_) - 1);
-        int endRow = GEB::Math::min(rowCount_ - 1, GEB::Math::floorToInt((aabb.y() + aabb.height()) / gridSize_) + 1);
-        int endCol = GEB::Math::min(colCount_ - 1, GEB::Math::floorToInt((aabb.x() + aabb.width()) / gridSize_) + 1);
-
-        for (int row = startRow; row <= endRow; row++)
-        {
-            for (int col = startCol; col <= endCol; col++)
-            {
-                candidateGrids.pushBack({row, col});
-            }
-        }
-    }
-
-    void getCandidateGrids(
-        Entity *detectedItem,
-        const GEB::Vec2 &distanceVec,
-        const GEB::Boundary &mapBoundary,
-        GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids)
-    {
-
-        if (!detectedItem)
-            return;
-        auto aabb = AABB::createAABB(detectedItem, distanceVec, mapBoundary);
-
-        if (aabb.width() <= 0 || aabb.height() <= 0)
-            return;
-
-        getCandidateGridsByAABB(aabb, mapBoundary, candidateGrids);
-    }
+    void removeEntity(int rowIdx, int colIdx, Entity *item);
 
     inline int gridSize() const { return gridSize_; }
     inline int rowCount() const { return rowCount_; }
     inline int colCount() const { return colCount_; }
     inline GEB::Structures::Array<Entity *> &itemsToUpdate() { return itemsToUpdate_; }
+    inline GEB::Structures::Array<Entity *> &inactiveItems() { return inactiveItems_; }
+
+    inline void addInactiveItem(Entity *item) { inactiveItems_.pushBack(item); }
+    inline void clearInactiveItems() { inactiveItems_.clear(); }
 
 private:
+    // todo: be careful when updating the itemsToUpdate_ in the game loop to avoid modifying elements while iterating.
+    void addEntityToUpdateList(Entity *item);
+    void removeEntityFromUpdateList(Entity *item);
+    // This method just moves the item from one grid to another without updating the update list.
+    void changeEntityGrid(Entity *item, GEB::Vec2 oldCenter, GEB::Vec2 newCenter);
+
     int gridSize_;
     int rowCount_;
     int colCount_;
@@ -241,4 +73,25 @@ private:
      * the memory of items that Entity * points to is managed by the Grid.
      */
     GEB::Structures::Array<Entity *> itemsToUpdate_;
+
+    /**
+     * items that will be removed after iteration
+     * also, a copy of items which were already in GridMap_
+     */
+    GEB::Structures::Array<Entity *> inactiveItems_;
+
+    void getCandidateGridsByAABB(const AABB &aabb,
+                                 GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids);
+
+    void getCandidateGridsByDisVec2(
+        Entity *detectedItem,
+        const GEB::Vec2 &distanceVec,
+        GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids);
+
+    void getCandidateListByGrids(
+        Entity *detectedItem,
+        const GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids,
+        GEB::Structures::Array<Entity *> &candidateItemList);
+
+    Grid *grid(int rowIdx, int colIdx);
 };

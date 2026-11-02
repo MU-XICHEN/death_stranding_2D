@@ -1,83 +1,51 @@
 #pragma once
 
 #include "core/GameBase.h"
+#include "structure/Array.h"
 #include "structure/Set.h"
-#include "entities/ItemEntity.h"
 #include "entities/AABB.h"
+#include "skills/AttackInfo.h"
 
+class ItemEntity;
 class World;
+class Layer;
 
-struct AttackInfo
-{
-    // base
-    float damage = 0.0f;
-    float duration = 0.0f;
-    float hitStartTime = 0.0f;
-    float hitEndTime = 0.0f;
-    int hitBoxWidth = 0;  // actual size of the hit box
-    int hitBoxHeight = 0; // actual size of the hit box
-
-    GEB::Vec2 originPoint = {0.0f, 0.0f};
-    GEB::Direction direction = GEB::Direction::None;
-};
-
+/**
+ * Base class for all attacks.
+ * Attackers are responsible for creating AttackInfo, eg. damage, duration...
+ */
 class Attack
 {
 public:
-    Attack(int key) : triggerKey_(key) {};
+    Attack(int key, bool lockDirection = false)
+        : triggerKey_(key), lockDirection_(lockDirection) {};
     virtual ~Attack() = default;
 
-    virtual void render(World &world) = 0;
+    virtual void tryHit(World &world, Layer &layer) = 0;
+    void begin();
+    virtual void tryBegin(World &world, Layer &layer);
+    virtual void render(World &world, Layer &layer) = 0;
 
-    virtual AABB getAttackContainer(World &world) = 0; // used for filtering items which might be attacked
+    void updateAttackInfo();
 
-    void begin(const AttackInfo &info)
-    {
-        if (active_)
-            return;
-
-        attackInfo_ = info;
-        active_ = true;
-        elapsedTime_ = 0.0f;
-    }
-
-    void end()
-    {
-        hitTargets_.clear();
-        active_ = false;
-        elapsedTime_ = 0.0f;
-    }
-
-    virtual bool tryHit(World &world, const ItemEntity &item, std::uintptr_t entityPtr)
-    {
-        if (!active_)
-            return false;
-
-        if (hitTargets_.contains(entityPtr))
-            return false;
-
-        return true;
-    }
-
-    inline void updateElapsedTime(float dt)
-    {
-        elapsedTime_ += dt;
-    }
-
+    inline void updateElapsedTime(float dt) { elapsedTime_ += dt; }
+    inline void setOwner(ItemEntity *owner) { owner_ = owner; }
+    inline AttackInfo &attackInfo() { return attackInfo_; }
     inline const AttackInfo &attackInfo() const { return attackInfo_; }
-
     inline const int triggerKey() const { return triggerKey_; }
-
     inline bool isActive() const { return active_; }
     inline float elapsedTime() const { return elapsedTime_; }
+    inline bool lockDirection() const { return active_ && lockDirection_; }
 
 protected:
-    bool active_ = false;
-    float elapsedTime_ = 0.0f;
-
-    int triggerKey_;
+    bool preTryHit(World &world, Layer &layer);
+    virtual void end();
 
     AttackInfo attackInfo_;
-
+    bool active_ = false;
+    float elapsedTime_ = 0.0f;
+    int triggerKey_;
+    bool lockDirection_ = false;
     GEB::Structures::HashSet<std::uintptr_t> hitTargets_;
+    ItemEntity *owner_ = nullptr;
 };

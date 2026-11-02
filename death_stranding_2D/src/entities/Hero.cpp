@@ -1,23 +1,104 @@
+#include <limits>
 #include "entities/Hero.h"
+#include "GamesEngineeringBase.h"
 #include "world/World.h"
 #include "core/GameBase.h"
-#include "GamesEngineeringBase.h"
-#include "core/Types.h"
+#include "utils/Utils.h"
 #include "layers/MainLayer.h"
 #include "stages/Play.h"
 #include "skills/Attack.h"
-#include "skills/HalfCircleSlash.h"
+#include "skills/AttackHalfCircleSlash.h"
+#include "skills/AttackRemoteMulti.h"
+#include "skills/AttackAutoTargetingMagic.h"
 
 template <typename T>
 using GEBArray = GEB::Structures::Array<T>;
 
-GEB::Vec2 translateEventsToDirectionVec2(const GamesEngineeringBase::Window &canvas);
-GEB::Direction translateEventsToDirection(const GamesEngineeringBase::Window &canvas, GEB::Direction prevDirection);
-
-void Hero::handleEvents(World &world, Layer &layer)
+namespace GamesEngineeringBase::Utils
 {
-    handleMovement(world, layer);
-    handleSkills(world, layer);
+    GEB::Vec2 translateEventsToDirectionVec2(const GamesEngineeringBase::Window &canvas);
+    GEB::Direction translateEventsToDirection(const GamesEngineeringBase::Window &canvas, GEB::Direction prevDirection);
+}
+
+class HeroImpl
+{
+public:
+    explicit HeroImpl(Hero *hero)
+        : host_(hero) {}
+
+    bool checkLockDirection() const
+    {
+        for (int i = 0; i < host_->attacks_.size(); ++i)
+        {
+            if (!host_->attacks_[i])
+                continue;
+            if (host_->attacks_[i]->lockDirection())
+                return true;
+        }
+        return false;
+    }
+
+    void tryTriggerAttacks(World &world, Layer &layer)
+    {
+        if (host_ == nullptr)
+            return;
+        // try begin attacks
+        for (int i = 0; i < host_->attacks_.size(); ++i)
+        {
+            auto *attack = host_->attacks_[i];
+            if (!attack)
+                continue;
+            attack->tryBegin(world, layer);
+        }
+    }
+
+    void tryTriggerSkills(World &world, Layer &layer)
+    {
+        if (host_ == nullptr)
+            return;
+        auto &canvas = world.canvas();
+        for (int i = 0; i < host_->skills_.size(); ++i)
+        {
+            if (!host_->skills_[i])
+                continue;
+            if (canvas.keyPressed(host_->skills_[i]->triggerKey()))
+            {
+                if (host_->skills_[i]->active())
+                    continue;
+
+                host_->skills_[i]->activate(host_->state_);
+            }
+        }
+    }
+
+private:
+    Hero *host_;
+};
+
+Hero::Hero(
+    float x,
+    float y,
+    int width,
+    int height)
+    : ItemEntity(x, y, width, height),
+      impl_(new HeroImpl(this))
+{
+    GEB::Pair<int, float> props[] = {
+        {State::HEALTH, HERO_HP},
+        {State::SPEED, HERO_PIXEL_PER_SEC},
+        {State::PERCEPTION_RANGE, HERO_DANGER_DISTANCE},
+        {State::DEFENSE, HERO_DEFENSE},
+        {State::Damage, HERO_DAMAGE},
+        {State::MANA, HERO_MANA},
+    };
+    initializeState(props, sizeof(props) / sizeof(props[0]));
+}
+
+Hero::~Hero()
+{
+    if (impl_)
+        delete impl_;
+    impl_ = nullptr;
 }
 
 void Hero::handleMovement(World &world, Layer &layer)
@@ -25,7 +106,7 @@ void Hero::handleMovement(World &world, Layer &layer)
     const MapInfo &map = world.gameInfo().mapInfo();
     auto &canvas = world.canvas();
     float dt = world.gameInfo().dt();
-    float distance = dt * speed_;
+    float distance = dt * state_.speed();
 
     auto &mainLayer = dynamic_cast<MainLayer &>(layer);
 
@@ -33,23 +114,21 @@ void Hero::handleMovement(World &world, Layer &layer)
 
     auto &gridSystem = playStage.gridSystem();
 
-    direction_ = translateEventsToDirection(canvas, direction_);
-    auto distanceVec = GEB::Math::normalize(translateEventsToDirectionVec2(canvas)) * distance;
+    bool lockDirection = impl_->checkLockDirection();
+
+    if (!lockDirection)
+        direction_ = GEB::Utils::translateEventsToDirection(canvas, direction_);
+
+    auto distanceVec = GEB::Math::normalize(GEB::Utils::translateEventsToDirectionVec2(canvas)) * distance;
 
     // get candidate items for collision detection
     GEBArray<Entity *> candidateItemList;
-    GEB::Boundary mapBoundary{
-        .top = 0,
-        .bottom = static_cast<float>(map.height()),
-        .left = 0,
-        .right = static_cast<float>(map.width()),
-    };
-    gridSystem.getCollisionCandidateListByItem(this, distanceVec, mapBoundary, candidateItemList);
+    gridSystem.getCandidateListByItem(this, distanceVec, candidateItemList);
 
     // add map tiles which may collide with the hero to the candidate list
-    playStage.map().addCollisionTileToCandiList(this,
-                                                distanceVec,
-                                                candidateItemList);
+    playStage.map().addCollisionTileToCandiListByDisVec(this,
+                                                        distanceVec,
+                                                        candidateItemList);
 
     // get old position
     auto oldCenter = center();
@@ -57,93 +136,30 @@ void Hero::handleMovement(World &world, Layer &layer)
     // move
     moveWithCollision(distanceVec, map, candidateItemList.head(), candidateItemList.size());
 
-    // calculate new position
-    auto newCenter = center();
-
     // update grid system
-    playStage.gridSystem().updateEntityGridIfNeed(oldCenter, newCenter, this);
+    gridSystem.updateEntityGridIfNeed(oldCenter, this);
 }
 
-void Hero::handleSkills(World &world, Layer &layer)
+void Hero::tryTriggerAttacks(World &world, Layer &layer)
 {
-    auto &canvas = world.canvas();
+    if (impl_ == nullptr)
+        return;
+    impl_->tryTriggerAttacks(world, layer);
+}
 
-    auto &mainLayer = dynamic_cast<MainLayer &>(layer);
-    auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
-    auto &gridSystem = playStage.gridSystem();
-
-    auto dt = world.gameInfo().dt();
-
-    GEB::Boundary mapBoundary{
-        .top = 0,
-        .bottom = static_cast<float>(playStage.map().height()),
-        .left = 0,
-        .right = static_cast<float>(playStage.map().width()),
-    };
-
-    for (int i = 0; i < attacks_.size(); i++)
-    {
-        auto *attack = attacks_[i];
-        if (!attack)
-            continue;
-
-        if (!attack->isActive())
-            continue;
-
-        attack->updateElapsedTime(dt);
-
-        if (attack->elapsedTime() >= attack->attackInfo().duration)
-        {
-            attack->end();
-            continue;
-        }
-
-        // attackContainer is used for filtering candidate itemlist which might handle the attack
-        // The actual hit detection happens in 'virtual Attack::tryHit' method.
-        // pointers in list do not need to be owned, just references to existing entities, like 'this'.
-        AABB attackContainer = attack->getAttackContainer(world);
-        GEBArray<Entity *> candidateItemList;
-        gridSystem.getCandidateListByAABB(this, attackContainer, mapBoundary, candidateItemList);
-
-        // try hit
-        for (int j = 0; j < candidateItemList.size(); ++j)
-        {
-            auto *entity = dynamic_cast<ItemEntity *>(candidateItemList[j]);
-            if (!entity)
-                continue;
-
-            bool hitted = attack->tryHit(world, *this, reinterpret_cast<std::uintptr_t>(entity));
-
-            if (hitted)
-            {
-                const auto &attackInfo = attack->attackInfo();
-                entity->onAttack(attackInfo);
-            }
-        }
-    }
-
-    // try begin attacks
-    for (int i = 0; i < attacks_.size(); ++i)
-    {
-        if (!attacks_[i])
-            continue;
-        if (canvas.keyPressed(attacks_[i]->triggerKey()))
-        {
-            if (attacks_[i]->isActive())
-                continue;
-
-            // handle different types of attacks
-            // todo: update attackInfo while hero is moving.
-            if (dynamic_cast<HalfCircleSlash *>(attacks_[i]))
-                attacks_[i]->begin(createAttackInfo<HalfCircleSlash>());
-        }
-    }
+void Hero::tryTriggerSkills(World &world, Layer &layer)
+{
+    if (impl_ == nullptr)
+        return;
+    impl_->tryTriggerSkills(world, layer);
 }
 
 void Hero::update(World &world, Layer &layer)
 {
-    // handle keyboard events for hero
-    handleEvents(world, layer);
+    ItemEntity::coreUpdate(world, layer);
+
+    if (!active())
+        return;
 
     HeroInfo heroInfo{
         .x = x_,
@@ -157,106 +173,65 @@ void Hero::update(World &world, Layer &layer)
     world.gameInfo().updateViewport(heroInfo, world.gameInfo().mapInfo());
 }
 
-template <typename T>
-AttackInfo Hero::createAttackInfo()
+AttackInfo Hero::createAttackInfo(Attack *attack)
 {
-    if constexpr (std::is_same_v<T, HalfCircleSlash>)
+    const auto originPoint = getOriginPoint();
+    if (dynamic_cast<AttackHalfCircleSlash *>(attack))
     {
-        AttackInfo slashAttackInfo{
-            .damage = 10.0f,
-            .duration = 0.3f,
-            .hitStartTime = 0.06f,
-            .hitEndTime = 0.14f,
-            .hitBoxWidth = 80,
-            .hitBoxHeight = 30,
-            .originPoint = getOriginPoint(),
-            .direction = direction_,
+        GEB::Pair<int, float> props[] = {
+            {AttackInfo::Damage, 10.0f},
+            // lifetime of the attack
+            {AttackInfo::Duration, 1.0f},
+            {AttackInfo::HitStartTime, 0.2f},
+            {AttackInfo::HitEndTime, 0.4f},
+            // hit box dimensions
+            {AttackInfo::HitBoxWidth, 80.0f},
+            {AttackInfo::HitBoxHeight, 30.0f},
+            // set point and direction of the attack
+            {AttackInfo::OriginPointX, originPoint.x},
+            {AttackInfo::OriginPointY, originPoint.y},
+            {AttackInfo::Direction, static_cast<float>(direction())},
         };
-        return slashAttackInfo;
+        int size = sizeof(props) / sizeof(props[0]);
+        AttackInfo attackInfo(props, size);
+        return attackInfo;
     }
-    else
+
+    if (dynamic_cast<AttackRemote *>(attack))
     {
-        return AttackInfo{};
+        // max float value
+        const float infinityFloat = std::numeric_limits<float>::max();
+        const GEB::Pair<int, float> props[] = {
+            {AttackInfo::Damage, 15.0f},
+            {AttackInfo::Duration, infinityFloat},
+            {AttackInfo::HitStartTime, 0.0f},
+            {AttackInfo::HitEndTime, infinityFloat},
+            // remote hitEndTime is set to match the duration of the attack
+            {AttackInfo::OriginPointX, originPoint.x},
+            {AttackInfo::OriginPointY, originPoint.y},
+            {AttackInfo::Direction, static_cast<float>(direction())},
+            {AttackInfo::RangedAttackSpeed, 300.0f},
+        };
+        int size = sizeof(props) / sizeof(props[0]);
+        AttackInfo attackInfo(props, size);
+        return attackInfo;
     }
-}
 
-GEB::Direction translateEventsToDirection(const GamesEngineeringBase::Window &canvas, GEB::Direction prevDirection)
-{
-    if (canvas.keyPressed('W') && canvas.keyPressed('A'))
-        return GEB::Direction::UpLeft;
-    else if (canvas.keyPressed('W') && canvas.keyPressed('D'))
-        return GEB::Direction::UpRight;
-    else if (canvas.keyPressed('S') && canvas.keyPressed('A'))
-        return GEB::Direction::DownLeft;
-    else if (canvas.keyPressed('S') && canvas.keyPressed('D'))
-        return GEB::Direction::DownRight;
-    else if (canvas.keyPressed('W'))
-        return GEB::Direction::Up;
-    else if (canvas.keyPressed('S'))
-        return GEB::Direction::Down;
-    else if (canvas.keyPressed('A'))
-        return GEB::Direction::Left;
-    else if (canvas.keyPressed('D'))
-        return GEB::Direction::Right;
+    if (dynamic_cast<AttackAutoTargetingMagic *>(attack))
+    {
+        GEB::Pair<int, float> props[] = {
+            {AttackInfo::Damage, 20.0f},
+            {AttackInfo::Duration, 1.0f},
+            {AttackInfo::HitStartTime, 0.1f},
+            {AttackInfo::HitEndTime, 0.5f},
+            {AttackInfo::AttackRaidus, 200.0f},
+            {AttackInfo::AttackedCount, 3},
+            {AttackInfo::RequiredMana, 10},
+        };
+        int size = sizeof(props) / sizeof(props[0]);
+        AttackInfo attackInfo(props, size);
+        return attackInfo;
+    }
 
-    // up\down\left\right keys
-    else if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_LEFT))
-        return GEB::Direction::UpLeft;
-    else if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_RIGHT))
-        return GEB::Direction::UpRight;
-    else if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_LEFT))
-        return GEB::Direction::DownLeft;
-    else if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_RIGHT))
-        return GEB::Direction::DownRight;
-    else if (canvas.keyPressed(VK_UP))
-        return GEB::Direction::Up;
-    else if (canvas.keyPressed(VK_DOWN))
-        return GEB::Direction::Down;
-    else if (canvas.keyPressed(VK_LEFT))
-        return GEB::Direction::Left;
-    else if (canvas.keyPressed(VK_RIGHT))
-        return GEB::Direction::Right;
-
-    return prevDirection;
-}
-
-GEB::Vec2 translateEventsToDirectionVec2(const GamesEngineeringBase::Window &canvas)
-{
-    // wsad
-    if (canvas.keyPressed('W') && canvas.keyPressed('A'))
-        return GEB::Vec2{-1, -1};
-    else if (canvas.keyPressed('W') && canvas.keyPressed('D'))
-        return GEB::Vec2{1, -1};
-    else if (canvas.keyPressed('S') && canvas.keyPressed('A'))
-        return GEB::Vec2{-1, 1};
-    else if (canvas.keyPressed('S') && canvas.keyPressed('D'))
-        return GEB::Vec2{1, 1};
-    else if (canvas.keyPressed('W'))
-        return GEB::Vec2{0, -1};
-    else if (canvas.keyPressed('S'))
-        return GEB::Vec2{0, 1};
-    else if (canvas.keyPressed('A'))
-        return GEB::Vec2{-1, 0};
-    else if (canvas.keyPressed('D'))
-        return GEB::Vec2{1, 0};
-
-    // up\down\left\right keys
-    else if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_LEFT))
-        return GEB::Vec2{-1, -1};
-    else if (canvas.keyPressed(VK_UP) && canvas.keyPressed(VK_RIGHT))
-        return GEB::Vec2{1, -1};
-    else if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_LEFT))
-        return GEB::Vec2{-1, 1};
-    else if (canvas.keyPressed(VK_DOWN) && canvas.keyPressed(VK_RIGHT))
-        return GEB::Vec2{1, 1};
-    else if (canvas.keyPressed(VK_UP))
-        return GEB::Vec2{0, -1};
-    else if (canvas.keyPressed(VK_DOWN))
-        return GEB::Vec2{0, 1};
-    else if (canvas.keyPressed(VK_LEFT))
-        return GEB::Vec2{-1, 0};
-    else if (canvas.keyPressed(VK_RIGHT))
-        return GEB::Vec2{1, 0};
-
-    return GEB::Vec2{0, 0};
+    return AttackInfo{};
 }

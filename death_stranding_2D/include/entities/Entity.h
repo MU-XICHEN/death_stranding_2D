@@ -16,9 +16,9 @@ public:
     virtual void update(World &world, Layer &layer) = 0;
     virtual void render(World &world, Layer &layer) = 0;
 
-    inline GEB::Position center() const
+    inline GEB::Vec2 center() const
     {
-        return GEB::Position{
+        return GEB::Vec2{
             x_ + width_ / 2.0f,
             y_ + height_ / 2.0f,
         };
@@ -39,10 +39,15 @@ public:
     inline int width() const { return width_; }
     inline int height() const { return height_; }
 
+    inline bool active() const { return active_; }
+    inline void setActive(bool active) { active_ = active; }
+
 protected:
     float x_;
     float y_;
 
     int width_;
     int height_;
+
+    bool active_ = true;
 };

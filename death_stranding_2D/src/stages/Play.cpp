@@ -6,11 +6,19 @@
 #include "map/MapFactory.h"
 #include "layers/MainLayer.h"
 #include "world/World.h"
-#include "skills/HalfCircleSlash.h"
+#include "skills/AttackHalfCircleSlash.h"
+#include "skills/AttackRemoteMulti.h"
+#include "skills/AttackAutoTargetingMagic.h"
+#include "skills/SkillSpeedUp.h"
 
 PlayStage::PlayStage()
     : gridSystem_(GRID_ROWCNT, GRID_COLCNT, GRID_SIZE),
       map_(MapType::Chapter1)
+{
+    initialize();
+}
+
+void PlayStage::initialize()
 {
     mapUpdated_ = true;
 
@@ -22,13 +30,18 @@ PlayStage::PlayStage()
         heroPosition.x,
         heroPosition.y,
         ROLE_SIZE,
-        ROLE_SIZE,
-        PIXEL_PER_SEC);
-
+        ROLE_SIZE);
     hero->setColor(255, 0, 0);
-    hero->updateState(State(1, 100));
-    auto *skill = new HalfCircleSlash('J');
-    hero->addAttack(skill);
+    // attacks
+    auto *attack = new AttackHalfCircleSlash('J', true);
+    hero->addAttack(attack);
+    auto *remoteAttack = new AttackRemoteMulti('K', 0.5f);
+    hero->addAttack(remoteAttack);
+    auto *autoTargetingMagic = new AttackAutoTargetingMagic('L');
+    hero->addAttack(autoTargetingMagic);
+    // skills
+    auto *speedUpSkill = new SkillSpeedUp('U');
+    hero->addSkill(speedUpSkill);
     addEntityToGridSystem(hero);
 
     auto monster = new Beast(
@@ -37,7 +50,6 @@ PlayStage::PlayStage()
         ROLE_SIZE,
         ROLE_SIZE);
     monster->setColor(0, 255, 0);
-    monster->updateState(State(2, 100));
     addEntityToGridSystem(monster);
 
     auto monster2 = new Beast(
@@ -46,10 +58,7 @@ PlayStage::PlayStage()
         ROLE_SIZE,
         ROLE_SIZE);
     monster2->setColor(0, 255, 0);
-    monster2->updateState(State(3, 100));
     addEntityToGridSystem(monster2);
-
-    // todo: other sections like information panel.
 }
 
 GEB::Pair<int, int> getGridIndex(float x, float y)
@@ -67,7 +76,7 @@ void PlayStage::addEntityToGridSystem(ItemEntity *item)
 {
     auto center = item->center();
     auto indexPair = getGridIndex(center.x, center.y);
-    gridSystem_.addEntityToGrid(indexPair.first, indexPair.second, item);
+    gridSystem_.addEntity(indexPair.first, indexPair.second, item);
 }
 
 // updateEntities
@@ -108,4 +117,22 @@ void PlayStage::render(World &world, Layer &layer)
         if (item)
             item->render(world, layer);
     }
+}
+
+void PlayStage::renderFinished(World &world, Layer &layer)
+{
+    auto &inactiveItems = gridSystem_.inactiveItems();
+    int inactiveItemCount = inactiveItems.size();
+    for (int i = 0; i < inactiveItemCount; ++i)
+    {
+        auto *item = inactiveItems[i];
+        if (!item)
+            continue;
+        const auto &center = item->center();
+        auto [rowIdx, colIdx] = gridSystem_.getGridIdxPair(center);
+        gridSystem_.removeEntity(rowIdx, colIdx, item);
+    }
+
+    // clear
+    gridSystem_.clearInactiveItems();
 }

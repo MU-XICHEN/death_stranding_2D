@@ -7,7 +7,6 @@
 
 namespace GamesEngineeringBase::Structures
 {
-
     template <typename T, int BucketCount = 128>
     class HashSet
     {
@@ -15,7 +14,13 @@ namespace GamesEngineeringBase::Structures
         GEB::Structures::Array<T> *buckets_[BucketCount];
         int size_ = 0;
 
-        int bucketIndex(const T &value) const { return value % BucketCount; }
+        int bucketIndex(const T &value) const
+        {
+            static_assert(BucketCount > 0);
+
+            return static_cast<int>(
+                std::hash<T>{}(value) % BucketCount);
+        }
 
     public:
         HashSet()

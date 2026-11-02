@@ -16,6 +16,9 @@
     <Filter Include="Resource Files\assets">
       <UniqueIdentifier>{9AE24CF9-AF31-4B42-B940-B01E64052DD4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\assets\map">
+      <UniqueIdentifier>{60319D2D-87D7-47F6-93BB-5A0065C95F32}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\entities">
       <UniqueIdentifier>{8D86E330-A335-4B03-9D74-FA8860D72867}</UniqueIdentifier>
     </Filter>
@@ -81,9 +84,6 @@
     <ClCompile Include="src\entities\Monster.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
-    <ClCompile Include="src\entities\Beast.cpp">
-      <Filter>Source Files\entities</Filter>
-    </ClCompile>
     <ClCompile Include="src\entities\Ghost.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
@@ -114,7 +114,19 @@
     <ClCompile Include="src\renderer\SlicerRenderer.cpp">
       <Filter>Source Files\renderer</Filter>
     </ClCompile>
-    <ClCompile Include="src\skills\HalfCircleSlash.cpp">
+    <ClCompile Include="src\skills\AttackHalfCircleSlash.cpp">
+      <Filter>Source Files\skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src\skills\AttackRemote.cpp">
+      <Filter>Source Files\skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src\skills\AttackRemoteMulti.cpp">
+      <Filter>Source Files\skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src\skills\AttackAutoTargetingMagic.cpp">
+      <Filter>Source Files\skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src\skills\Attack.cpp">
       <Filter>Source Files\skills</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
@@ -126,10 +138,16 @@
     <ClCompile Include="src\world\GameInfo.cpp">
       <Filter>Source Files\world</Filter>
     </ClCompile>
+    <ClCompile Include="src\world\Grid.cpp">
+      <Filter>Source Files\world</Filter>
+    </ClCompile>
     <ClCompile Include="src\world\AssetManager.cpp">
       <Filter>Source Files\world</Filter>
     </ClCompile>
     <ClCompile Include="src\map\Map.cpp">
+      <Filter>Source Files\map</Filter>
+    </ClCompile>
+    <ClCompile Include="src\map\MapFactory.cpp">
       <Filter>Source Files\map</Filter>
     </ClCompile>
   </ItemGroup>
@@ -161,8 +179,8 @@
     <ClInclude Include="include\entities\Monster.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
-    <ClInclude Include="include\entities\State.h">
-      <Filter>Header Files\entities</Filter>
+    <ClInclude Include="include\skills\State.h">
+      <Filter>Header Files\skills</Filter>
     </ClInclude>
     <ClInclude Include="include\layers\Layer.h">
       <Filter>Header Files\layers</Filter>
@@ -182,7 +200,25 @@
     <ClInclude Include="include\skills\Attack.h">
       <Filter>Header Files\skills</Filter>
     </ClInclude>
-    <ClInclude Include="include\skills\HalfCircleSlash.h">
+    <ClInclude Include="include\skills\AttackInfo.h">
+      <Filter>Header Files\skills</Filter>
+    </ClInclude>
+    <ClInclude Include="include\skills\AttackHalfCircleSlash.h">
+      <Filter>Header Files\skills</Filter>
+    </ClInclude>
+    <ClInclude Include="include\skills\AttackRemote.h">
+      <Filter>Header Files\skills</Filter>
+    </ClInclude>
+    <ClInclude Include="include\skills\AttackRemoteMulti.h">
+      <Filter>Header Files\skills</Filter>
+    </ClInclude>
+    <ClInclude Include="include\skills\AttackAutoTargetingMagic.h">
+      <Filter>Header Files\skills</Filter>
+    </ClInclude>
+    <ClInclude Include="include\skills\Skill.h">
+      <Filter>Header Files\skills</Filter>
+    </ClInclude>
+    <ClInclude Include="include\skills\SkillSpeedUp.h">
       <Filter>Header Files\skills</Filter>
     </ClInclude>
     <ClInclude Include="include\stages\Common.h">
@@ -247,8 +283,8 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="src\assets\**\*">
-      <Filter>Resource Files\assets</Filter>
-    </CopyFileToFolders>
+    <None Include="src\assets\map\*.txt">
+      <Filter>Resource Files\assets\map</Filter>
+    </None>
   </ItemGroup>
 </Project>

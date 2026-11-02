@@ -12,11 +12,11 @@ void IntroStage::update(World &world, Layer &layer)
 void IntroStage::render(World &world, Layer &layer)
 {
     auto &canvas = world.canvas();
-    for (int i = 0; i < 50; i++)
+    for (int y = 0; y < 50; y++)
     {
-        for (int j = 0; j < 50; j++)
+        for (int x = 0; x < 50; x++)
         {
-            canvas.draw(i, j, 255, 0, 0);
+            canvas.draw(x, y, 255, 0, 0);
         }
     }
 }

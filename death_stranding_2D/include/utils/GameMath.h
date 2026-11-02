@@ -1,22 +1,11 @@
 #pragma once
 
+#include "GamesEngineeringBase.h"
 #include <cmath>
 #include "core/Types.h"
 
 namespace GamesEngineeringBase::Math
 {
-
-    template <typename T>
-    inline T min(const T &lhs, const T &rhs)
-    {
-        return lhs <= rhs ? lhs : rhs;
-    }
-
-    template <typename T>
-    inline T max(const T &lhs, const T &rhs)
-    {
-        return lhs >= rhs ? lhs : rhs;
-    }
 
     template <typename T>
     inline T abs(const T &value)
@@ -27,7 +16,7 @@ namespace GamesEngineeringBase::Math
     inline Vec2 normalize(const Vec2 &v)
     {
         Vec2 result;
-        float scale = max(abs(v.x), abs(v.y));
+        float scale = std::max(abs(v.x), abs(v.y));
         if (scale == 0.0f)
             return Vec2{0.0f, 0.0f};
 
@@ -47,9 +36,16 @@ namespace GamesEngineeringBase::Math
         return a.x * b.x + a.y * b.y;
     }
 
+    // clockwise
     inline Vec2 perpendicular(const Vec2 &v)
     {
         return Vec2{-v.y, v.x};
+    }
+
+    // counter-clockwise
+    inline Vec2 perpendicularCCW(const Vec2 &v)
+    {
+        return Vec2{v.y, -v.x};
     }
 
     inline int ceilToInt(float value)

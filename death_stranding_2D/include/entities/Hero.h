@@ -9,25 +9,30 @@ struct HeroInfo
     int width;
     int height;
 
-    GEB::Position center() const { return {x + width / 2.0f, y + height / 2.0f}; }
+    GEB::Vec2 center() const { return {x + width / 2.0f, y + height / 2.0f}; }
 };
+
+class HeroImpl;
 
 class Hero : public ItemEntity
 {
+
+    friend class HeroImpl;
+
 public:
-    explicit Hero()
-        : ItemEntity(0, 0, ROLE_SIZE, ROLE_SIZE) {}
-    using ItemEntity::ItemEntity;
+    explicit Hero(
+        float x,
+        float y,
+        int width,
+        int height);
+    virtual ~Hero();
 
     void update(World &world, Layer &layer) override;
+    void tryTriggerAttacks(World &world, Layer &layer) override;
+    void tryTriggerSkills(World &world, Layer &layer) override;
+    void handleMovement(World &world, Layer &layer) override;
+    AttackInfo createAttackInfo(Attack *attack) override;
 
 private:
-    void handleMovement(World &world, Layer &layer);
-    void handleSkills(World &world, Layer &layer);
-    void handleEvents(World &world, Layer &layer);
-
-    template <typename T>
-    AttackInfo createAttackInfo();
-
-    HeroInfo heroInfo_;
+    HeroImpl *impl_;
 };

@@ -32,6 +32,7 @@ public:
     void tryTriggerSkills(World &world, Layer &layer) override;
     void handleMovement(World &world, Layer &layer) override;
     AttackInfo createAttackInfo(Attack *attack) override;
+    bool onUsePotion(Potion *potion) override;
 
 private:
     HeroImpl *impl_;

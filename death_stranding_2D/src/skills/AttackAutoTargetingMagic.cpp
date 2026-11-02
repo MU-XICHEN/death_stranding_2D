@@ -12,17 +12,11 @@ public:
     AABB getAttackContainer()
     {
         const auto &atkInfo = host_->attackInfo();
+        const float radius = atkInfo.attackRadius();
+
         auto center = host_->owner_->center();
 
-        const float radius = atkInfo.attackRadius();
-        auto aabbX = center.x - radius;
-        auto aabbY = center.y - radius;
-
-        return AABB(
-            aabbX,
-            aabbY,
-            static_cast<int>(2 * radius),
-            static_cast<int>(2 * radius));
+        return AABB::createAABB(center, radius);
     }
 
     void addItemToItemsInorder(ItemEntity *item, float health)

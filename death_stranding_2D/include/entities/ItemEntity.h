@@ -13,6 +13,7 @@ class World;
 class Layer;
 class Attack;
 class AttackInfo;
+class Potion;
 
 // ItemEntity is used to anything which should consider collision.
 class ItemEntity : public Entity
@@ -85,6 +86,8 @@ public:
     // ❗Note: make sure that derived classed call coreUpdate first in their update method
     virtual void update(World &world, Layer &layer) = 0;
     virtual void render(World &world, Layer &layer) override;
+
+    virtual bool onUsePotion(Potion *portion);
 
 protected:
     GEB::Color color_{0, 0, 0};

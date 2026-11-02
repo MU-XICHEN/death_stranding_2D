@@ -2,7 +2,7 @@
 #include "entities/Entity.h"
 #include "core/GameBase.h"
 
-bool AABB::intersects(const AABB &aabb) const
+bool AABB::intersects(const Entity &aabb) const
 {
     return !(x_ + width_ < aabb.x() || x_ > aabb.x() + aabb.width() ||
              y_ + height_ < aabb.y() || y_ > aabb.y() + aabb.height());
@@ -43,6 +43,19 @@ AABB AABB::createAABB(GEB::Vec2 ori,
     return AABB(startX, startY,
                 GEB::Math::ceilToInt(endX - startX),
                 GEB::Math::ceilToInt(endY - startY));
+}
+
+AABB AABB::createAABB(GEB::Vec2 center,
+                      float radius)
+{
+    auto aabbX = center.x - radius;
+    auto aabbY = center.y - radius;
+
+    return AABB(
+        aabbX,
+        aabbY,
+        static_cast<int>(2 * radius),
+        static_cast<int>(2 * radius));
 }
 
 bool AABB::contains(const GEB::Vec2 &point) const

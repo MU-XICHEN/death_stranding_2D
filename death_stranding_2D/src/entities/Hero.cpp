@@ -1,5 +1,6 @@
 #include <limits>
 #include "entities/Hero.h"
+#include "entities/Potion.h"
 #include "GamesEngineeringBase.h"
 #include "world/World.h"
 #include "core/GameBase.h"
@@ -88,7 +89,7 @@ Hero::Hero(
         {State::SPEED, HERO_PIXEL_PER_SEC},
         {State::PERCEPTION_RANGE, HERO_DANGER_DISTANCE},
         {State::DEFENSE, HERO_DEFENSE},
-        {State::Damage, HERO_DAMAGE},
+        {State::DAMAGE, HERO_DAMAGE},
         {State::MANA, HERO_MANA},
     };
     initializeState(props, sizeof(props) / sizeof(props[0]));
@@ -109,9 +110,7 @@ void Hero::handleMovement(World &world, Layer &layer)
     float distance = dt * state_.speed();
 
     auto &mainLayer = dynamic_cast<MainLayer &>(layer);
-
     auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
-
     auto &gridSystem = playStage.gridSystem();
 
     bool lockDirection = impl_->checkLockDirection();
@@ -234,4 +233,10 @@ AttackInfo Hero::createAttackInfo(Attack *attack)
     }
 
     return AttackInfo{};
+}
+
+bool Hero::onUsePotion(Potion *potion)
+{
+    state_.apply(potion->effectState());
+    return true;
 }

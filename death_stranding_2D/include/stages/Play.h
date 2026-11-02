@@ -10,7 +10,7 @@ class PlayStage : public Stage
 public:
     PlayStage();
     virtual ~PlayStage() = default;
-    
+
     void initialize();
     void addEntityToGridSystem(ItemEntity *itemEntity);
     void update(World &world, Layer &layer) override;

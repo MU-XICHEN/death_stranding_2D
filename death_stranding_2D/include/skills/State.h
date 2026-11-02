@@ -14,7 +14,7 @@ public:
     {
         HEALTH = 0,
         SPEED,
-        Damage,
+        DAMAGE,
         COLLITION_DAMAGE,
         PERCEPTION_RANGE,
         DEFENSE,
@@ -28,31 +28,8 @@ public:
     State(const State &state)
         : properties_(propCount) { *this = state; }
     ~State() = default;
-    // properties
-    // health
-    float health() const { return properties_[HEALTH]; }
-    void setHealth(float health) { properties_[HEALTH] = health; }
-    // speed
-    float speed() const { return properties_[SPEED]; }
-    void setSpeed(float speed) { properties_[SPEED] = speed; }
-    // perception range
-    float perceptionRange() const { return properties_[PERCEPTION_RANGE]; }
-    void setPerceptionRange(float perceptionRange) { properties_[PERCEPTION_RANGE] = perceptionRange; }
-    // defense
-    float defense() const { return properties_[DEFENSE]; }
-    void setDefense(float defense) { properties_[DEFENSE] = defense; }
-    // damage
-    float damage() const { return properties_[Damage]; }
-    void setDamage(float damage) { properties_[Damage] = damage; }
-    // collition damage
-    float collitionDamage() const { return properties_[COLLITION_DAMAGE]; }
-    void setCollitionDamage(float collitionDamage) { properties_[COLLITION_DAMAGE] = collitionDamage; }
-
-    float mana() const { return properties_[MANA]; }
-    void setMana(float mana) { properties_[MANA] = mana; }
 
     // methods
-    inline const GEB::Structures::Array<float> &properties() const { return properties_; };
     void initialize(GEB::Pair<int, float> *newProp, int size)
     {
         for (int i = 0; i < size; i++)
@@ -64,6 +41,9 @@ public:
             }
         }
     }
+
+    inline const GEB::Structures::Array<float> &properties() const { return properties_; };
+
     State &operator=(const State &state)
     {
         const int size = properties_.size();
@@ -102,6 +82,29 @@ public:
             properties_[i] -= newProperties[i];
         }
     }
+
+    // properties
+    // health
+    float health() const { return properties_[HEALTH]; }
+    void setHealth(float health) { properties_[HEALTH] = health; }
+    // speed
+    float speed() const { return properties_[SPEED]; }
+    void setSpeed(float speed) { properties_[SPEED] = speed; }
+    // perception range
+    float perceptionRange() const { return properties_[PERCEPTION_RANGE]; }
+    void setPerceptionRange(float perceptionRange) { properties_[PERCEPTION_RANGE] = perceptionRange; }
+    // defense
+    float defense() const { return properties_[DEFENSE]; }
+    void setDefense(float defense) { properties_[DEFENSE] = defense; }
+    // damage
+    float damage() const { return properties_[DAMAGE]; }
+    void setDamage(float damage) { properties_[DAMAGE] = damage; }
+    // collition damage
+    float collitionDamage() const { return properties_[COLLITION_DAMAGE]; }
+    void setCollitionDamage(float collitionDamage) { properties_[COLLITION_DAMAGE] = collitionDamage; }
+
+    float mana() const { return properties_[MANA]; }
+    void setMana(float mana) { properties_[MANA] = mana; }
 
 private:
     GEB::Structures::Array<float> properties_;

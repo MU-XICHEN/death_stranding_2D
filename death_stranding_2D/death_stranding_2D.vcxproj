@@ -154,6 +154,7 @@
     <ClCompile Include="src\entities\ItemEntity.cpp" />
     <ClCompile Include="src\entities\Hero.cpp" />
     <ClCompile Include="src\entities\Monster.cpp" />
+    <ClCompile Include="src\entities\Potion.cpp" />
     <ClCompile Include="src\entities\Ghost.cpp" />
     <ClCompile Include="src\stages\Intro.cpp" />
     <ClCompile Include="src\stages\Menu.cpp" />
@@ -186,7 +187,10 @@
     <ClInclude Include="include\entities\ItemEntity.h" />
     <ClInclude Include="include\entities\Entity.h" />
     <ClInclude Include="include\entities\Hero.h" />
+    <ClInclude Include="include\entities\HealthPotion.h" />
+    <ClInclude Include="include\entities\ManaPotion.h" />
     <ClInclude Include="include\entities\Monster.h" />
+    <ClInclude Include="include\entities\Potion.h" />
     <ClInclude Include="include\skills\State.h" />
     <ClInclude Include="include\layers\Layer.h" />
     <ClInclude Include="include\layers\MainLayer.h" />
@@ -200,6 +204,7 @@
     <ClInclude Include="include\skills\AttackRemoteMulti.h" />
     <ClInclude Include="include\skills\AttackAutoTargetingMagic.h" />
     <ClInclude Include="include\skills\Skill.h" />
+    <ClInclude Include="include\skills\SkillDefenseBoost.h" />
     <ClInclude Include="include\skills\SkillSpeedUp.h" />
     <ClInclude Include="include\stages\Common.h" />
     <ClInclude Include="include\stages\Intro.h" />

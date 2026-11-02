@@ -10,6 +10,7 @@
 #include "entities/AABB.h"
 #include "skills/Attack.h"
 #include "structure/Array.h"
+#include "entities/Potion.h"
 
 ItemEntity::~ItemEntity()
 {
@@ -82,7 +83,7 @@ void ItemEntity::render(World &world, Layer &layer)
         attacks_[i]->render(world, layer);
     }
 
-    // draw health && speed
+    // draw state
     if (state_.health() >= 0)
     {
         auto &textRenderer = world.textRenderer();
@@ -96,15 +97,15 @@ void ItemEntity::render(World &world, Layer &layer)
             targetY,
             GEB::TextSizeType::TEXT_SIZE_SMALL);
     }
-    if (state_.speed() >= 0)
+    if (state_.mana() >= 0)
     {
         auto &textRenderer = world.textRenderer();
         auto targetX = static_cast<int>(xRelativeToViewport);
         auto targetY = static_cast<int>(yRelativeToViewport) + GEB::TextSizeH::TEXT_SIZE_H_SMALL + ROLE_HP_TEXT_SEP;
-        std::string speedText = std::to_string(static_cast<int>(state_.speed()));
+        std::string manaText = std::to_string(static_cast<int>(state_.mana()));
         textRenderer.drawString(
             world,
-            speedText.c_str(),
+            manaText.c_str(),
             targetX,
             targetY,
             GEB::TextSizeType::TEXT_SIZE_SMALL);
@@ -309,4 +310,10 @@ void ItemEntity::initializeState(GEB::Pair<int, float> *newProp,
                                  int size)
 {
     state_.initialize(newProp, size);
+}
+
+bool ItemEntity::onUsePotion(Potion *potion)
+{
+    // If entity consumed the potion, return true;
+    return false;
 }

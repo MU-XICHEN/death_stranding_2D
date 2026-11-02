@@ -60,3 +60,6 @@
 #define M_GHOST_DEFENSE 8.0f
 #define M_GHOST_DAMAGE 20.0f
 #define M_GHOST_COLLITION_DAMAGE 10.0f
+
+// Potion
+#define POTION_SIZE 30

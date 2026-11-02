@@ -84,6 +84,9 @@
     <ClCompile Include="src\entities\Monster.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
+    <ClCompile Include="src\entities\Potion.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
     <ClCompile Include="src\entities\Ghost.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
@@ -176,7 +179,16 @@
     <ClInclude Include="include\entities\Hero.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
+    <ClInclude Include="include\entities\HealthPotion.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\entities\ManaPotion.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
     <ClInclude Include="include\entities\Monster.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\entities\Potion.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
     <ClInclude Include="include\skills\State.h">
@@ -216,6 +228,9 @@
       <Filter>Header Files\skills</Filter>
     </ClInclude>
     <ClInclude Include="include\skills\Skill.h">
+      <Filter>Header Files\skills</Filter>
+    </ClInclude>
+    <ClInclude Include="include\skills\SkillDefenseBoost.h">
       <Filter>Header Files\skills</Filter>
     </ClInclude>
     <ClInclude Include="include\skills\SkillSpeedUp.h">

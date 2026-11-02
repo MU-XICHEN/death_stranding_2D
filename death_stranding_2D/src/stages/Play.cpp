@@ -10,6 +10,8 @@
 #include "skills/AttackRemoteMulti.h"
 #include "skills/AttackAutoTargetingMagic.h"
 #include "skills/SkillSpeedUp.h"
+#include "entities/HealthPotion.h"
+#include "entities/ManaPotion.h"
 
 PlayStage::PlayStage()
     : gridSystem_(GRID_ROWCNT, GRID_COLCNT, GRID_SIZE),
@@ -22,13 +24,13 @@ void PlayStage::initialize()
 {
     mapUpdated_ = true;
 
-    auto heroPosition = map_.playerPosition();
+    auto mapcenter = map_.center();
 
     // add Items
     // [new] items will be recycled by the grid system
     auto hero = new Hero(
-        heroPosition.x,
-        heroPosition.y,
+        mapcenter.x,
+        mapcenter.y,
         ROLE_SIZE,
         ROLE_SIZE);
     hero->setColor(255, 0, 0);
@@ -44,21 +46,37 @@ void PlayStage::initialize()
     hero->addSkill(speedUpSkill);
     addEntityToGridSystem(hero);
 
-    auto monster = new Beast(
-        heroPosition.x + 100,
-        heroPosition.y + 100,
-        ROLE_SIZE,
-        ROLE_SIZE);
-    monster->setColor(0, 255, 0);
-    addEntityToGridSystem(monster);
+    // // potions
+    // auto *healthPotion = new HealthPotion();
+    // addEntityToGridSystem(healthPotion);
 
-    auto monster2 = new Beast(
-        heroPosition.x - 100,
-        heroPosition.y - 100,
-        ROLE_SIZE,
-        ROLE_SIZE);
-    monster2->setColor(0, 255, 0);
-    addEntityToGridSystem(monster2);
+    auto *manaPotion = new ManaPotion(
+        mapcenter.x - 100,
+        mapcenter.y - 100);
+    manaPotion->setColor(100, 100, 100);
+    addEntityToGridSystem(manaPotion);
+
+    auto *healthPotion = new HealthPotion(
+        mapcenter.x - 50,
+        mapcenter.y - 50);
+    healthPotion->setColor(200, 200, 200);
+    addEntityToGridSystem(healthPotion);
+
+    // auto monster = new Beast(
+    //     heroPosition.x + 100,
+    //     heroPosition.y + 100,
+    //     ROLE_SIZE,
+    //     ROLE_SIZE);
+    // monster->setColor(0, 255, 0);
+    // addEntityToGridSystem(monster);
+
+    // auto monster2 = new Beast(
+    //     heroPosition.x - 100,
+    //     heroPosition.y - 100,
+    //     ROLE_SIZE,
+    //     ROLE_SIZE);
+    // monster2->setColor(0, 255, 0);
+    // addEntityToGridSystem(monster2);
 }
 
 GEB::Pair<int, int> getGridIndex(float x, float y)

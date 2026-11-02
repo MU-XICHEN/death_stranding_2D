@@ -98,11 +98,6 @@ Map::~Map()
     }
 }
 
-GEB::Vec2 Map::playerPosition() const
-{
-    return center();
-}
-
 void Map::mergeTiles(const int *ground, int colCnt, int rowCnt)
 {
     tileBlocks_.resize(0);
@@ -244,7 +239,7 @@ void Map::addCollisionTileToCandiListByAABB(Entity *detectedItem,
     for (int i = 0; i < tileBlocks_.size(); i++)
     {
         auto &tileBlock = tileBlocks_[i];
-        bool intersected = aabb.intersects(AABB(tileBlock.x(), tileBlock.y(), tileBlock.width(), tileBlock.height()));
+        bool intersected = aabb.intersects(tileBlock);
         if (intersected)
         {
             candidateItemList.pushBack(&tileBlock);

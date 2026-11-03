@@ -5,6 +5,8 @@
 #include "world/Grid.h"
 #include "map/Map.h"
 
+class Hero;
+
 class PlayStage : public Stage
 {
 public:
@@ -24,6 +26,12 @@ public:
     Map *map() { return map_; }
 
 private:
+    bool checkChangeChapter() const;
+    void changeChapterIfNeed(World &world);
+
+    bool changeMapFlag_ = false;
+
     GridSystem *gridSystem_ = nullptr;
     Map *map_ = nullptr;
+    Hero *hero_ = nullptr; // Owned by the current grid system.
 };

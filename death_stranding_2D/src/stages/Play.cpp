@@ -21,8 +21,8 @@ PlayStage::PlayStage()
     if (!map_)
         return;
     gridSystem_ = new GridSystem(
-        map_->height() / GRID_SIZE,
-        map_->width() / GRID_SIZE,
+        (map_->height() + GRID_SIZE - 1) / GRID_SIZE,
+        (map_->width() + GRID_SIZE - 1) / GRID_SIZE,
         GRID_SIZE);
 
     initialize();
@@ -38,30 +38,8 @@ void PlayStage::initialize()
 {
     if (!gridSystem_ || !map_)
         return;
-    auto mapCenter = map_->center();
 
-    // add Items
-    // [new] items will be recycled by the grid system
-    auto hero = new Hero(
-        mapCenter.x,
-        mapCenter.y,
-        ROLE_SIZE,
-        ROLE_SIZE);
-    hero->setColor(255, 0, 0);
-    // attacks
-    auto *attack = new AttackHalfCircleSlash('J', true);
-    hero->addAttack(attack);
-    auto *remoteAttack = new AttackRemoteMulti('K', 0.5f);
-    hero->addAttack(remoteAttack);
-    auto *autoTargetingMagic = new AttackAutoTargetingMagic('L');
-    hero->addAttack(autoTargetingMagic);
-    // skills
-    auto *speedUpSkill = new SkillSpeedUp('U');
-    hero->addSkill(speedUpSkill);
-    addEntityToGridSystem(hero);
-
-    // show health, mana, and score information for the hero.
-    pushEntity(new InfoEntity(*hero));
+    // todo: add items.
 }
 
 GEB::Pair<int, int> getGridIndex(float x, float y)
@@ -103,6 +81,8 @@ void PlayStage::update(World &world, Layer &layer)
     }
 
     Stage::update(world, layer);
+
+    changeMapFlag_ = checkChangeChapter();
 }
 
 // renderEntities
@@ -137,6 +117,8 @@ void PlayStage::renderFinished(World &world, Layer &layer)
         auto *item = inactiveItems[i];
         if (!item)
             continue;
+        if (item == hero_)
+            hero_ = nullptr;
         const auto &center = item->center();
         auto [rowIdx, colIdx] = gridSystem_->getGridIdxPair(center);
         gridSystem_->removeEntity(rowIdx, colIdx, item);
@@ -144,4 +126,59 @@ void PlayStage::renderFinished(World &world, Layer &layer)
 
     // clear
     gridSystem_->clearInactiveItems();
+
+    changeChapterIfNeed(world);
+}
+
+bool PlayStage::checkChangeChapter() const
+{
+    if (!map_ || !gridSystem_)
+        return false;
+    if (!hero_ || !hero_->active() || hero_->state().health() <= 0.0f)
+        return false;
+
+    const auto *exit = map_->exit();
+
+    if (!exit)
+        return false;
+
+    const AABB heroBounds(hero_->x(), hero_->y(), hero_->width(), hero_->height());
+    return heroBounds.contains(exit->position);
+}
+
+void PlayStage::changeChapterIfNeed(World &world)
+{
+    if (!changeMapFlag_)
+        return;
+
+    auto nextMap = new Map(map_->exit()->destination);
+    auto nextGrid = new GridSystem(
+        (nextMap->height() + GRID_SIZE - 1) / GRID_SIZE,
+        (nextMap->width() + GRID_SIZE - 1) / GRID_SIZE,
+        GRID_SIZE);
+    const auto entrance = nextMap->entrancePosition(hero_->width(), hero_->height());
+
+    for (int i = 0; i < hero_->attacks().size(); ++i)
+    {
+        if (auto *attack = hero_->attacks()[i])
+            attack->end();
+    }
+
+    // Manage the memory of old map and grid system.
+    const auto [row, col] = gridSystem_->getGridIdxPair(hero_->center());
+    gridSystem_->removeEntity(row, col, hero_);
+    delete gridSystem_;
+    delete map_;
+    // Assign the new map and grid system to the stage.
+    map_ = nextMap;
+    gridSystem_ = nextGrid;
+    hero_->setPos(entrance.x, entrance.y);
+    addEntityToGridSystem(hero_);
+
+    // Update related game information after changing the map.
+    HeroInfo heroInfo{hero_->x(), hero_->y(), hero_->width(), hero_->height()};
+    world.gameInfo().updateMapInfo(*map_);
+    world.gameInfo().updateHeroInfo(heroInfo);
+    world.gameInfo().updateViewport(heroInfo, world.gameInfo().mapInfo());
+    changeMapFlag_ = false;
 }

@@ -23,6 +23,12 @@ struct MapSource
     int groundCount;
 };
 
+struct MapExit
+{
+    GEB::Vec2 position;
+    MapType destination;
+};
+
 class Map : public Entity
 {
 public:
@@ -31,6 +37,9 @@ public:
 
     void update(World &world, Layer &layer) override;
     void render(World &world, Layer &layer) override;
+
+    GEB::Vec2 entrancePosition(int entityWidth, int entityHeight) const;
+    const MapExit *exit() const { return hasExit_ ? &exit_ : nullptr; }
 
     const GEB::Structures::Array<TileBlock> &tileBlocks() const { return tileBlocks_; }
 
@@ -49,6 +58,9 @@ private:
     void mergeTiles(const int *ground, int colCnt, int rowCnt);
 
     MapType mapType_;
+    GEB::Vec2 entrance_{}; // Tile center converted from the row/column in txt.
+    MapExit exit_{};
+    bool hasExit_ = false;
     MapSource source_{};
     GEB::Structures::Array<int> ground_;
 

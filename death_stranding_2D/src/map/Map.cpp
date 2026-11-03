@@ -5,6 +5,7 @@
 #include <fstream>
 #include <limits>
 #include <stdexcept>
+#include <string>
 
 GEB::Pair<bool, int> tileProcessed(int tileIndexX, int tileIndexY, int tileSize,
                                    const GEB::Structures::Array<TileBlock> &tileRects);
@@ -16,6 +17,23 @@ int expandTileRectSize(TileBlock &tileRect, int tileIndexX, int tileIndexY,
                        const GEB::Structures::Array<TileBlock> &tileRects);
 
 void getMapPath(MapType type, const char **path);
+
+GEB::Vec2 Map::entrancePosition(int entityWidth, int entityHeight) const
+{
+    const GEB::Vec2 position{entrance_.x - entityWidth / 2.0f,
+                             entrance_.y - entityHeight / 2.0f};
+    if (entityWidth <= 0 || entityHeight <= 0 || position.x < 0 || position.y < 0 ||
+        position.x + entityWidth > width_ || position.y + entityHeight > height_)
+        throw std::runtime_error("Entity does not fit at the map entrance");
+
+    const AABB body(position.x, position.y, entityWidth, entityHeight);
+    for (int i = 0; i < tileBlocks_.size(); ++i)
+    {
+        if (body.intersects(tileBlocks_[i]))
+            throw std::runtime_error("Map entrance overlaps an obstacle");
+    }
+    return position;
+}
 
 Map::Map(MapType type)
     : Entity(0, 0, 0, 0), mapType_(type)
@@ -29,6 +47,9 @@ void Map::loadChapterMap(MapType type)
     mapCache_.clear();
     tileBlocks_.clear();
     ground_.clear();
+    entrance_ = {};
+    exit_ = {};
+    hasExit_ = false;
     source_ = {};
     width_ = 0;
     height_ = 0;
@@ -37,6 +58,21 @@ void Map::loadChapterMap(MapType type)
     cachemap();
     // Ground values describe collision only: 0 is walkable, nonzero is blocked.
     mergeTiles(source_.ground, source_.colCnt, source_.rowCnt);
+
+    if (hasExit_)
+    {
+        switch (type)
+        {
+        case MapType::Chapter1:
+            exit_.destination = MapType::Chapter2;
+            break;
+        case MapType::Chapter2:
+            exit_.destination = MapType::Chapter3;
+            break;
+        default:
+            throw std::runtime_error("No destination configured for this map exit");
+        }
+    }
 }
 
 void Map::loadMapSource(MapType type)
@@ -76,15 +112,42 @@ void Map::loadMapSource(MapType type)
         for (int col = 0; col < source_.colCnt; ++col)
         {
             int ground = 0;
-            if (!(file >> ground) || ground < 0)
+            if (!(file >> ground) || (ground != 0 && ground != 1))
                 throw std::runtime_error("Invalid ground tile");
             ground_.pushBack(ground);
         }
     }
 
+    // First line after the grid: entrance row, column (zero-based).
+    int entranceRow = 0;
+    int entranceCol = 0;
+    if (!(file >> entranceRow >> entranceCol) ||
+        entranceRow < 0 || entranceRow >= source_.rowCnt ||
+        entranceCol < 0 || entranceCol >= source_.colCnt)
+        throw std::runtime_error("Invalid map entrance configuration");
+    entrance_ = {(entranceCol + 0.5f) * source_.tileSize,
+                 (entranceRow + 0.5f) * source_.tileSize};
+
+    // Optional final line: exit row, column (zero-based). No line means no exit.
     file >> std::ws;
+    hasExit_ = !file.eof();
+    if (hasExit_)
+    {
+        int exitRow = 0;
+        int exitCol = 0;
+        if (!(file >> exitRow >> exitCol) ||
+            exitRow < 0 || exitRow >= source_.rowCnt ||
+            exitCol < 0 || exitCol >= source_.colCnt)
+            throw std::runtime_error("Invalid map exit coordinates");
+        if (ground_[exitRow * source_.colCnt + exitCol] != 0)
+            throw std::runtime_error("Map exit must be on walkable ground");
+        exit_.position = {(exitCol + 0.5f) * source_.tileSize,
+                          (exitRow + 0.5f) * source_.tileSize};
+        file >> std::ws;
+    }
+
     if (!file.eof() || file.bad())
-        throw std::runtime_error("Unexpected content after map");
+        throw std::runtime_error("Unexpected content after map configuration");
 
     source_.ground = ground_.head();
 }

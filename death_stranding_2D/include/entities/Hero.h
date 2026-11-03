@@ -35,6 +35,9 @@ public:
     void onTargetDefeated(const ItemEntity &target) override;
     bool onUsePotion(Potion *potion) override;
 
+    int defeatedMonsterCount() const { return defeatedMonsterCount_; }
+
 private:
     HeroImpl *impl_;
+    int defeatedMonsterCount_ = 0;
 };

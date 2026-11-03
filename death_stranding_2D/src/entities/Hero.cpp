@@ -180,6 +180,7 @@ void Hero::onTargetDefeated(const ItemEntity &target)
 {
     if (dynamic_cast<const Monster *>(&target))
     {
+        ++defeatedMonsterCount_;
         const float newScore = state_.score() + target.state().score();
         state_.setScore(newScore);
     }

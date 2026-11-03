@@ -21,4 +21,5 @@ private:
     std::string healthText_;
     std::string manaText_;
     std::string scoreText_;
+    std::string killsText_;
 };

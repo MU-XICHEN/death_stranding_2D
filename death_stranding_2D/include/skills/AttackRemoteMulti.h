@@ -26,8 +26,8 @@ public:
     virtual void tryHit(World &world, Layer &layer) override;
     // add bullet
     virtual void tryBegin(World &world, Layer &layer) override;
-    // remove bullet
-    virtual void end() override {};
+
+    virtual void end() override;
     virtual void render(World &world, Layer &layer) override;
 
 private:

@@ -9,6 +9,11 @@ typedef GEB::Structures::DoublyLinkedList<AttackRemote *>::ListNode<AttackRemote
 
 AttackRemoteMulti::~AttackRemoteMulti()
 {
+    end();
+}
+
+void AttackRemoteMulti::end()
+{
     auto *head = bullets_.front();
     while (head != nullptr)
     {
@@ -17,6 +22,8 @@ AttackRemoteMulti::~AttackRemoteMulti()
         if (tmp->data)
             delete tmp->data;
     }
+    bullets_.clear();
+    shotElapsedTime_ = std::numeric_limits<float>::max();
 }
 
 void AttackRemoteMulti::tryHit(World &world, Layer &layer)

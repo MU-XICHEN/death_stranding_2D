@@ -23,6 +23,8 @@ public:
 
     virtual void tryHit(World &world, Layer &layer) = 0;
     void begin();
+
+    virtual void end();
     virtual void tryBegin(World &world, Layer &layer);
     virtual void render(World &world, Layer &layer) = 0;
 
@@ -40,7 +42,6 @@ public:
 protected:
     void hitTarget(ItemEntity &target, const AttackInfo &attackInfo);
     bool preTryHit(World &world, Layer &layer);
-    virtual void end();
 
     AttackInfo attackInfo_;
     bool active_ = false;

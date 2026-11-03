@@ -116,7 +116,7 @@ void AttackHalfCircleSlash::tryHit(World &world, Layer &layer)
         if (GEB::Utils::SAT(rectA, rectB))
         {
             hitTargets_.insert(entityPtr);
-            entity->onAttacked(atkInfo);
+            hitTarget(*entity, atkInfo);
         }
     }
 }

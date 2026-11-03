@@ -316,14 +316,5 @@ void getMapPath(MapType type, const char **path)
     case MapType::Chapter3:
         *path = "assets/map/chapter3/chapter3";
         break;
-    case MapType::Chapter4:
-        *path = "assets/map/chapter4/chapter4";
-        break;
-    case MapType::Chapter5:
-        *path = "assets/map/chapter5/chapter5";
-        break;
-    default:
-        throw std::runtime_error("Invalid map type");
-        break;
     }
 }

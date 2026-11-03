@@ -1,5 +1,6 @@
 #include <limits>
 #include "entities/Hero.h"
+#include "entities/Monster.h"
 #include "entities/Potion.h"
 #include "GamesEngineeringBase.h"
 #include "world/World.h"
@@ -173,6 +174,15 @@ void Hero::update(World &world, Layer &layer)
         .updateHeroInfo(heroInfo);
 
     world.gameInfo().updateViewport(heroInfo, world.gameInfo().mapInfo());
+}
+
+void Hero::onTargetDefeated(const ItemEntity &target)
+{
+    if (dynamic_cast<const Monster *>(&target))
+    {
+        const float newScore = state_.score() + target.state().score();
+        state_.setScore(newScore);
+    }
 }
 
 AttackInfo Hero::createAttackInfo(Attack *attack)

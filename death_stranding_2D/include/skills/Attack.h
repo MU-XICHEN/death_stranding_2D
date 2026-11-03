@@ -38,6 +38,7 @@ public:
     inline bool lockDirection() const { return active_ && lockDirection_; }
 
 protected:
+    void hitTarget(ItemEntity &target, const AttackInfo &attackInfo);
     bool preTryHit(World &world, Layer &layer);
     virtual void end();
 

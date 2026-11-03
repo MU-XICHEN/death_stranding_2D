@@ -38,6 +38,7 @@ public:
         // initialize states
         GEB::Pair<int, float> props[] = {
             {State::HEALTH, M_BEAST_HP},
+            {State::SCORE, M_BEAST_SCORE},
             {State::SPEED, M_BEAST_PIXEL_PER_SEC},
             {State::PERCEPTION_RANGE, M_BEAST_DANGER_DISTANCE},
             {State::DEFENSE, M_BEAST_DEFENSE},
@@ -55,6 +56,7 @@ public:
         // initialize states
         GEB::Pair<int, float> props[] = {
             {State::HEALTH, M_GHOST_HP},
+            {State::SCORE, M_GHOST_SCORE},
             {State::SPEED, M_GHOST_PIXEL_PER_SEC},
             {State::PERCEPTION_RANGE, M_GHOST_DANGER_DISTANCE},
             {State::DEFENSE, M_GHOST_DEFENSE},

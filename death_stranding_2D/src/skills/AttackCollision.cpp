@@ -45,7 +45,7 @@ void AttackCollision::tryHit(World &world, Layer &layer)
             auto *item = dynamic_cast<ItemEntity *>(entity);
             if (!item)
                 return;
-            item->onAttacked(atkInfo);
+            hitTarget(*item, atkInfo);
         }
     }
 }

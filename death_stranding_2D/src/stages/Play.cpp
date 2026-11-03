@@ -1,6 +1,7 @@
 #include "stages/Play.h"
 #include "core/GameBase.h"
 #include "entities/Hero.h"
+#include "entities/InfoEntity.h"
 #include "entities/Monster.h"
 #include "map/Map.h"
 #include "layers/MainLayer.h"
@@ -58,6 +59,9 @@ void PlayStage::initialize()
     auto *speedUpSkill = new SkillSpeedUp('U');
     hero->addSkill(speedUpSkill);
     addEntityToGridSystem(hero);
+
+    // show health, mana, and score information for the hero.
+    pushEntity(new InfoEntity(*hero));
 }
 
 GEB::Pair<int, int> getGridIndex(float x, float y)
@@ -89,8 +93,6 @@ void PlayStage::update(World &world, Layer &layer)
 
     world.gameInfo().updateMapInfo(*map_);
 
-    Stage::update(world, layer); // update sections like information panels
-
     auto &itemsToUpdate = gridSystem_->itemsToUpdate();
     int itemCount = itemsToUpdate.size();
     for (int i = 0; i < itemCount; ++i)
@@ -99,6 +101,8 @@ void PlayStage::update(World &world, Layer &layer)
         if (item)
             item->update(world, layer);
     }
+
+    Stage::update(world, layer);
 }
 
 // renderEntities
@@ -109,8 +113,6 @@ void PlayStage::render(World &world, Layer &layer)
 
     map_->render(world, layer);
 
-    Stage::render(world, layer);
-
     auto &itemsToUpdate = gridSystem_->itemsToUpdate();
     int itemCount = itemsToUpdate.size();
     for (int i = 0; i < itemCount; ++i)
@@ -119,6 +121,8 @@ void PlayStage::render(World &world, Layer &layer)
         if (item)
             item->render(world, layer);
     }
+
+    Stage::render(world, layer);
 }
 
 void PlayStage::renderFinished(World &world, Layer &layer)

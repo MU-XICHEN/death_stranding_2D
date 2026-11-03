@@ -10,8 +10,6 @@ enum MapType
     Chapter1 = 0,
     Chapter2 = 1,
     Chapter3 = 2,
-    Chapter4 = 3,
-    Chapter5 = 4
 };
 
 struct MapSource

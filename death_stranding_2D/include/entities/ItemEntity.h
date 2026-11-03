@@ -74,6 +74,7 @@ public:
     GEB::Structures::Array<Attack *> &attacks() { return attacks_; }
     const GEB::Structures::Array<Attack *> &attacks() const { return attacks_; }
     virtual void onAttacked(const AttackInfo &attackInfo);
+    virtual void onTargetDefeated(const ItemEntity &target) {}
 
     virtual void processAttack(World &world, Layer &layer);
     virtual void processSkill(World &world, Layer &layer);

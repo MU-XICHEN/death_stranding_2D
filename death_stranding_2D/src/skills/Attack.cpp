@@ -4,6 +4,17 @@
 #include "layers/MainLayer.h"
 #include "world/World.h"
 
+void Attack::hitTarget(ItemEntity &target, const AttackInfo &attackInfo)
+{
+    if (!target.active() || target.state().health() <= 0.0f)
+        return;
+
+    target.onAttacked(attackInfo);
+
+    if (target.state().health() <= 0.0f && owner_)
+        owner_->onTargetDefeated(target);
+}
+
 void Attack::updateAttackInfo()
 {
     if (owner_)

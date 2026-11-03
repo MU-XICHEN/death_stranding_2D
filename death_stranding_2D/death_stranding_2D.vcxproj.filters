@@ -81,6 +81,9 @@
     <ClCompile Include="src\entities\Hero.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
+    <ClCompile Include="src\entities\InfoEntity.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
     <ClCompile Include="src\entities\Monster.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
@@ -180,6 +183,9 @@
       <Filter>Header Files\entities</Filter>
     </ClInclude>
     <ClInclude Include="include\entities\Hero.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\entities\InfoEntity.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
     <ClInclude Include="include\entities\HealthPotion.h">

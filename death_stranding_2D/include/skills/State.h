@@ -19,6 +19,7 @@ public:
         PERCEPTION_RANGE,
         DEFENSE,
         MANA,
+        SCORE,
         _END_FLAG_
     };
     static constexpr int propCount = static_cast<int>(PropertyIndex::_END_FLAG_);
@@ -105,6 +106,10 @@ public:
 
     float mana() const { return properties_[MANA]; }
     void setMana(float mana) { properties_[MANA] = mana; }
+
+    // Accumulated points for the hero; defeat reward for monsters.
+    float score() const { return properties_[SCORE]; }
+    void setScore(float score) { properties_[SCORE] = score; }
 
 private:
     GEB::Structures::Array<float> properties_;

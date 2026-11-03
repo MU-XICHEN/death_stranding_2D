@@ -37,7 +37,7 @@
  *  for preventing items from spanning multiple grid cells.
  *  In getCandidateGridsByDisVec2(Grid.h), this is ensured by extending one more grid in all directions.
  */
-#define ROLE_SIZE 64
+#define ROLE_SIZE 96
 // Hero
 #define HERO_HP 100.0f
 #define HERO_MANA 100.0f
@@ -48,6 +48,7 @@
 
 // Monster
 #define M_BEAST_HP 100.0f
+#define M_BEAST_SCORE 10.0f
 #define M_BEAST_PIXEL_PER_SEC 130.0f
 #define M_BEAST_DANGER_DISTANCE 100.0f
 #define M_BEAST_DEFENSE 5.0f
@@ -55,6 +56,7 @@
 #define M_BEAST_COLLITION_DAMAGE 5.0f
 
 #define M_GHOST_HP 150.0f
+#define M_GHOST_SCORE 20.0f
 #define M_GHOST_PIXEL_PER_SEC 150.0f
 #define M_GHOST_DANGER_DISTANCE 50.0f
 #define M_GHOST_DEFENSE 8.0f

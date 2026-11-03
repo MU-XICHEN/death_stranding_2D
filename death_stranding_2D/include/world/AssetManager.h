@@ -10,6 +10,9 @@ enum AssetId
     TextMedium = 2,
     TextLarge = 3,
     Cover = 4,
+    SwordsmanSprite = 5,
+    ArcherSprite = 6,
+    MageSprite = 7,
 };
 
 struct Asset

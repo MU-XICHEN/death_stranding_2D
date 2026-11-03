@@ -5,6 +5,9 @@ AssetId initialAssetIds[] = {
     AssetId::TextMedium,
     AssetId::TextLarge,
     AssetId::Cover,
+    AssetId::SwordsmanSprite,
+    AssetId::ArcherSprite,
+    AssetId::MageSprite,
 };
 
 const char *getAssetPath(AssetId id)
@@ -19,6 +22,12 @@ const char *getAssetPath(AssetId id)
         return "assets/font/font_18x36.png";
     case AssetId::Cover:
         return "assets/cover/game_cover.png";
+    case AssetId::SwordsmanSprite:
+        return "assets/character/swordsman/swordsman-8-directions-96.png";
+    case AssetId::ArcherSprite:
+        return "assets/character/archer/archer-8-directions-96.png";
+    case AssetId::MageSprite:
+        return "assets/character/mage/mage-8-directions-96.png";
     default:
         return nullptr;
     }

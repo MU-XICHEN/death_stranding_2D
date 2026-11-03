@@ -4,13 +4,12 @@
 #include "entities/ItemEntity.h"
 #include "world/Grid.h"
 #include "map/Map.h"
-
-class Hero;
+#include "entities/Hero.h"
 
 class PlayStage : public Stage
 {
 public:
-    PlayStage();
+    explicit PlayStage(HeroType heroType = HeroType::Swordsman);
     virtual ~PlayStage() override;
 
     PlayStage(const PlayStage &) = delete;
@@ -26,6 +25,7 @@ public:
     Map *map() { return map_; }
 
 private:
+    HeroType heroType_;
     bool checkChangeChapter() const;
     void changeChapterIfNeed(World &world);
 

@@ -81,6 +81,15 @@
     <ClCompile Include="src\entities\Hero.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
+    <ClCompile Include="src\entities\Swordsman.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\entities\Archer.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\entities\Mage.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
     <ClCompile Include="src\entities\InfoEntity.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
@@ -183,6 +192,15 @@
       <Filter>Header Files\entities</Filter>
     </ClInclude>
     <ClInclude Include="include\entities\Hero.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\entities\Swordsman.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\entities\Archer.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\entities\Mage.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
     <ClInclude Include="include\entities\InfoEntity.h">

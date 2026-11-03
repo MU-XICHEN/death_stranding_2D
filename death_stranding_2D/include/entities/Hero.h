@@ -1,6 +1,14 @@
 #pragma once
 
 #include "entities/ItemEntity.h"
+#include "world/AssetManager.h"
+
+enum class HeroType
+{
+    Swordsman,
+    Archer,
+    Mage,
+};
 
 struct HeroInfo
 {
@@ -28,14 +36,18 @@ public:
     virtual ~Hero();
 
     void update(World &world, Layer &layer) override;
+    void render(World &world, Layer &layer) override;
     void tryTriggerAttacks(World &world, Layer &layer) override;
     void tryTriggerSkills(World &world, Layer &layer) override;
     void handleMovement(World &world, Layer &layer) override;
-    AttackInfo createAttackInfo(Attack *attack) override;
+    AttackInfo createAttackInfo(Attack *attack) override = 0;
     void onTargetDefeated(const ItemEntity &target) override;
     bool onUsePotion(Potion *potion) override;
 
     int defeatedMonsterCount() const { return defeatedMonsterCount_; }
+
+protected:
+    virtual AssetId spriteAsset() const = 0;
 
 private:
     HeroImpl *impl_;

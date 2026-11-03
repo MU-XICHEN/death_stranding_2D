@@ -8,6 +8,17 @@
 
 namespace GamesEngineeringBase::Utils
 {
+    // Blend an RGB source pixel into the destination using alpha (0-255).
+    static void blendPixel(unsigned char *destination, const unsigned char *source, unsigned char alpha)
+    {
+        if (alpha == 0)
+            return;
+
+        for (int channel = 0; channel < 3; ++channel)
+            destination[channel] = static_cast<unsigned char>(
+                (source[channel] * alpha + destination[channel] * (255 - alpha)) / 255);
+    }
+
     static GEB::Vec2 rotateCounterClockwise(GEB::Vec2 point, GEB::Vec2 origin, float degrees)
     {
         float radians = GEB::Math::toRadians(degrees);

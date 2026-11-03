@@ -2,6 +2,7 @@
 #include "core/GameBase.h"
 #include "world/World.h"
 #include "world/AssetManager.h"
+#include "utils/Utils.h"
 
 const int TEXT_WIDTH[TEXT_SIZE_COUNT] = {
     GEB::TextSizeW::TEXT_SIZE_W_SMALL,
@@ -42,6 +43,10 @@ void TextRenderer::drawCharacter(World &world,
     if (!fontImage)
         return;
 
+    auto *buffer = canvas.getBackBuffer();
+    if (!buffer)
+        return;
+
     const int imageIndex = static_cast<int>(textSize);
     const int fontWidth = TEXT_WIDTH[imageIndex];
     const int fontHeight = TEXT_HEIGHT[imageIndex];
@@ -57,11 +62,17 @@ void TextRenderer::drawCharacter(World &world,
         {
             const int targetX = x + pixelX;
             const int targetY = y + pixelY;
-            if (targetX >= 0 && targetX < validWidth && targetY >= 0 && targetY < validHeight)
-            {
-                if (fontImage->alphaAt(charXInImage + pixelX, charYInImage + pixelY))
-                    canvas.draw(targetX, targetY, fontImage->at(charXInImage + pixelX, charYInImage + pixelY));
-            }
+            if (targetX < 0 || targetX >= validWidth)
+                continue;
+            if (targetY < 0 || targetY >= validHeight)
+                continue;
+
+            int sourceX = charXInImage + pixelX;
+            int sourceY = charYInImage + pixelY;
+            auto *pixel = fontImage->at(sourceX, sourceY);
+            auto alpha = fontImage->alphaAt(sourceX, sourceY);
+            auto *destination = buffer + (targetY * validWidth + targetX) * 3;
+            GEB::Utils::blendPixel(destination, pixel, alpha);
         }
     }
 }

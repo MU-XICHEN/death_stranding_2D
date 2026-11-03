@@ -1,21 +1,22 @@
 #include "stages/Play.h"
 #include "core/GameBase.h"
 #include "entities/Hero.h"
+#include "entities/Swordsman.h"
+#include "entities/Archer.h"
+#include "entities/Mage.h"
 #include "entities/InfoEntity.h"
 #include "entities/Monster.h"
 #include "map/Map.h"
 #include "layers/MainLayer.h"
 #include "world/World.h"
-#include "skills/AttackHalfCircleSlash.h"
-#include "skills/AttackRemoteMulti.h"
-#include "skills/AttackAutoTargetingMagic.h"
 #include "skills/SkillSpeedUp.h"
 #include "entities/HealthPotion.h"
 #include "entities/ManaPotion.h"
 #include "entities/Track.h"
 #include "skills/AttackCollision.h"
 
-PlayStage::PlayStage()
+PlayStage::PlayStage(HeroType heroType)
+    : heroType_(heroType)
 {
     map_ = new Map(MapType::Chapter1);
     if (!map_)
@@ -39,7 +40,23 @@ void PlayStage::initialize()
     if (!gridSystem_ || !map_)
         return;
 
-    // todo: add items.
+    const auto entrance = map_->entrancePosition(ROLE_SIZE, ROLE_SIZE);
+    switch (heroType_)
+    {
+    case HeroType::Archer:
+        hero_ = new Archer(entrance.x, entrance.y);
+        break;
+    case HeroType::Mage:
+        hero_ = new Mage(entrance.x, entrance.y);
+        break;
+    case HeroType::Swordsman:
+    default:
+        hero_ = new Swordsman(entrance.x, entrance.y);
+        break;
+    }
+    hero_->addSkill(new SkillSpeedUp('U'));
+    addEntityToGridSystem(hero_);
+    pushEntity(new InfoEntity(*hero_));
 }
 
 GEB::Pair<int, int> getGridIndex(float x, float y)

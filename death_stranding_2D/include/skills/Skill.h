@@ -1,7 +1,10 @@
 #pragma once
 
 #include "State.h"
-#include "entities/ItemEntity.h"
+
+class ItemEntity;
+class World;
+class Layer;
 
 /**
  * Skill is used to add sideEffect to character's state, not for damaging.
@@ -28,17 +31,15 @@ public:
         }
     }
 
-    void activate(State &targetState)
-    {
-        active_ = true;
-        targetState.apply(sideEffectState_);
-    }
-    void deactivate(State &targetState)
+    virtual void tryActivate(World &world, Layer &layer, State &targetState);
+
+    virtual void deactivate(State &targetState)
     {
         elapsedTime_ = 0.0f;
         active_ = false;
         targetState.unDo(sideEffectState_);
     }
+
     bool active() const { return active_; }
 
     float elapsedTime() const { return elapsedTime_; }
@@ -51,7 +52,7 @@ protected:
 
     State sideEffectState_;
     float duration_ = 0.0f;
-    int triggerKey_;
+    int triggerKey_ = -1;
 
     float elapsedTime_ = 0.0f;
     bool active_ = false;

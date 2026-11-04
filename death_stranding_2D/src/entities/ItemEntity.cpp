@@ -299,6 +299,17 @@ void ItemEntity::tryTriggerAttacks(World &world, Layer &layer)
     }
 }
 
+void ItemEntity::tryTriggerSkills(World &world, Layer &layer)
+{
+    auto &canvas = world.canvas();
+    for (int i = 0; i < skills_.size(); ++i)
+    {
+        if (!skills_[i])
+            continue;
+        skills_[i]->tryActivate(world, layer, state_);
+    }
+}
+
 void ItemEntity::processAttack(World &world, Layer &layer)
 {
     for (int i = 0; i < attacks_.size(); i++)

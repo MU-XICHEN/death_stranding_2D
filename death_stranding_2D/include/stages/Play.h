@@ -16,7 +16,6 @@ public:
     PlayStage &operator=(const PlayStage &) = delete;
 
     void initialize();
-    void addEntityToGridSystem(ItemEntity *itemEntity);
     void update(World &world, Layer &layer) override;
     void render(World &world, Layer &layer) override;
     void renderFinished(World &world, Layer &layer) override;
@@ -24,8 +23,11 @@ public:
     GridSystem *gridSystem() { return gridSystem_; }
     Map *map() { return map_; }
 
+    void addEntityNextFrame(ItemEntity *itemEntity);
+
 private:
     HeroType heroType_;
+    void addEntityToGridSystem(ItemEntity *itemEntity);
     bool checkChangeChapter() const;
     void changeChapterIfNeed(World &world);
 
@@ -34,4 +36,6 @@ private:
     GridSystem *gridSystem_ = nullptr;
     Map *map_ = nullptr;
     Hero *hero_ = nullptr; // Owned by the current grid system.
+
+    GEB::Structures::Array<ItemEntity *> entitiesNextFrame_;
 };

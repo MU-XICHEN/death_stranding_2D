@@ -10,6 +10,9 @@ void AttackRemote::tryBegin(World &world, Layer &layer)
         return;
 
     const auto &canvas = world.canvas();
+    if (triggerKey_ < 0)
+        return;
+
     if (canvas.keyPressed(triggerKey_))
     {
         Attack::begin();
@@ -59,8 +62,8 @@ void AttackRemote::tryHit(World &world, Layer &layer)
     gridSystem->getCandidateListByAABB(owner_, attackContainer, candidateItemList);
     // add map tiles which may collide with the hero to the candidate list
     stageMap->addCollisionTileToCandiListByAABB(owner_,
-                                                      attackContainer,
-                                                      candidateItemList);
+                                                attackContainer,
+                                                candidateItemList);
 
     const auto &atkInfo = attackInfo();
     float speed = atkInfo.rangedAttackSpeed();

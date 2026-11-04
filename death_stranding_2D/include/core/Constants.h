@@ -63,5 +63,9 @@
 #define M_GHOST_DAMAGE 20.0f
 #define M_GHOST_COLLITION_DAMAGE 10.0f
 
+// Monster nest
+#define MONSTER_NEST_HP 300.0f
+#define MONSTER_NEST_DEFENSE 0.0f
+
 // Potion
 #define POTION_SIZE 30

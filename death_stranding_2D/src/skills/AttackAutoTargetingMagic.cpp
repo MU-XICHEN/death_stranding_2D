@@ -74,7 +74,7 @@ void AttackAutoTargetingMagic::tryBegin(World &world, Layer &layer)
         return;
 
     const auto &canvas = world.canvas();
-    if (canvas.keyPressed(triggerKey_))
+    if (triggerKey_ >= 0 && canvas.keyPressed(triggerKey_))
     {
         Attack::begin();
     }

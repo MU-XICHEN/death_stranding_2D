@@ -59,7 +59,7 @@ void Attack::tryBegin(World &world, Layer &layer)
     if (active_ || !owner_)
         return;
     const auto &canvas = world.canvas();
-    if (canvas.keyPressed(triggerKey_))
+    if (triggerKey_ >= 0 && canvas.keyPressed(triggerKey_))
     {
         begin();
     }

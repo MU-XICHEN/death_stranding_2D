@@ -20,8 +20,6 @@ struct HeroInfo
     GEB::Vec2 center() const { return {x + width / 2.0f, y + height / 2.0f}; }
 };
 
-class HeroImpl;
-
 class Hero : public ItemEntity
 {
 
@@ -33,10 +31,9 @@ public:
         float y,
         int width,
         int height);
-    virtual ~Hero();
+    virtual ~Hero() = default;
 
     void update(World &world, Layer &layer) override;
-    void tryTriggerSkills(World &world, Layer &layer) override;
     void handleMovement(World &world, Layer &layer) override;
     AttackInfo createAttackInfo(Attack *attack) override = 0;
     void onTargetDefeated(const ItemEntity &target) override;
@@ -48,6 +45,6 @@ protected:
     AssetId spriteAsset() const override = 0;
 
 private:
-    HeroImpl *impl_;
+    bool checkLockDirection() const;
     int defeatedMonsterCount_ = 0;
 };

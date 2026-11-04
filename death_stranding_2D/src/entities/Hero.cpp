@@ -18,54 +18,24 @@ namespace GamesEngineeringBase::Utils
     GEB::Direction translateEventsToDirection(const GamesEngineeringBase::Window &canvas, GEB::Direction prevDirection);
 }
 
-class HeroImpl
+bool Hero::checkLockDirection() const
 {
-public:
-    explicit HeroImpl(Hero *hero)
-        : host_(hero) {}
-
-    bool checkLockDirection() const
+    for (int i = 0; i < attacks_.size(); ++i)
     {
-        for (int i = 0; i < host_->attacks_.size(); ++i)
-        {
-            if (!host_->attacks_[i])
-                continue;
-            if (host_->attacks_[i]->lockDirection())
-                return true;
-        }
-        return false;
+        if (!attacks_[i])
+            continue;
+        if (attacks_[i]->lockDirection())
+            return true;
     }
-
-    void tryTriggerSkills(World &world, Layer &layer)
-    {
-        if (host_ == nullptr)
-            return;
-        auto &canvas = world.canvas();
-        for (int i = 0; i < host_->skills_.size(); ++i)
-        {
-            if (!host_->skills_[i])
-                continue;
-            if (canvas.keyPressed(host_->skills_[i]->triggerKey()))
-            {
-                if (host_->skills_[i]->active())
-                    continue;
-
-                host_->skills_[i]->activate(host_->state_);
-            }
-        }
-    }
-
-private:
-    Hero *host_;
-};
+    return false;
+}
 
 Hero::Hero(
     float x,
     float y,
     int width,
     int height)
-    : ItemEntity(x, y, width, height),
-      impl_(new HeroImpl(this))
+    : ItemEntity(x, y, width, height)
 {
     GEB::Pair<int, float> props[] = {
         {State::HEALTH, HERO_HP},
@@ -76,13 +46,6 @@ Hero::Hero(
         {State::MANA, HERO_MANA},
     };
     initializeState(props, sizeof(props) / sizeof(props[0]));
-}
-
-Hero::~Hero()
-{
-    if (impl_)
-        delete impl_;
-    impl_ = nullptr;
 }
 
 void Hero::handleMovement(World &world, Layer &layer)
@@ -99,7 +62,7 @@ void Hero::handleMovement(World &world, Layer &layer)
     if (!gridSystem || !stageMap)
         return;
 
-    bool lockDirection = impl_->checkLockDirection();
+    bool lockDirection = checkLockDirection();
 
     if (!lockDirection)
         direction_ = GEB::Utils::translateEventsToDirection(canvas, direction_);
@@ -123,13 +86,6 @@ void Hero::handleMovement(World &world, Layer &layer)
 
     // update grid system
     gridSystem->updateEntityGridIfNeed(oldCenter, this);
-}
-
-void Hero::tryTriggerSkills(World &world, Layer &layer)
-{
-    if (impl_ == nullptr)
-        return;
-    impl_->tryTriggerSkills(world, layer);
 }
 
 void Hero::update(World &world, Layer &layer)

@@ -33,6 +33,13 @@ PlayStage::~PlayStage()
 {
     delete map_;
     delete gridSystem_;
+
+    for (int i = 0; i < entitiesNextFrame_.size(); ++i)
+    {
+        delete entitiesNextFrame_[i];
+    }
+
+    entitiesNextFrame_.clear();
 }
 
 void PlayStage::initialize()
@@ -75,9 +82,19 @@ void PlayStage::addEntityToGridSystem(ItemEntity *item)
     if (!gridSystem_ || !item)
         return;
 
+    // todo: adjust item's position by checking this position is already occupied.
+
     auto center = item->center();
     auto indexPair = getGridIndex(center.x, center.y);
     gridSystem_->addEntity(indexPair.first, indexPair.second, item);
+}
+
+void PlayStage::addEntityNextFrame(ItemEntity *itemEntity)
+{
+    if (!itemEntity)
+        return;
+
+    entitiesNextFrame_.pushBack(itemEntity);
 }
 
 // updateEntities
@@ -143,6 +160,11 @@ void PlayStage::renderFinished(World &world, Layer &layer)
 
     // clear
     gridSystem_->clearInactiveItems();
+
+    // Newly generated entities begin updating in the next frame.
+    for (int i = 0; i < entitiesNextFrame_.size(); ++i)
+        addEntityToGridSystem(entitiesNextFrame_[i]);
+    entitiesNextFrame_.clear();
 
     changeChapterIfNeed(world);
 }

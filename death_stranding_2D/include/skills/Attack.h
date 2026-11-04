@@ -47,7 +47,7 @@ protected:
     AttackInfo attackInfo_;
     bool active_ = false;
     float elapsedTime_ = 0.0f;
-    int triggerKey_;
+    int triggerKey_ = -1;
     bool lockDirection_ = false;
     GEB::Structures::HashSet<std::uintptr_t> hitTargets_;
     ItemEntity *owner_ = nullptr;

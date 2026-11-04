@@ -96,6 +96,9 @@
     <ClCompile Include="src\entities\Monster.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
+    <ClCompile Include="src\entities\MonsterNest.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
     <ClCompile Include="src\entities\Beast.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
@@ -151,6 +154,9 @@
       <Filter>Source Files\skills</Filter>
     </ClCompile>
     <ClCompile Include="src\skills\Attack.cpp">
+      <Filter>Source Files\skills</Filter>
+    </ClCompile>
+    <ClCompile Include="src\skills\Skill.cpp">
       <Filter>Source Files\skills</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
@@ -218,6 +224,9 @@
     <ClInclude Include="include\entities\Monster.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
+    <ClInclude Include="include\entities\MonsterNest.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
     <ClInclude Include="include\entities\Potion.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
@@ -264,6 +273,9 @@
       <Filter>Header Files\skills</Filter>
     </ClInclude>
     <ClInclude Include="include\skills\Skill.h">
+      <Filter>Header Files\skills</Filter>
+    </ClInclude>
+    <ClInclude Include="include\skills\SkillCreateMonster.h">
       <Filter>Header Files\skills</Filter>
     </ClInclude>
     <ClInclude Include="include\skills\SkillDefenseBoost.h">

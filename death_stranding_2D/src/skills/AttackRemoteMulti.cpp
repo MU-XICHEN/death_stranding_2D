@@ -52,7 +52,11 @@ void AttackRemoteMulti::tryBegin(World &world, Layer &layer)
     float dt = world.gameInfo().dt();
     shotElapsedTime_ += dt;
 
-    if (!owner_ || !world.canvas().keyPressed(triggerKey_) || shotElapsedTime_ < timeInterval_)
+    if (!owner_)
+        return;
+    if (shotElapsedTime_ < timeInterval_)
+        return;
+    if (triggerKey_ < 0 || !world.canvas().keyPressed(triggerKey_))
         return;
 
     AttackRemote *atkRmt = new AttackRemote(triggerKey_);

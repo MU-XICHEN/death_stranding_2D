@@ -46,7 +46,7 @@ SOFTWARE.
 #pragma comment(lib, "xinput.lib")
 
 // Stop warnings about possible NULL values for buffer and backbuffer. This should work on any modern hardware.
-#pragma warning( disable : 6387)
+#pragma warning(disable : 6387)
 
 // Define the namespace to encapsulate the library's classes
 namespace GamesEngineeringBase
@@ -77,43 +77,44 @@ namespace GamesEngineeringBase
 	{
 	private:
 		// Private member variables
-		HWND hwnd;                               // Handle to the window
-		HINSTANCE hinstance;                     // Handle to the application instance
-		std::string name;                        // Window name/title
-		ID3D11Device* dev;                       // Direct3D device
-		ID3D11DeviceContext* devcontext;         // Direct3D device context
-		IDXGISwapChain* sc;                      // Swap chain for double buffering
-		ID3D11RenderTargetView* rtv;             // Render target view
-		D3D11_VIEWPORT vp;                       // Viewport configuration
-		ID3D11Buffer* buffer;                    // Buffer for pixel data
-		ID3D11ShaderResourceView* srv;           // Shader resource view
-		ID3D11PixelShader* ps;                   // Pixel shader
-		ID3D11VertexShader* vs;                  // Vertex shader
-		unsigned char* image;                    // Back buffer image data
-		bool keys[256];                          // Keyboard state array
-		int mousex;                              // Mouse X-coordinate
-		int mousey;                              // Mouse Y-coordinate
-		MouseButtonState buttonStates[3];		 // Mouse button states
-		int mouseWheel;                          // Mouse wheel value
-		unsigned int width = 0;                  // Window width
-		unsigned int height = 0;                 // Window height
-		unsigned int paddedDataSize = 0;         // Padding for backbuffer memory allocation
+		HWND hwnd;						  // Handle to the window
+		HINSTANCE hinstance;			  // Handle to the application instance
+		std::string name;				  // Window name/title
+		ID3D11Device *dev;				  // Direct3D device
+		ID3D11DeviceContext *devcontext;  // Direct3D device context
+		IDXGISwapChain *sc;				  // Swap chain for double buffering
+		ID3D11RenderTargetView *rtv;	  // Render target view
+		D3D11_VIEWPORT vp;				  // Viewport configuration
+		ID3D11Buffer *buffer;			  // Buffer for pixel data
+		ID3D11ShaderResourceView *srv;	  // Shader resource view
+		ID3D11PixelShader *ps;			  // Pixel shader
+		ID3D11VertexShader *vs;			  // Vertex shader
+		unsigned char *image;			  // Back buffer image data
+		bool keys[256];					  // Keyboard state array
+		int mousex;						  // Mouse X-coordinate
+		int mousey;						  // Mouse Y-coordinate
+		MouseButtonState buttonStates[3]; // Mouse button states
+		int mouseWheel;					  // Mouse wheel value
+		unsigned int width = 0;			  // Window width
+		unsigned int height = 0;		  // Window height
+		unsigned int paddedDataSize = 0;  // Padding for backbuffer memory allocation
 		bool closeRequested = false;
 		bool moveResizeFinished_ = false;
 
 		// Static window procedure to handle window messages
 		static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
-			Window* canvas = NULL;
+			Window *canvas = NULL;
 			if (msg == WM_CREATE)
 			{
 				// On window creation, associate the Window instance with the HWND
-				canvas = reinterpret_cast<Window*>(((LPCREATESTRUCT)lParam)->lpCreateParams);
+				canvas = reinterpret_cast<Window *>(((LPCREATESTRUCT)lParam)->lpCreateParams);
 				SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)canvas);
-			} else
+			}
+			else
 			{
 				// Retrieve the Window instance associated with the HWND
-				canvas = reinterpret_cast<Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+				canvas = reinterpret_cast<Window *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 			}
 			if (canvas)
 				return canvas->realWndProc(hwnd, msg, wParam, lParam);
@@ -290,7 +291,8 @@ namespace GamesEngineeringBase
 				fs.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 				ChangeDisplaySettings(&fs, CDS_FULLSCREEN);
 				style = WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP;
-			} else
+			}
+			else
 			{
 				// Configure windowed mode settings
 				width = window_width;
@@ -302,9 +304,8 @@ namespace GamesEngineeringBase
 			SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_UNAWARE);
 			// SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_SYSTEM_AWARE);
 
-
 			// Adjust window rectangle to accommodate for window borders
-			RECT wr = { 0, 0, static_cast<LONG>(width), static_cast<LONG>(height) };
+			RECT wr = {0, 0, static_cast<LONG>(width), static_cast<LONG>(height)};
 			AdjustWindowRect(&wr, (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SIZEBOX), FALSE);
 
 			// Create the window
@@ -362,8 +363,8 @@ namespace GamesEngineeringBase
 				&devcontext);
 
 			// Get the back buffer from the swap chain
-			ID3D11Texture2D* backbuffer;
-			sc->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backbuffer);
+			ID3D11Texture2D *backbuffer;
+			sc->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID *)&backbuffer);
 
 			// Create the render target view
 			dev->CreateRenderTargetView(backbuffer, NULL, &rtv);
@@ -393,7 +394,7 @@ namespace GamesEngineeringBase
 			bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_ALLOW_RAW_VIEWS;
 			dev->CreateBuffer(&bufferDesc, nullptr, &buffer);
 
-			//Create shader resource view
+			// Create shader resource view
 			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;
 			srvDesc.BufferEx.FirstElement = 0;
@@ -454,8 +455,8 @@ namespace GamesEngineeringBase
 			pixelShader.replace(startPos, widthConst.length(), widthStr);
 
 			// Compile the shaders
-			ID3DBlob* vshader;
-			ID3DBlob* pshader;
+			ID3DBlob *vshader;
+			ID3DBlob *pshader;
 			D3DCompile(
 				vertexShader.c_str(),
 				strlen(vertexShader.c_str()),
@@ -530,7 +531,7 @@ namespace GamesEngineeringBase
 		}
 
 		// Returns a pointer to the back buffer image data
-		unsigned char* backBuffer() const
+		unsigned char *backBuffer() const
 		{
 			return image;
 		}
@@ -554,7 +555,7 @@ namespace GamesEngineeringBase
 		}
 
 		// Draws a pixel at (x, y) using the color from the provided pixel array
-		void draw(int x, int y, unsigned char* pixel)
+		void draw(int x, int y, unsigned char *pixel)
 		{
 			int index = ((y * width) + x) * 3;
 			image[index] = pixel[0];
@@ -575,7 +576,7 @@ namespace GamesEngineeringBase
 			devcontext->UpdateSubresource(buffer, 0, nullptr, image, paddedDataSize, 0);
 
 			// Clear the render target view
-			float ClearColor[4] = { 0.0f, 0.0f, 1.0f, 1.0f }; // RGBA
+			float ClearColor[4] = {0.0f, 0.0f, 1.0f, 1.0f}; // RGBA
 			devcontext->ClearRenderTargetView(rtv, ClearColor);
 
 			// Draw the vertices
@@ -603,7 +604,7 @@ namespace GamesEngineeringBase
 		// Provide raw access to back buffer
 		// There are no checks done on this so any writes to this buffer should be within bounds
 		// Can be used for screenshots
-		unsigned char* getBackBuffer() const
+		unsigned char *getBackBuffer() const
 		{
 			return image;
 		}
@@ -731,16 +732,16 @@ namespace GamesEngineeringBase
 #define fourccDPDS 'sdpd'
 #endif
 
-// The Sound class handles loading and playing WAV audio files
+	// The Sound class handles loading and playing WAV audio files
 	class Sound
 	{
 	private:
-		XAUDIO2_BUFFER buffer;                   // Audio buffer
-		IXAudio2SourceVoice* sourceVoice[128];   // Array of source voices for playback
-		int index;                               // Current index for source voices
+		XAUDIO2_BUFFER buffer;				   // Audio buffer
+		IXAudio2SourceVoice *sourceVoice[128]; // Array of source voices for playback
+		int index;							   // Current index for source voices
 
 		// Helper function to find a chunk in the WAV file (from documentation)
-		HRESULT FindChunk(HANDLE hFile, DWORD fourcc, DWORD& dwChunkSize, DWORD& dwChunkDataPosition)
+		HRESULT FindChunk(HANDLE hFile, DWORD fourcc, DWORD &dwChunkSize, DWORD &dwChunkDataPosition)
 		{
 			HRESULT hr = S_OK;
 			if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, 0, NULL, FILE_BEGIN))
@@ -794,7 +795,7 @@ namespace GamesEngineeringBase
 		}
 
 		// Helper function to read chunk data from the WAV file
-		HRESULT ReadChunkData(HANDLE hFile, void* buffer, DWORD buffersize, DWORD bufferoffset)
+		HRESULT ReadChunkData(HANDLE hFile, void *buffer, DWORD buffersize, DWORD bufferoffset)
 		{
 			HRESULT hr = S_OK;
 			if (INVALID_SET_FILE_POINTER == SetFilePointer(hFile, bufferoffset, NULL, FILE_BEGIN))
@@ -807,9 +808,9 @@ namespace GamesEngineeringBase
 
 	public:
 		// Loads a WAV file into the audio buffer
-		bool loadWAV(IXAudio2* xaudio, std::string filename)
+		bool loadWAV(IXAudio2 *xaudio, std::string filename)
 		{
-			WAVEFORMATEXTENSIBLE wfx = { 0 };
+			WAVEFORMATEXTENSIBLE wfx = {0};
 			// Open the file
 			HANDLE hFile = CreateFileA(
 				filename.c_str(),
@@ -837,7 +838,7 @@ namespace GamesEngineeringBase
 
 			// Read the 'data' chunk to get the audio data
 			FindChunk(hFile, fourccDATA, dwChunkSize, dwChunkPosition);
-			BYTE* pDataBuffer = new BYTE[dwChunkSize];
+			BYTE *pDataBuffer = new BYTE[dwChunkSize];
 			ReadChunkData(hFile, pDataBuffer, dwChunkSize, dwChunkPosition);
 
 			// Fill the XAUDIO2_BUFFER structure
@@ -849,7 +850,7 @@ namespace GamesEngineeringBase
 			// Create multiple source voices for concurrent playback
 			for (int i = 0; i < 128; i++)
 			{
-				if (FAILED(hr = xaudio->CreateSourceVoice(&sourceVoice[i], (WAVEFORMATEX*)&wfx)))
+				if (FAILED(hr = xaudio->CreateSourceVoice(&sourceVoice[i], (WAVEFORMATEX *)&wfx)))
 				{
 					return false;
 				}
@@ -898,23 +899,23 @@ namespace GamesEngineeringBase
 		}
 
 		Sound() = default;
-		Sound(const Sound&) = delete;
-		Sound& operator=(const Sound&) = delete;
-		Sound(Sound&&) = delete;
-		Sound& operator=(Sound&&) = delete;
+		Sound(const Sound &) = delete;
+		Sound &operator=(const Sound &) = delete;
+		Sound(Sound &&) = delete;
+		Sound &operator=(Sound &&) = delete;
 	};
 
 	// The SoundManager class manages multiple Sound instances
 	class SoundManager
 	{
 	private:
-		IXAudio2* xaudio;                          // XAudio2 interface
-		IXAudio2MasteringVoice* xaudioMasterVoice; // Mastering voice
-		std::map<std::string, Sound*> sounds;      // Map of sounds
-		Sound* music = NULL;                              // Music sound
+		IXAudio2 *xaudio;						   // XAudio2 interface
+		IXAudio2MasteringVoice *xaudioMasterVoice; // Mastering voice
+		std::map<std::string, Sound *> sounds;	   // Map of sounds
+		Sound *music = NULL;					   // Music sound
 
 		// Helper function to find a sound by filename
-		Sound* find(std::string filename)
+		Sound *find(std::string filename)
 		{
 			auto it = sounds.find(filename);
 			if (it != sounds.end())
@@ -938,7 +939,7 @@ namespace GamesEngineeringBase
 		{
 			if (find(filename) == NULL)
 			{
-				Sound* sound = new Sound();
+				Sound *sound = new Sound();
 				if (sound->loadWAV(xaudio, filename))
 				{
 					sounds[filename] = sound;
@@ -949,7 +950,7 @@ namespace GamesEngineeringBase
 		// Plays a loaded sound effect
 		void play(std::string filename)
 		{
-			Sound* sound = find(filename);
+			Sound *sound = find(filename);
 			if (sound != NULL)
 			{
 				sound->play();
@@ -980,8 +981,8 @@ namespace GamesEngineeringBase
 	class Timer
 	{
 	private:
-		LARGE_INTEGER freq;   // Frequency of the performance counter
-		LARGE_INTEGER start;  // Starting time
+		LARGE_INTEGER freq;	 // Frequency of the performance counter
+		LARGE_INTEGER start; // Starting time
 
 	public:
 		// Constructor that initializes the frequency
@@ -1013,10 +1014,10 @@ namespace GamesEngineeringBase
 	class Image
 	{
 	public:
-		unsigned int width;       // Image width
-		unsigned int height;      // Image height
-		unsigned int channels;    // Number of color channels
-		unsigned char* data;      // Pointer to image data
+		unsigned int width;	   // Image width
+		unsigned int height;   // Image height
+		unsigned int channels; // Number of color channels
+		unsigned char *data;   // Pointer to image data
 
 		// Default constructor
 		Image()
@@ -1028,7 +1029,7 @@ namespace GamesEngineeringBase
 		}
 
 		// Move constructor
-		Image(Image&& other)
+		Image(Image &&other)
 		{
 			width = other.width;
 			height = other.height;
@@ -1041,7 +1042,7 @@ namespace GamesEngineeringBase
 		}
 
 		// Move assignment
-		Image& operator=(Image&& other)
+		Image &operator=(Image &&other)
 		{
 			if (this != &other)
 			{
@@ -1059,8 +1060,8 @@ namespace GamesEngineeringBase
 		}
 
 		// Remove copy constructors
-		Image(const Image&) = delete;
-		Image& operator=(const Image&) = delete;
+		Image(const Image &) = delete;
+		Image &operator=(const Image &) = delete;
 
 		// Loads an image from a file using WIC
 		bool load(std::string filename)
@@ -1073,7 +1074,7 @@ namespace GamesEngineeringBase
 			}
 
 			Microsoft::WRL::ComPtr<IWICBitmapDecoder> decoder;
-			IWICStream* stream = NULL;
+			IWICStream *stream = NULL;
 			factory->CreateStream(&stream);
 
 			std::wstring wFilename = std::wstring(filename.begin(), filename.end());
@@ -1086,7 +1087,7 @@ namespace GamesEngineeringBase
 			stream->Release();
 
 			frame->GetSize(&width, &height);
-			WICPixelFormatGUID pixelFormat = { 0 };
+			WICPixelFormatGUID pixelFormat = {0};
 			frame->GetPixelFormat(&pixelFormat);
 
 			channels = 0;
@@ -1122,10 +1123,11 @@ namespace GamesEngineeringBase
 			{
 				// Copy pixels directly if stride matches
 				frame->CopyPixels(0, stride, width * height * channels, data);
-			} else
+			}
+			else
 			{
 				// Handle images with padded stride
-				unsigned char* strideData = new unsigned char[stride * height];
+				unsigned char *strideData = new unsigned char[stride * height];
 				frame->CopyPixels(0, stride, width * height * channels, strideData);
 				for (unsigned int i = 0; i < height; i++)
 				{
@@ -1149,9 +1151,9 @@ namespace GamesEngineeringBase
 
 		// Returns a pointer to the pixel data at (x, y)
 		// Note, the bounds are handled via clamping
-		unsigned char* at(const unsigned int x, const unsigned int y) const
+		unsigned char *at(const unsigned int x, const unsigned int y) const
 		{
-			return &data[((std::min(y, height - 1) * width) + std::min(x, width  - 1)) * channels];
+			return &data[((std::min(y, height - 1) * width) + std::min(x, width - 1)) * channels];
 		}
 
 		// Returns the alpha value of the pixel at (x, y)
@@ -1174,7 +1176,7 @@ namespace GamesEngineeringBase
 
 		// Returns a pointer to the pixel data at (x, y)
 		// Note, no checks performed on x and y coordinates
-		unsigned char* atUnchecked(const unsigned int x, const unsigned int y) const
+		unsigned char *atUnchecked(const unsigned int x, const unsigned int y) const
 		{
 			return &data[((y * width) + x) * channels];
 		}
@@ -1217,21 +1219,21 @@ namespace GamesEngineeringBase
 	class XBoxController
 	{
 	private:
-		int ID = 0;                 // Controller ID
-		XINPUT_STATE state = {};    // Current state of the controller
-		float lX = 0;               // Left thumbstick X-axis value
-		float lY = 0;               // Left thumbstick Y-axis value
-		float rX = 0;               // Right thumbstick X-axis value
-		float rY = 0;               // Right thumbstick Y-axis value
-		float lT = 0;               // Left trigger value
-		float rT = 0;               // Right trigger value
+		int ID = 0;				 // Controller ID
+		XINPUT_STATE state = {}; // Current state of the controller
+		float lX = 0;			 // Left thumbstick X-axis value
+		float lY = 0;			 // Left thumbstick Y-axis value
+		float rX = 0;			 // Right thumbstick X-axis value
+		float rY = 0;			 // Right thumbstick Y-axis value
+		float lT = 0;			 // Left trigger value
+		float rT = 0;			 // Right trigger value
 
 	public:
 		// Constructor initializes the controller as inactive
 		XBoxController() { ID = -1; }
 
 		// Activates the controller with the given ID
-		void activate(int _ID) { ID = _ID; }
+		void tryActivate(int _ID) { ID = _ID; }
 
 		// Deactivates the controller
 		void deactivate() { ID = -1; }
@@ -1250,7 +1252,8 @@ namespace GamesEngineeringBase
 			{
 				lX = lX / lLen;
 				lY = lY / lLen;
-			} else
+			}
+			else
 			{
 				lX = 0;
 				lY = 0;
@@ -1263,7 +1266,8 @@ namespace GamesEngineeringBase
 				}
 				lLen = lLen - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE;
 				lLen = lLen / (32767 - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
-			} else
+			}
+			else
 			{
 				lLen = 0;
 			}
@@ -1284,7 +1288,8 @@ namespace GamesEngineeringBase
 				}
 				rLen = rLen - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE;
 				rLen = rLen / (32767 - XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE);
-			} else
+			}
+			else
 			{
 				rLen = 0;
 			}
@@ -1386,8 +1391,9 @@ namespace GamesEngineeringBase
 				memset(&state, 0, sizeof(XINPUT_STATE));
 				if (XInputGetState(i, &state) == 0)
 				{
-					controllers[i].activate(i);
-				} else
+					controllers[i].tryActivate(i);
+				}
+				else
 				{
 					controllers[i].deactivate();
 				}

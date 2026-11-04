@@ -2,10 +2,9 @@
 
 Grid::~Grid()
 {
-    for (int i = 0; i < itemList_.size(); ++i)
+    for (auto *node = itemList_.front(); node; node = node->next)
     {
-        if (itemList_[i])
-            delete itemList_[i];
+        delete node->data;
     }
 }
 
@@ -16,13 +15,12 @@ void Grid::addEntity(Entity *item)
 
 void Grid::removeEntity(const Entity *item)
 {
-    for (int i = 0; i < itemList_.size(); ++i)
+    for (auto *node = itemList_.front(); node; node = node->next)
     {
-        if (itemList_[i] == item)
+        if (node->data == item)
         {
-            // do not delete the item(ItemEntity *), just remove it from the list。
-            // all memory management of the item is handled in ~Grid().
-            itemList_.removeAt(i);
+            // Remove only the node; the entity may be moved to another grid.
+            itemList_.removeNode(node);
             break;
         }
     }
@@ -94,13 +92,13 @@ void GridSystem::getCandidateListByGrids(
         if (!gridPtr)
             continue;
 
-        int len = gridPtr->itemList().size();
         auto &itemList = gridPtr->itemList();
-        for (int j = 0; j < len; j++)
+        for (auto *node = itemList.front(); node; node = node->next)
         {
-            if (!itemList[j] || itemList[j] == detectedItem)
+            auto *item = node->data;
+            if (!item || item == detectedItem)
                 continue;
-            candidateItemList.pushBack(itemList[j]);
+            candidateItemList.pushBack(item);
         }
     }
 }
@@ -184,7 +182,8 @@ void GridSystem::removeEntity(int rowIdx, int colIdx, Entity *item)
     }
 }
 
-void GridSystem::changeEntityGrid(Entity *item, GEB::Vec2 oldCenter, GEB::Vec2 newCenter)
+void GridSystem::changeEntityGrid(Entity *item,
+                                  GEB::Vec2 oldCenter, GEB::Vec2 newCenter)
 {
     // remove
     auto [oldRowIdx, oldColIdx] = getGridIdxPair(oldCenter);

@@ -132,22 +132,22 @@ void ItemEntity::renderDefault(World &world)
 void ItemEntity::moveUp(float distance, float topBoundary)
 {
     float resPos = y_ - distance;
-    y_ = std::min(y_, std::max(resPos, topBoundary));
+    y_ = std::max(resPos, topBoundary);
 }
 void ItemEntity::moveDown(float distance, float bottomBoundary)
 {
     float resPos = y_ + distance;
-    y_ = std::max(y_, std::min(resPos, bottomBoundary - height_));
+    y_ = std::min(resPos, bottomBoundary - height_);
 }
 void ItemEntity::moveLeft(float distance, float leftBoundary)
 {
     float resPos = x_ - distance;
-    x_ = std::min(x_, std::max(resPos, leftBoundary));
+    x_ = std::max(resPos, leftBoundary);
 }
 void ItemEntity::moveRight(float distance, float rightBoundary)
 {
     float resPos = x_ + distance;
-    x_ = std::max(x_, std::min(resPos, rightBoundary - width_));
+    x_ = std::min(resPos, rightBoundary - width_);
 }
 
 void ItemEntity::calculateBoundaryTop(GEB::Boundary &boundary, const Entity *barrierItem)
@@ -322,6 +322,8 @@ void ItemEntity::processAttack(World &world, Layer &layer)
         attack->tryHit(world, layer);
     }
 }
+
+void ItemEntity::handleMovement(World &world, Layer &layer) {}
 
 void ItemEntity::onAttacked(const Attack *atk, const AttackInfo &attackInfo)
 {

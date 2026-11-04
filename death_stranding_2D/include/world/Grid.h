@@ -1,7 +1,7 @@
 #pragma once
 
-#include "entities/ItemEntity.h"
 #include "structure/Array.h"
+#include "structure/DoublyLinkedList.h"
 #include "core/Types.h"
 #include "entities/AABB.h"
 
@@ -15,10 +15,10 @@ public:
 
     void removeEntity(const Entity *item);
 
-    inline GEB::Structures::Array<Entity *> &itemList() { return itemList_; }
+    inline GEB::Structures::DoublyLinkedList<Entity *> &itemList() { return itemList_; }
 
 private:
-    GEB::Structures::Array<Entity *> itemList_;
+    GEB::Structures::DoublyLinkedList<Entity *> itemList_;
 };
 
 class GridSystem
@@ -69,7 +69,8 @@ private:
 
     GEB::Structures::Array<Grid> gridMap_;
     /**
-     * just a copy of the items that need to be updated.
+     * just a copy of the items.
+     * Used to update in a loop.
      * the memory of items that Entity * points to is managed by the Grid.
      */
     GEB::Structures::Array<Entity *> itemsToUpdate_;

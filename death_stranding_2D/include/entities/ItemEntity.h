@@ -16,7 +16,6 @@ class Attack;
 class AttackInfo;
 class Potion;
 
-// ItemEntity is used to anything which should consider collision.
 class ItemEntity : public Entity
 {
 public:
@@ -78,9 +77,9 @@ public:
     virtual bool canAttackTarget(const ItemEntity *target) const { return true; }
     virtual void onTargetDefeated(const ItemEntity &target) {}
 
-    virtual void processAttack(World &world, Layer &layer);
     virtual void processSkill(World &world, Layer &layer);
-    virtual void handleMovement(World &world, Layer &layer) {};
+    virtual void handleMovement(World &world, Layer &layer);
+    virtual void processAttack(World &world, Layer &layer);
     virtual void tryTriggerSkills(World &world, Layer &layer);
     virtual void tryTriggerAttacks(World &world, Layer &layer);
     virtual AttackInfo createAttackInfo(Attack *attack) { return AttackInfo{}; };

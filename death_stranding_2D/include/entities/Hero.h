@@ -7,7 +7,6 @@ enum class HeroType
 {
     Swordsman,
     Archer,
-    Mage,
 };
 
 struct HeroInfo

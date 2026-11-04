@@ -12,7 +12,6 @@ enum AssetId
     Cover = 4,
     SwordsmanSprite = 5,
     ArcherSprite = 6,
-    MageSprite = 7,
     BeastSprite = 8,
     GhostSprite = 9,
 };

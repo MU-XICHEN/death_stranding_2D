@@ -155,7 +155,6 @@
     <ClCompile Include="src\entities\Hero.cpp" />
     <ClCompile Include="src\entities\Swordsman.cpp" />
     <ClCompile Include="src\entities\Archer.cpp" />
-    <ClCompile Include="src\entities\Mage.cpp" />
     <ClCompile Include="src\entities\InfoEntity.cpp" />
     <ClCompile Include="src\entities\Monster.cpp" />
     <ClCompile Include="src\entities\MonsterNest.cpp" />
@@ -197,7 +196,6 @@
     <ClInclude Include="include\entities\Hero.h" />
     <ClInclude Include="include\entities\Swordsman.h" />
     <ClInclude Include="include\entities\Archer.h" />
-    <ClInclude Include="include\entities\Mage.h" />
     <ClInclude Include="include\entities\InfoEntity.h" />
     <ClInclude Include="include\entities\HealthPotion.h" />
     <ClInclude Include="include\entities\ManaPotion.h" />

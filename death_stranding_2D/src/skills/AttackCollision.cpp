@@ -2,8 +2,22 @@
 #include "skills/AttackInfo.h"
 #include "layers/MainLayer.h"
 
+void AttackCollision::tryBegin(World &world, Layer &layer)
+{
+    if (!owner_)
+        return;
+    if (!owner_->active())
+        return;
+    begin();
+}
+
 void AttackCollision::tryHit(World &world, Layer &layer)
 {
+    if (!owner_)
+        return;
+    if (!owner_->active())
+        return;
+
     auto &mainLayer = dynamic_cast<MainLayer &>(layer);
     auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
     auto *gridSystem = playStage.gridSystem();
@@ -28,24 +42,26 @@ void AttackCollision::tryHit(World &world, Layer &layer)
     GEB::Structures::Array<Entity *> candidateItemList;
     gridSystem->getCandidateListByAABB(owner_, aabb, candidateItemList);
 
-    if (!(candidateItemList.size() > 0))
-        return;
-
     for (int i = 0; i < candidateItemList.size(); ++i)
     {
-        if (!candidateItemList[i])
+        auto *targetItem = dynamic_cast<ItemEntity *>(candidateItemList[i]);
+        if (!targetItem)
+            continue;
+        if (!targetItem->active())
+            continue;
+        if (targetItem == owner_)
+            continue;
+        if (!aabb.intersects(*targetItem))
             continue;
 
-        auto *entity = candidateItemList[i];
-        if (!entity)
+        auto targetId = reinterpret_cast<std::uintptr_t>(targetItem);
+        if (hitTargets_.contains(targetId))
             continue;
 
-        if (aabb.intersects(*entity))
-        {
-            auto *item = dynamic_cast<ItemEntity *>(entity);
-            if (!item)
-                return;
-            hitTarget(*item, atkInfo);
-        }
+        hitTarget(*targetItem, atkInfo);
+        hitTargets_.insert(targetId);
+
+        // reset the elapsed time for the next contact cooldown.
+        elapsedTime_ = 0.0f;
     }
 }

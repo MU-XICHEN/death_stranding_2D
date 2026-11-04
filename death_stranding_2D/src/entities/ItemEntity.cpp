@@ -44,6 +44,30 @@ void ItemEntity::coreUpdate(World &world, Layer &layer)
 
 void ItemEntity::render(World &world, Layer &layer)
 {
+    if (!active())
+        return;
+
+    // Draw the entity using its assigned sprite, if any.
+    auto asset = spriteAsset();
+    if (asset == AssetId::None)
+        renderDefault(world);
+    else
+        renderSprite(world, asset);
+
+    // Draw active attack effects after the entity.
+    for (int i = 0; i < attacks_.size(); ++i)
+    {
+        auto *attack = attacks_[i];
+        if (!attack)
+            continue;
+        if (!attack->isActive())
+            continue;
+        attack->render(world, layer);
+    }
+}
+
+void ItemEntity::renderDefault(World &world)
+{
     const Viewport &viewport = world.gameInfo().viewport();
     auto &canvas = world.canvas();
     const int visibleWidth = viewport.width();
@@ -73,14 +97,6 @@ void ItemEntity::render(World &world, Layer &layer)
                         color_.g,
                         color_.b);
         }
-    }
-
-    // draw attacks effects
-    for (int i = 0; i < attacks_.size(); i++)
-    {
-        if (!attacks_[i] || !(attacks_[i]->isActive()))
-            continue;
-        attacks_[i]->render(world, layer);
     }
 
     // draw state
@@ -272,6 +288,17 @@ void ItemEntity::processSkill(World &world, Layer &layer)
     }
 }
 
+void ItemEntity::tryTriggerAttacks(World &world, Layer &layer)
+{
+    for (int i = 0; i < attacks_.size(); ++i)
+    {
+        auto *attack = attacks_[i];
+        if (!attack)
+            continue;
+        attack->tryBegin(world, layer);
+    }
+}
+
 void ItemEntity::processAttack(World &world, Layer &layer)
 {
     for (int i = 0; i < attacks_.size(); i++)
@@ -318,4 +345,90 @@ bool ItemEntity::onUsePotion(Potion *potion)
 {
     // If entity consumed the potion, return true;
     return false;
+}
+
+int spriteFrame(GEB::Direction direction)
+{
+    switch (direction)
+    {
+    case GEB::Direction::Up:
+        return 0;
+    case GEB::Direction::UpRight:
+        return 1;
+    case GEB::Direction::Right:
+        return 2;
+    case GEB::Direction::DownRight:
+        return 3;
+    case GEB::Direction::Down:
+        return 4;
+    case GEB::Direction::DownLeft:
+        return 5;
+    case GEB::Direction::Left:
+        return 6;
+    case GEB::Direction::UpLeft:
+        return 7;
+    default:
+        return 4;
+    }
+}
+
+void ItemEntity::renderSprite(World &world, AssetId asset)
+{
+    auto &canvas = world.canvas();
+    auto *sheet = world.assetManager().getImage(asset);
+    if (!sheet)
+        return;
+
+    auto *buffer = canvas.getBackBuffer();
+    if (!buffer)
+        return;
+
+    // Validate the eight-direction sheet and target size.
+    int frameSize = ROLE_SIZE;
+    int sheetColumns = 4;
+    int sheetRows = 2;
+    if (sheet->width != frameSize * sheetColumns)
+        return;
+    if (sheet->height != frameSize * sheetRows)
+        return;
+
+    int width = width_;
+    int height = height_;
+
+    // Select the frame for the current direction.
+    int frame = spriteFrame(direction_);
+    int sourceLeft = (frame % sheetColumns) * frameSize;
+    int sourceTop = (frame / sheetColumns) * frameSize;
+
+    // Convert world coordinates to screen coordinates.
+    auto &viewport = world.gameInfo().viewport();
+    int left = static_cast<int>(x_ - viewport.x());
+    int top = static_cast<int>(y_ - viewport.y());
+    int canvasWidth = static_cast<int>(canvas.getWidth());
+    int visibleWidth = std::min(viewport.width(), canvasWidth);
+    int visibleHeight = std::min(viewport.height(), static_cast<int>(canvas.getHeight()));
+
+    // Clip drawing to the visible area.
+    int drawLeft = std::max(0, left);
+    int drawTop = std::max(0, top);
+    int drawRight = std::min(visibleWidth, left + width);
+    int drawBottom = std::min(visibleHeight, top + height);
+    if (drawLeft >= drawRight)
+        return;
+    if (drawTop >= drawBottom)
+        return;
+
+    // Draw the sprite frame for the current direction.
+    for (int y = drawTop; y < drawBottom; ++y)
+    {
+        int sourceY = sourceTop + (y - top) * frameSize / height;
+        for (int x = drawLeft; x < drawRight; ++x)
+        {
+            int sourceX = sourceLeft + (x - left) * frameSize / width;
+            int alpha = sheet->alphaAt(sourceX, sourceY);
+            auto *pixel = sheet->at(sourceX, sourceY);
+            auto *destination = buffer + (y * canvasWidth + x) * 3;
+            GEB::Utils::blendPixel(destination, pixel, alpha);
+        }
+    }
 }

@@ -36,8 +36,6 @@ public:
     virtual ~Hero();
 
     void update(World &world, Layer &layer) override;
-    void render(World &world, Layer &layer) override;
-    void tryTriggerAttacks(World &world, Layer &layer) override;
     void tryTriggerSkills(World &world, Layer &layer) override;
     void handleMovement(World &world, Layer &layer) override;
     AttackInfo createAttackInfo(Attack *attack) override = 0;
@@ -47,7 +45,7 @@ public:
     int defeatedMonsterCount() const { return defeatedMonsterCount_; }
 
 protected:
-    virtual AssetId spriteAsset() const = 0;
+    AssetId spriteAsset() const override = 0;
 
 private:
     HeroImpl *impl_;

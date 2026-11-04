@@ -158,6 +158,7 @@
     <ClCompile Include="src\entities\Mage.cpp" />
     <ClCompile Include="src\entities\InfoEntity.cpp" />
     <ClCompile Include="src\entities\Monster.cpp" />
+    <ClCompile Include="src\entities\Beast.cpp" />
     <ClCompile Include="src\entities\Potion.cpp" />
     <ClCompile Include="src\entities\Track.cpp" />
     <ClCompile Include="src\entities\Ghost.cpp" />

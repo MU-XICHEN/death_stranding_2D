@@ -15,6 +15,8 @@ public:
     virtual void handleMovement(World &world, Layer &layer) override;
 
 protected:
+    AssetId spriteAsset() const override = 0;
+
     static GEB::Direction transDirVecToDiretion(const GEB::Vec2 &dirVec, GEB::Direction prevDirection);
     static inline GEB::Vec2 calculateDirVecToHero(GEB::Vec2 monsterCenter, GEB::Vec2 heroCenter)
     {
@@ -32,41 +34,23 @@ protected:
 class Beast : public Monster
 {
 public:
-    Beast(float x, float y, int width, int height)
-        : Monster(x, y, width, height)
-    {
-        // initialize states
-        GEB::Pair<int, float> props[] = {
-            {State::HEALTH, M_BEAST_HP},
-            {State::SCORE, M_BEAST_SCORE},
-            {State::SPEED, M_BEAST_PIXEL_PER_SEC},
-            {State::PERCEPTION_RANGE, M_BEAST_DANGER_DISTANCE},
-            {State::DEFENSE, M_BEAST_DEFENSE},
-            {State::DAMAGE, M_BEAST_DAMAGE}};
-        initializeState(props, sizeof(props) / sizeof(props[0]));
-    }
+    Beast(float x, float y, int width = ROLE_SIZE, int height = ROLE_SIZE);
+    AttackInfo createAttackInfo(Attack *attack) override;
+
+protected:
+    AssetId spriteAsset() const override { return AssetId::BeastSprite; }
 };
 
 class Ghost : public Monster
 {
 public:
-    Ghost(float x, float y, int width, int height)
-        : Monster(x, y, width, height)
-    {
-        // initialize states
-        GEB::Pair<int, float> props[] = {
-            {State::HEALTH, M_GHOST_HP},
-            {State::SCORE, M_GHOST_SCORE},
-            {State::SPEED, M_GHOST_PIXEL_PER_SEC},
-            {State::PERCEPTION_RANGE, M_GHOST_DANGER_DISTANCE},
-            {State::DEFENSE, M_GHOST_DEFENSE},
-            {State::DAMAGE, M_GHOST_DAMAGE}};
-        initializeState(props, sizeof(props) / sizeof(props[0]));
-    }
+    Ghost(float x, float y, int width = ROLE_SIZE, int height = ROLE_SIZE);
+    AttackInfo createAttackInfo(Attack *attack) override;
 
     void render(World &world, Layer &layer) override;
 
 protected:
+    AssetId spriteAsset() const override { return AssetId::GhostSprite; }
     virtual void checkDangerDistance(World &world, Layer &layer) override;
 
 private:

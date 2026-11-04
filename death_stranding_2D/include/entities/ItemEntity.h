@@ -6,6 +6,7 @@
 #include "utils/Utils.h"
 #include "skills/Attack.h"
 #include "skills/Skill.h"
+#include "world/AssetManager.h"
 
 struct MapInfo;
 
@@ -80,7 +81,7 @@ public:
     virtual void processSkill(World &world, Layer &layer);
     virtual void handleMovement(World &world, Layer &layer) {};
     virtual void tryTriggerSkills(World &world, Layer &layer) {};
-    virtual void tryTriggerAttacks(World &world, Layer &layer) {};
+    virtual void tryTriggerAttacks(World &world, Layer &layer);
     virtual AttackInfo createAttackInfo(Attack *attack) { return AttackInfo{}; };
 
     void coreUpdate(World &world, Layer &layer);
@@ -91,6 +92,9 @@ public:
     virtual bool onUsePotion(Potion *portion);
 
 protected:
+    virtual AssetId spriteAsset() const { return AssetId::None; }
+    void renderSprite(World &world, AssetId asset);
+
     GEB::Color color_{0, 0, 0};
     State state_;
     GEB::Direction direction_ = GEB::Direction::Down;
@@ -99,5 +103,6 @@ protected:
     GEB::Structures::Array<Skill *> skills_;
 
 private:
+    void renderDefault(World &world);
     bool deactivateIfNeeded(Layer &layer);
 };

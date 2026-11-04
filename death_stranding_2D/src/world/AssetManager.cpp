@@ -8,6 +8,8 @@ AssetId initialAssetIds[] = {
     AssetId::SwordsmanSprite,
     AssetId::ArcherSprite,
     AssetId::MageSprite,
+    AssetId::BeastSprite,
+    AssetId::GhostSprite,
 };
 
 const char *getAssetPath(AssetId id)
@@ -28,6 +30,10 @@ const char *getAssetPath(AssetId id)
         return "assets/character/archer/archer-8-directions-96.png";
     case AssetId::MageSprite:
         return "assets/character/mage/mage-8-directions-96.png";
+    case AssetId::BeastSprite:
+        return "assets/monsters/werewolf/werewolf-8-directions-96.png";
+    case AssetId::GhostSprite:
+        return "assets/monsters/ghost/ghost-8-directions-96.png";
     default:
         return nullptr;
     }

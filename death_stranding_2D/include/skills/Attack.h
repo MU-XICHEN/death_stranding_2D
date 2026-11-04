@@ -25,6 +25,7 @@ public:
     void begin();
 
     virtual void end();
+    // If the attack is not triggered by pressing key, implement this.
     virtual void tryBegin(World &world, Layer &layer);
     virtual void render(World &world, Layer &layer) = 0;
 

@@ -3,17 +3,20 @@
 #include "entities/Hero.h"
 #include "entities/Swordsman.h"
 #include "entities/Archer.h"
-#include "entities/Mage.h"
 #include "entities/InfoEntity.h"
 #include "entities/Monster.h"
+#include "entities/MonsterNest.h"
 #include "map/Map.h"
 #include "layers/MainLayer.h"
 #include "world/World.h"
 #include "skills/SkillSpeedUp.h"
+#include "skills/SkillCreateMonster.h"
 #include "entities/HealthPotion.h"
 #include "entities/ManaPotion.h"
 #include "entities/Track.h"
 #include "skills/AttackCollision.h"
+
+bool overlaps(const Entity &obstacle, float x, float y, int width, int height);
 
 PlayStage::PlayStage(HeroType heroType)
     : heroType_(heroType)
@@ -53,9 +56,6 @@ void PlayStage::initialize()
     case HeroType::Archer:
         hero_ = new Archer(entrance.x, entrance.y);
         break;
-    case HeroType::Mage:
-        hero_ = new Mage(entrance.x, entrance.y);
-        break;
     case HeroType::Swordsman:
     default:
         hero_ = new Swordsman(entrance.x, entrance.y);
@@ -64,29 +64,106 @@ void PlayStage::initialize()
     hero_->addSkill(new SkillSpeedUp('U'));
     addEntityToGridSystem(hero_);
     pushEntity(new InfoEntity(*hero_));
+
+    float nestX = (map_->width() - ROLE_SIZE) / 2.0f;
+    float nestY = (map_->height() - ROLE_SIZE) / 2.0f;
+    auto *nest = new MonsterNest(nestX, nestY);
+    addEntityNextFrame(nest);
 }
 
-GEB::Pair<int, int> getGridIndex(float x, float y)
+bool PlayStage::canPlaceEntity(const ItemEntity &item, float x, float y) const
 {
-    GEB::Pair<int, int> index;
-    int rolIdx = GEB::Math::floorToInt(y / GRID_SIZE);
-    int corIdx = GEB::Math::floorToInt(x / GRID_SIZE);
+    if (x < 0 || y < 0)
+        return false;
+    if (x + item.width() > map_->width())
+        return false;
+    if (y + item.height() > map_->height())
+        return false;
 
-    index.first = rolIdx;
-    index.second = corIdx;
-    return index;
+    // Check map obstacles.
+    auto &tiles = map_->tileBlocks();
+    for (int i = 0; i < tiles.size(); ++i)
+    {
+        if (overlaps(tiles[i], x, y, item.width(), item.height()))
+            return false;
+    }
+
+    // Check existing entities.
+    auto &items = gridSystem_->itemsToUpdate();
+    for (int i = 0; i < items.size(); ++i)
+    {
+        auto *existing = items[i];
+        if (!existing || existing == &item)
+            continue;
+        if (!existing->active())
+            continue;
+        if (overlaps(*existing, x, y, item.width(), item.height()))
+            return false;
+    }
+    return true;
 }
 
-void PlayStage::addEntityToGridSystem(ItemEntity *item)
+bool PlayStage::findAvailablePosition(const ItemEntity &item, GEB::Vec2 &position) const
 {
-    if (!gridSystem_ || !item)
-        return;
+    if (item.width() <= 0 || item.height() <= 0)
+        return false;
+    if (item.width() > map_->width() || item.height() > map_->height())
+        return false;
+    // Start near the entity that requested the spawn, inside the map.
+    float startX = item.x();
+    float startY = item.y();
+    float maxX = static_cast<float>(map_->width() - item.width());
+    float maxY = static_cast<float>(map_->height() - item.height());
+    startX = std::min(std::max(startX, 0.0f), maxX);
+    startY = std::min(std::max(startY, 0.0f), maxY);
 
-    // todo: adjust item's position by checking this position is already occupied.
+    if (canPlaceEntity(item, startX, startY))
+    {
+        position = {startX, startY};
+        return true;
+    }
 
-    auto center = item->center();
-    auto indexPair = getGridIndex(center.x, center.y);
-    gridSystem_->addEntity(indexPair.first, indexPair.second, item);
+    // Walk each ring clockwise from its top-left corner, up to three rings.
+    GEB::Vec2 directions[] = {
+        {1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+    float step = ROLE_SIZE;
+    for (int ring = 1; ring <= 2; ++ring)
+    {
+        float distance = ring * step;
+        GEB::Vec2 candidate{startX - distance, startY - distance};
+        for (int side = 0; side < 4; ++side)
+        {
+            for (int i = 0; i < ring * 2; ++i)
+            {
+                if (canPlaceEntity(item, candidate.x, candidate.y))
+                {
+                    position = candidate;
+                    return true;
+                }
+
+                candidate.x += directions[side].x * step;
+                candidate.y += directions[side].y * step;
+            }
+        }
+    }
+    return false;
+}
+
+bool PlayStage::addEntityToGridSystem(ItemEntity *item)
+{
+    if (!gridSystem_ || !map_)
+        return false;
+    if (!item)
+        return false;
+
+    GEB::Vec2 position;
+    if (!findAvailablePosition(*item, position))
+        return false;
+
+    item->setPos(position.x, position.y);
+    auto [row, col] = gridSystem_->getGridIdxPair(item->center());
+    gridSystem_->addEntity(row, col, item);
+    return true;
 }
 
 void PlayStage::addEntityNextFrame(ItemEntity *itemEntity)
@@ -162,9 +239,15 @@ void PlayStage::renderFinished(World &world, Layer &layer)
     gridSystem_->clearInactiveItems();
 
     // Newly generated entities begin updating in the next frame.
-    for (int i = 0; i < entitiesNextFrame_.size(); ++i)
-        addEntityToGridSystem(entitiesNextFrame_[i]);
-    entitiesNextFrame_.clear();
+    for (int i = 0; i < entitiesNextFrame_.size();)
+    {
+        if (!addEntityToGridSystem(entitiesNextFrame_[i]))
+        {
+            ++i;
+            continue;
+        }
+        entitiesNextFrame_.removeAt(i);
+    }
 
     changeChapterIfNeed(world);
 }
@@ -204,6 +287,10 @@ void PlayStage::changeChapterIfNeed(World &world)
     }
 
     // Manage the memory of old map and grid system.
+    for (int i = 0; i < entitiesNextFrame_.size(); ++i)
+        delete entitiesNextFrame_[i];
+    entitiesNextFrame_.clear();
+
     const auto [row, col] = gridSystem_->getGridIdxPair(hero_->center());
     gridSystem_->removeEntity(row, col, hero_);
     delete gridSystem_;
@@ -220,4 +307,18 @@ void PlayStage::changeChapterIfNeed(World &world)
     world.gameInfo().updateHeroInfo(heroInfo);
     world.gameInfo().updateViewport(heroInfo, world.gameInfo().mapInfo());
     changeMapFlag_ = false;
+}
+
+bool overlaps(const Entity &obstacle, float x, float y, int width, int height)
+{
+    // Touching edges are allowed; only occupied area counts as overlap.
+    if (x + width <= obstacle.x())
+        return false;
+    if (x >= obstacle.x() + obstacle.width())
+        return false;
+    if (y + height <= obstacle.y())
+        return false;
+    if (y >= obstacle.y() + obstacle.height())
+        return false;
+    return true;
 }

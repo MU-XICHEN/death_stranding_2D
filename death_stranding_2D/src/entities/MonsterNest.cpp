@@ -1,4 +1,7 @@
 #include "entities/MonsterNest.h"
+#include "entities/Hero.h"
+#include "entities/Monster.h"
+#include "skills/SkillCreateMonster.h"
 
 MonsterNest::MonsterNest(float x, float y, int width, int height)
     : ItemEntity(x, y, width, height)
@@ -9,6 +12,13 @@ MonsterNest::MonsterNest(float x, float y, int width, int height)
     };
     initializeState(props, sizeof(props) / sizeof(props[0]));
     setColor(128, 80, 48);
+
+    addSkill(new SkillCreateMonster<Beast>(3.0f, 10));
+}
+
+bool MonsterNest::canAttackTarget(const ItemEntity *target) const
+{
+    return dynamic_cast<const Hero *>(target) != nullptr;
 }
 
 void MonsterNest::update(World &world, Layer &layer)

@@ -27,7 +27,9 @@ public:
 
 private:
     HeroType heroType_;
-    void addEntityToGridSystem(ItemEntity *itemEntity);
+    bool addEntityToGridSystem(ItemEntity *itemEntity);
+    bool findAvailablePosition(const ItemEntity &item, GEB::Vec2 &position) const;
+    bool canPlaceEntity(const ItemEntity &item, float x, float y) const;
     bool checkChangeChapter() const;
     void changeChapterIfNeed(World &world);
 

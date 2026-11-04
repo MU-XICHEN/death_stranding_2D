@@ -5,12 +5,15 @@
 #include "layers/MainLayer.h"
 #include "stages/Play.h"
 
-template <typename MonsterType, int monsterSize, float nestX, float nestY>
+template <typename MonsterType, int monsterSize = ROLE_SIZE>
 class SkillCreateMonster : public Skill
 {
 public:
-    SkillCreateMonster(float duration, int maxCount)
-        : Skill(-1, duration), maxMonsterCount_(maxCount) {}
+    // A negative maxCount keeps generating monsters without a count limit.
+    SkillCreateMonster(float duration, int maxCount = -1)
+        : Skill(-1, duration), maxMonsterCount_(maxCount)
+    {
+    }
 
     void tryActivate(World &world, Layer &layer, State &targetState) override
     {
@@ -18,15 +21,19 @@ public:
             return;
         if (active_)
             return;
-        if (generatedCount >= maxMonsterCount_)
+        if (maxMonsterCount_ >= 0 && generatedCount >= maxMonsterCount_)
             return;
 
         auto &mainLayer = dynamic_cast<MainLayer &>(layer);
         auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
 
         active_ = true;
-        playStage.addEntityNextFrame(new MonsterType(nestX, nestY, monsterSize, monsterSize));
-        generatedCount++;
+        auto center = owner_->center();
+        float x = center.x - monsterSize / 2.0f;
+        float y = center.y - monsterSize / 2.0f;
+        playStage.addEntityNextFrame(new MonsterType(x, y, monsterSize, monsterSize));
+        if (maxMonsterCount_ >= 0)
+            generatedCount++;
     }
 
     void deactivate(State &targetState) override

@@ -45,11 +45,11 @@ void AttackCollision::tryHit(World &world, Layer &layer)
     for (int i = 0; i < candidateItemList.size(); ++i)
     {
         auto *targetItem = dynamic_cast<ItemEntity *>(candidateItemList[i]);
-        if (!targetItem)
-            continue;
-        if (!targetItem->active())
+        if (!targetItem || !targetItem->active())
             continue;
         if (targetItem == owner_)
+            continue;
+        if (!owner_->canAttackTarget(targetItem))
             continue;
         if (!aabb.intersects(*targetItem))
             continue;

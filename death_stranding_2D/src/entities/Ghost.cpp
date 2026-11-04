@@ -24,7 +24,7 @@ AttackInfo Ghost::createAttackInfo(Attack *attack)
         return AttackInfo{};
 
     GEB::Pair<int, float> props[] = {
-        {AttackInfo::Damage, state_.damage()},
+        {AttackInfo::Damage, state_.collisionDamage()},
         {AttackInfo::Duration, 0.5f},
         {AttackInfo::HitStartTime, 0.0f},
         {AttackInfo::HitEndTime, 0.5f},

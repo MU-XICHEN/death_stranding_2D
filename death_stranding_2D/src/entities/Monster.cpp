@@ -1,4 +1,5 @@
 #include "entities/Monster.h"
+#include "entities/Hero.h"
 #include "core/GameBase.h"
 #include "world/World.h"
 #include "world/Grid.h"
@@ -13,6 +14,11 @@ void calculateDotAndDir(GEB::Direction &bestDir, float &dot, float newDot)
         dot = newDot;
         bestDir = dir;
     }
+}
+
+bool Monster::canAttackTarget(const ItemEntity *target) const
+{
+    return dynamic_cast<const Hero *>(target) != nullptr;
 }
 
 GEB::Direction Monster::transDirVecToDiretion(const GEB::Vec2 &dirVec, GEB::Direction prevDirection)
@@ -98,8 +104,8 @@ void Monster::handleMovement(World &world, Layer &layer)
 
     // add map tiles which may collide with the hero to the candidate list
     stageMap->addCollisionTileToCandiListByDisVec(this,
-                                                        distanceVec,
-                                                        candidateItemList);
+                                                  distanceVec,
+                                                  candidateItemList);
 
     moveWithCollision(distanceVec, map, candidateItemList.head(), candidateItemList.size());
 

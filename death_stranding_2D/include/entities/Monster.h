@@ -13,6 +13,7 @@ public:
 
     virtual void update(World &world, Layer &layer) override;
     virtual void handleMovement(World &world, Layer &layer) override;
+    bool canAttackTarget(const ItemEntity *target) const override;
 
 protected:
     AssetId spriteAsset() const override = 0;

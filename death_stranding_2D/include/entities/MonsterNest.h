@@ -9,4 +9,5 @@ public:
     virtual ~MonsterNest() = default;
 
     void update(World &world, Layer &layer) override;
+    bool canAttackTarget(const ItemEntity *target) const override;
 };

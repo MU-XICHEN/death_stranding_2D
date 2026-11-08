@@ -49,10 +49,10 @@ void ItemEntity::render(World &world, Layer &layer)
 
     // Draw the entity using its assigned sprite, if any.
     auto asset = spriteAsset();
-    if (asset == AssetId::None)
-        renderDefault(world);
-    else
+    if (asset != AssetId::None)
         renderSprite(world, asset);
+
+    renderStateInfo(world);
 
     // Draw active attack effects after the entity.
     for (int i = 0; i < attacks_.size(); ++i)
@@ -66,7 +66,7 @@ void ItemEntity::render(World &world, Layer &layer)
     }
 }
 
-void ItemEntity::renderDefault(World &world)
+void ItemEntity::renderStateInfo(World &world)
 {
     const Viewport &viewport = world.gameInfo().viewport();
     auto &canvas = world.canvas();
@@ -80,32 +80,13 @@ void ItemEntity::renderDefault(World &world)
         xRelativeToViewport + width_ <= 0 || yRelativeToViewport + height_ <= 0)
         return;
 
-    for (int y = 0; y < height_; y++)
-    {
-        for (int x = 0; x < width_; x++)
-        {
-            float targetX = xRelativeToViewport + x;
-            float targetY = yRelativeToViewport + y;
-
-            if (targetX < 0 || targetY < 0 ||
-                targetX >= visibleWidth || targetY >= visibleHeight)
-                continue;
-
-            canvas.draw(static_cast<int>(targetX),
-                        static_cast<int>(targetY),
-                        color_.r,
-                        color_.g,
-                        color_.b);
-        }
-    }
-
     // draw state
     if (state_.health() >= 0)
     {
         auto &textRenderer = world.textRenderer();
         auto targetX = static_cast<int>(xRelativeToViewport);
         auto targetY = static_cast<int>(yRelativeToViewport);
-        std::string healthText = std::to_string(static_cast<int>(state_.health()));
+        std::string healthText = "HP: " + std::to_string(static_cast<int>(state_.health()));
         textRenderer.drawString(
             world,
             healthText.c_str(),
@@ -118,7 +99,7 @@ void ItemEntity::renderDefault(World &world)
         auto &textRenderer = world.textRenderer();
         auto targetX = static_cast<int>(xRelativeToViewport);
         auto targetY = static_cast<int>(yRelativeToViewport) + GEB::TextSizeH::TEXT_SIZE_H_SMALL + ROLE_HP_TEXT_SEP;
-        std::string manaText = std::to_string(static_cast<int>(state_.mana()));
+        std::string manaText = "MP: " + std::to_string(static_cast<int>(state_.mana()));
         textRenderer.drawString(
             world,
             manaText.c_str(),

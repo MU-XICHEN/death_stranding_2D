@@ -42,7 +42,6 @@ Hero::Hero(
         {State::SPEED, HERO_PIXEL_PER_SEC},
         {State::PERCEPTION_RANGE, HERO_DANGER_DISTANCE},
         {State::DEFENSE, HERO_DEFENSE},
-        {State::DAMAGE, HERO_DAMAGE},
         {State::MANA, HERO_MANA},
     };
     initializeState(props, sizeof(props) / sizeof(props[0]));

@@ -9,10 +9,7 @@ Beast::Beast(float x, float y, int width, int height)
         {State::SCORE, M_BEAST_SCORE},
         {State::SPEED, M_BEAST_PIXEL_PER_SEC},
         {State::PERCEPTION_RANGE, M_BEAST_DANGER_DISTANCE},
-        {State::DEFENSE, M_BEAST_DEFENSE},
-        {State::DAMAGE, M_BEAST_DAMAGE},
-        // M_BEAST_COLLITION_DAMAGE
-        {State::COLLISION_DAMAGE, M_BEAST_COLLITION_DAMAGE}};
+        {State::DEFENSE, M_BEAST_DEFENSE}};
     initializeState(props, sizeof(props) / sizeof(props[0]));
     addAttack(new AttackCollision(0));
 }
@@ -23,8 +20,8 @@ AttackInfo Beast::createAttackInfo(Attack *attack)
         return AttackInfo{};
 
     GEB::Pair<int, float> props[] = {
-        {AttackInfo::Damage, state_.collisionDamage()},
-        {AttackInfo::Duration, 0.5f},
+        {AttackInfo::Damage, M_BEAST_COLLITION_DAMAGE},
+        {AttackInfo::Duration, 2.0f},
         {AttackInfo::HitStartTime, 0.0f},
         {AttackInfo::HitEndTime, 0.5f},
         {AttackInfo::HitBoxWidth, static_cast<float>(width_)},

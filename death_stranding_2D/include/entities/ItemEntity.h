@@ -103,6 +103,6 @@ protected:
     GEB::Structures::Array<Skill *> skills_;
 
 private:
-    void renderDefault(World &world);
+    void renderStateInfo(World &world);
     bool deactivateIfNeeded(Layer &layer);
 };

@@ -12,8 +12,7 @@ Ghost::Ghost(float x, float y, int width, int height)
         {State::SCORE, M_GHOST_SCORE},
         {State::SPEED, M_GHOST_PIXEL_PER_SEC},
         {State::PERCEPTION_RANGE, M_GHOST_DANGER_DISTANCE},
-        {State::DEFENSE, M_GHOST_DEFENSE},
-        {State::DAMAGE, M_GHOST_DAMAGE}};
+        {State::DEFENSE, M_GHOST_DEFENSE}};
     initializeState(props, sizeof(props) / sizeof(props[0]));
     addAttack(new AttackCollision(0));
 }
@@ -24,8 +23,8 @@ AttackInfo Ghost::createAttackInfo(Attack *attack)
         return AttackInfo{};
 
     GEB::Pair<int, float> props[] = {
-        {AttackInfo::Damage, state_.collisionDamage()},
-        {AttackInfo::Duration, 0.5f},
+        {AttackInfo::Damage, M_GHOST_COLLITION_DAMAGE},
+        {AttackInfo::Duration, 1.0f},
         {AttackInfo::HitStartTime, 0.0f},
         {AttackInfo::HitEndTime, 0.5f},
         {AttackInfo::HitBoxWidth, static_cast<float>(width_)},

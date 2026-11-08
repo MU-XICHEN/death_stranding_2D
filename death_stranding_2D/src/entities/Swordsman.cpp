@@ -13,12 +13,12 @@ AttackInfo Swordsman::createAttackInfo(Attack *attack)
     {
         const auto originPoint = getOriginPoint();
         const GEB::Pair<int, float> props[] = {
-            {AttackInfo::Damage, 10.0f},
+            {AttackInfo::Damage, 20.0f},
             {AttackInfo::Duration, 1.0f},
             {AttackInfo::HitStartTime, 0.2f},
             {AttackInfo::HitEndTime, 0.4f},
-            {AttackInfo::HitBoxWidth, 80.0f},
-            {AttackInfo::HitBoxHeight, 30.0f},
+            {AttackInfo::HitBoxWidth, 120.0f},
+            {AttackInfo::HitBoxHeight, 20.0f},
             {AttackInfo::OriginPointX, originPoint.x},
             {AttackInfo::OriginPointY, originPoint.y},
             {AttackInfo::Direction, static_cast<float>(direction())},

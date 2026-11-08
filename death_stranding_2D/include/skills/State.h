@@ -14,8 +14,6 @@ public:
     {
         HEALTH = 0,
         SPEED,
-        DAMAGE,
-        COLLISION_DAMAGE,
         PERCEPTION_RANGE,
         DEFENSE,
         MANA,
@@ -97,12 +95,6 @@ public:
     // defense
     float defense() const { return properties_[DEFENSE]; }
     void setDefense(float defense) { properties_[DEFENSE] = defense; }
-    // damage
-    float damage() const { return properties_[DAMAGE]; }
-    void setDamage(float damage) { properties_[DAMAGE] = damage; }
-    // collition damage
-    float collisionDamage() const { return properties_[COLLISION_DAMAGE]; }
-    void setCollisionDamage(float collisionDamage) { properties_[COLLISION_DAMAGE] = collisionDamage; }
 
     float mana() const { return properties_[MANA]; }
     void setMana(float mana) { properties_[MANA] = mana; }

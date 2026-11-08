@@ -17,7 +17,7 @@ AttackInfo Archer::createAttackInfo(Attack *attack)
         const auto originPoint = getOriginPoint();
         const float infinityFloat = std::numeric_limits<float>::max();
         const GEB::Pair<int, float> props[] = {
-            {AttackInfo::Damage, 15.0f},
+            {AttackInfo::Damage, 10.0f},
             {AttackInfo::Duration, infinityFloat},
             {AttackInfo::HitStartTime, 0.0f},
             {AttackInfo::HitEndTime, infinityFloat},

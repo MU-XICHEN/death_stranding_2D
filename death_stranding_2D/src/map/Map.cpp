@@ -66,9 +66,6 @@ void Map::loadChapterMap(MapType type)
         case MapType::Chapter1:
             exit_.destination = MapType::Chapter2;
             break;
-        case MapType::Chapter2:
-            exit_.destination = MapType::Chapter3;
-            break;
         default:
             throw std::runtime_error("No destination configured for this map exit");
         }
@@ -375,9 +372,6 @@ void getMapPath(MapType type, const char **path)
         break;
     case MapType::Chapter2:
         *path = "assets/map/chapter2/chapter2";
-        break;
-    case MapType::Chapter3:
-        *path = "assets/map/chapter3/chapter3";
         break;
     }
 }

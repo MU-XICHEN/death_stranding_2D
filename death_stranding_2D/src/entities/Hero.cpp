@@ -8,6 +8,7 @@
 #include "layers/MainLayer.h"
 #include "stages/Play.h"
 #include "skills/Attack.h"
+#include "skills/SkillSpeedUp.h"
 
 template <typename T>
 using GEBArray = GEB::Structures::Array<T>;
@@ -45,6 +46,7 @@ Hero::Hero(
         {State::MANA, HERO_MANA},
     };
     initializeState(props, sizeof(props) / sizeof(props[0]));
+    addSkill(new SkillSpeedUp('L'));
 }
 
 void Hero::handleMovement(World &world, Layer &layer)

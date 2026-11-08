@@ -9,7 +9,6 @@
 #include "map/Map.h"
 #include "layers/MainLayer.h"
 #include "world/World.h"
-#include "skills/SkillSpeedUp.h"
 #include "skills/SkillCreateMonster.h"
 #include "entities/HealthPotion.h"
 #include "entities/ManaPotion.h"
@@ -61,7 +60,6 @@ void PlayStage::initialize()
         hero_ = new Swordsman(entrance.x, entrance.y);
         break;
     }
-    hero_->addSkill(new SkillSpeedUp('U'));
     addEntityToGridSystem(hero_);
     pushEntity(new InfoEntity(*hero_));
 

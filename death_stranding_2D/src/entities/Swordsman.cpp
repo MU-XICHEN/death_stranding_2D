@@ -1,10 +1,12 @@
 #include "entities/Swordsman.h"
 #include "skills/AttackHalfCircleSlash.h"
+#include "skills/AttackAutoTargetingMagic.h"
 
 Swordsman::Swordsman(float x, float y, int width, int height)
     : Hero(x, y, width, height)
 {
     addAttack(new AttackHalfCircleSlash('J', true));
+    addAttack(new AttackAutoTargetingMagic('K'));
 }
 
 AttackInfo Swordsman::createAttackInfo(Attack *attack)

@@ -199,6 +199,7 @@
     <ClInclude Include="include\entities\Archer.h" />
     <ClInclude Include="include\entities\InfoEntity.h" />
     <ClInclude Include="include\entities\HealthPotion.h" />
+    <ClInclude Include="include\entities\RecoveryPotion.h" />
     <ClInclude Include="include\entities\ManaPotion.h" />
     <ClInclude Include="include\entities\Monster.h" />
     <ClInclude Include="include\entities\MonsterNest.h" />

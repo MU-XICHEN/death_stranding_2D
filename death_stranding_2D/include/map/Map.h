@@ -42,6 +42,7 @@ public:
     MapType type() const { return mapType_; }
     int tileSize() const { return source_.tileSize; }
     const GEB::Structures::Array<GEB::Vec2> &monsterPositions() const { return monsterPositions_; }
+    const GEB::Structures::Array<GEB::Vec2> &potionPositions() const { return potionPositions_; }
 
     const GEB::Structures::Array<TileBlock> &tileBlocks() const { return tileBlocks_; }
 
@@ -56,7 +57,8 @@ public:
 private:
     void loadChapterMap(MapType type);
     void loadMapSource(MapType type);
-    void loadMonsterPositions(MapType type);
+    void loadPositions(MapType type, const char *suffix, int itemSize,
+                       GEB::Structures::Array<GEB::Vec2> &positions);
     void cachemap();
     void mergeTiles(const int *ground, int colCnt, int rowCnt);
 
@@ -67,6 +69,7 @@ private:
     MapSource source_{};
     GEB::Structures::Array<int> ground_;
     GEB::Structures::Array<GEB::Vec2> monsterPositions_; // Top-left positions loaded from .monsters.txt.
+    GEB::Structures::Array<GEB::Vec2> potionPositions_; // Top-left positions loaded from .potions.txt.
 
     GEB::Structures::Array<unsigned char> mapCache_;
     GEB::Structures::Array<TileBlock> tileBlocks_; // need collision detection

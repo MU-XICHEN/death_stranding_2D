@@ -118,8 +118,12 @@ void Hero::onTargetDefeated(const ItemEntity &target)
     }
 }
 
-bool Hero::onUsePotion(Potion *potion)
+void Hero::onUsePotion(Potion *potion)
 {
+    if (!active() || state_.health() <= 0)
+        return;
     state_.apply(potion->effectState());
-    return true;
+    state_.setHealth(std::min(state_.health(), HERO_HP));
+    state_.setMana(std::min(state_.mana(), HERO_MANA));
+    return;
 }

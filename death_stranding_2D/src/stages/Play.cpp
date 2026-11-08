@@ -11,8 +11,7 @@
 #include "map/Map.h"
 #include "layers/MainLayer.h"
 #include "world/World.h"
-#include "entities/HealthPotion.h"
-#include "entities/ManaPotion.h"
+#include "entities/RecoveryPotion.h"
 #include <algorithm>
 #include <stdexcept>
 
@@ -86,6 +85,24 @@ void PlayStage::initializeMapObjects()
     float y = std::clamp(doorPosition.y - 32.0f, 0.0f, static_cast<float>(map_->height() - 64));
     door_ = new Door(*hero_, x, y);
     pushEntity(door_);
+    initializeMapPotions();
+}
+
+void PlayStage::initializeMapPotions()
+{
+    // Hide the previous potions.
+    for (int i = 0; i < potions_.size(); ++i)
+        potions_[i]->setActive(false);
+    potions_.clear();
+
+    // Place new potions.
+    const auto &positions = map_->potionPositions();
+    for (int i = 0; i < positions.size(); ++i)
+    {
+        auto *potion = new RecoveryPotion(*hero_, positions[i].x, positions[i].y);
+        potions_.pushBack(potion);
+        pushEntity(potion);
+    }
 }
 
 void PlayStage::initializeMapMonsters()

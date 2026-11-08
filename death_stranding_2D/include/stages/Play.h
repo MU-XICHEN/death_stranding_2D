@@ -33,6 +33,7 @@ private:
     HeroType heroType_;
     void initializeMapMonsters();
     void initializeMapObjects();
+    void initializeMapPotions();
     void updateEntities(World &world, Layer &layer);
     bool checkHeroDeath(World &world, Layer &layer);
     void updateChapterProgress(World &world, Layer &layer);
@@ -49,8 +50,10 @@ private:
     GridSystem *gridSystem_ = nullptr;
     Map *map_ = nullptr;
 
-    Key *key_ = nullptr;   // Owned by current stage.
-    Door *door_ = nullptr; // Owned by current stage.
+    Key *key_ = nullptr;                       // Owned by current stage.
+    Door *door_ = nullptr;                     // Owned by current stage.
+    GEB::Structures::Array<Potion *> potions_; // Owned by current stage.
+
     Hero *hero_ = nullptr; // Owned by the current grid system.
 
     GEB::Structures::Array<ItemEntity *> entitiesNextFrame_;

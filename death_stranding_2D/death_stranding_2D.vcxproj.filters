@@ -215,6 +215,9 @@
     <ClInclude Include="include\entities\HealthPotion.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
+    <ClInclude Include="include\entities\RecoveryPotion.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
     <ClInclude Include="include\entities\ManaPotion.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>

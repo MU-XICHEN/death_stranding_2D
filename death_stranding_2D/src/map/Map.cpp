@@ -58,7 +58,8 @@ void Map::loadChapterMap(MapType type)
     cachemap();
     // Ground values describe collision only: 0 is walkable, nonzero is blocked.
     mergeTiles(source_.ground, source_.colCnt, source_.rowCnt);
-    loadMonsterPositions(type);
+    loadPositions(type, ".monsters.txt", ROLE_SIZE, monsterPositions_);
+    loadPositions(type, ".potions.txt", POTION_SIZE, potionPositions_);
 
     if (hasExit_)
     {
@@ -150,15 +151,16 @@ void Map::loadMapSource(MapType type)
     source_.ground = ground_.head();
 }
 
-void Map::loadMonsterPositions(MapType type)
+void Map::loadPositions(MapType type, const char *suffix, int itemSize,
+                        GEB::Structures::Array<GEB::Vec2> &positions)
 {
-    monsterPositions_.clear();
+    positions.clear();
     const char *path = nullptr;
     getMapPath(type, &path);
-    std::ifstream file(std::string(path) + ".monsters.txt");
+    std::ifstream file(std::string(path) + suffix);
     int count = 0;
     if (!(file >> count) || count < 0 || count > source_.groundCount)
-        throw std::runtime_error("Invalid map monster count");
+        throw std::runtime_error("Invalid map item count");
 
     // Each entry is a tile center: row, column (zero-based), like the entrance.
     for (int i = 0; i < count; ++i)
@@ -166,26 +168,26 @@ void Map::loadMonsterPositions(MapType type)
         int row = 0, col = 0;
         if (!(file >> row >> col) || row < 0 || row >= source_.rowCnt ||
             col < 0 || col >= source_.colCnt)
-            throw std::runtime_error("Invalid map monster coordinates");
+            throw std::runtime_error("Invalid map item coordinates");
 
-        const GEB::Vec2 position{(col + 0.5f) * source_.tileSize - ROLE_SIZE / 2.0f,
-                                 (row + 0.5f) * source_.tileSize - ROLE_SIZE / 2.0f};
-        if (position.x < 0 || position.y < 0 || position.x + ROLE_SIZE > width_ ||
-            position.y + ROLE_SIZE > height_)
-            throw std::runtime_error("Map monster does not fit inside the map");
+        const GEB::Vec2 position{(col + 0.5f) * source_.tileSize - itemSize / 2.0f,
+                                 (row + 0.5f) * source_.tileSize - itemSize / 2.0f};
+        if (position.x < 0 || position.y < 0 || position.x + itemSize > width_ ||
+            position.y + itemSize > height_)
+            throw std::runtime_error("Map item does not fit inside the map");
 
         for (int j = 0; j < tileBlocks_.size(); ++j)
         {
             const auto &tile = tileBlocks_[j];
-            if (position.x < tile.x() + tile.width() && position.x + ROLE_SIZE > tile.x() &&
-                position.y < tile.y() + tile.height() && position.y + ROLE_SIZE > tile.y())
-                throw std::runtime_error("Map monster overlaps an obstacle");
+            if (position.x < tile.x() + tile.width() && position.x + itemSize > tile.x() &&
+                position.y < tile.y() + tile.height() && position.y + itemSize > tile.y())
+                throw std::runtime_error("Map item overlaps an obstacle");
         }
-        monsterPositions_.pushBack(position);
+        positions.pushBack(position);
     }
     file >> std::ws;
     if (!file.eof() || file.bad())
-        throw std::runtime_error("Unexpected content after map monster positions");
+        throw std::runtime_error("Unexpected content after map item positions");
 }
 
 void Map::cachemap()

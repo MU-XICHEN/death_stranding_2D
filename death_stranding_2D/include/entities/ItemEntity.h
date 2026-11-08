@@ -89,7 +89,7 @@ public:
     virtual void update(World &world, Layer &layer) = 0;
     virtual void render(World &world, Layer &layer) override;
 
-    virtual bool onUsePotion(Potion *portion);
+    virtual void onUsePotion(Potion *portion);
 
 protected:
     virtual AssetId spriteAsset() const { return AssetId::None; }

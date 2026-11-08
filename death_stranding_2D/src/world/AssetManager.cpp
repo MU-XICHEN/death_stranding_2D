@@ -10,6 +10,7 @@ AssetId initialAssetIds[] = {
     AssetId::MonsterNestSprite,
     AssetId::DoorSprite,
     AssetId::KeySprite,
+    AssetId::PotionSprite,
     AssetId::SwordsmanSprite,
     AssetId::ArcherSprite,
     AssetId::BeastSprite,
@@ -38,6 +39,8 @@ const char *getAssetPath(AssetId id)
         return "assets/objects/door.png";
     case AssetId::KeySprite:
         return "assets/objects/key.png";
+    case AssetId::PotionSprite:
+        return "assets/potion/health.png";
     case AssetId::SwordsmanSprite:
         return "assets/character/swordsman/swordsman-8-directions-96.png";
     case AssetId::ArcherSprite:

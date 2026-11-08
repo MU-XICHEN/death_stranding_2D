@@ -66,4 +66,4 @@
 #define MONSTER_NEST_DEFENSE 0.0f
 
 // Potion
-#define POTION_SIZE 30
+#define POTION_SIZE 64

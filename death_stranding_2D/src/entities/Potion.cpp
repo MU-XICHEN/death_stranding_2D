@@ -1,53 +1,31 @@
 #include "entities/Potion.h"
-#include "entities/ItemEntity.h"
+#include "entities/Hero.h"
 #include "entities/AABB.h"
-#include "world/World.h"
-#include "layers/MainLayer.h"
+#include "renderer/ImageRenderer.h"
 
-void Potion::tryApplyTo(ItemEntity *item)
+Potion::Potion(Hero &hero, float x, float y, int width, int height)
+    : ItemEntity(x, y, width, height), hero_(hero)
 {
-    if (!active_)
-        return;
-    if (item->onUsePotion(this))
-        setActive(false);
 }
 
 void Potion::update(World &world, Layer &layer)
 {
+    if (!active() || !hero_.active() || hero_.state().health() <= 0)
+        return;
 
-    ItemEntity::coreUpdate(world, layer);
+    if (AABB(x_, y_, width_, height_).intersects(hero_))
+    {
+        hero_.onUsePotion(this);
+        setActive(false);
+    }
+}
+
+void Potion::render(World &world, Layer &layer)
+{
     if (!active())
         return;
 
-    AABB aabb{
-        x_,
-        y_,
-        width_,
-        height_,
-    };
-
-    // get candidate items for collision detection
-    GEB::Structures::Array<Entity *> candidateItemList;
-
-    auto &mainLayer = dynamic_cast<MainLayer &>(layer);
-    auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
-    auto *gridSystem = playStage.gridSystem();
-    if (!gridSystem)
-        return;
-
-    gridSystem->getCandidateListByAABB(this, aabb, candidateItemList);
-
-    for (int i = 0; i < candidateItemList.size(); i++)
-    {
-        auto *entity = candidateItemList[i];
-        if (!entity)
-            continue;
-        if (aabb.intersects(*entity))
-        {
-            auto *item = dynamic_cast<ItemEntity *>(entity);
-            if (!item)
-                continue;
-            tryApplyTo(item);
-        }
-    }
-};
+    const auto &viewport = world.gameInfo().viewport();
+    drawImage(world, AssetId::PotionSprite,
+              static_cast<int>(x_ - viewport.x()), static_cast<int>(y_ - viewport.y()));
+}

@@ -36,7 +36,7 @@ public:
     void handleMovement(World &world, Layer &layer) override;
     AttackInfo createAttackInfo(Attack *attack) override = 0;
     void onTargetDefeated(const ItemEntity &target) override;
-    bool onUsePotion(Potion *potion) override;
+    void onUsePotion(Potion *potion) override;
 
     int defeatedMonsterCount() const { return defeatedMonsterCount_; }
     bool hasKey() const { return hasKey_; }

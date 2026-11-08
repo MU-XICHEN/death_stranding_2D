@@ -6,6 +6,8 @@
 #include "entities/InfoEntity.h"
 #include "entities/Monster.h"
 #include "entities/MonsterNest.h"
+#include "entities/Key.h"
+#include "entities/Door.h"
 #include "map/Map.h"
 #include "layers/MainLayer.h"
 #include "world/World.h"
@@ -63,6 +65,27 @@ void PlayStage::initialize()
     pushEntity(new InfoEntity(*hero_));
 
     initializeMapMonsters();
+    initializeMapObjects();
+}
+
+void PlayStage::initializeMapObjects()
+{
+    if (door_)
+        door_->setActive(false);
+    key_ = nullptr;
+    door_ = nullptr;
+    hero_->useKey();
+
+    const auto *exit = map_->exit();
+    auto center = map_->center();
+    // The last chapter's door leads to the tally page.
+    GEB::Vec2 doorPosition = exit ? exit->position : GEB::Vec2{static_cast<float>(map_->width() - 128), center.y};
+
+    // Keep the door inside the map, at the exit.
+    float x = std::clamp(doorPosition.x - 64.0f, 0.0f, static_cast<float>(map_->width() - 128));
+    float y = std::clamp(doorPosition.y - 32.0f, 0.0f, static_cast<float>(map_->height() - 64));
+    door_ = new Door(*hero_, x, y);
+    pushEntity(door_);
 }
 
 void PlayStage::initializeMapMonsters()
@@ -109,7 +132,7 @@ bool PlayStage::monsterCleared() const
         if (monster && monster->active())
             return false;
         const auto *nest = dynamic_cast<const MonsterNest *>(items[i]);
-        if (nest && nest->canGenerateMonsters())
+        if (nest && nest->active())
             return false;
     }
     // Consider monsters that appear next frame as well.
@@ -203,7 +226,6 @@ void PlayStage::addEntityNextFrame(ItemEntity *itemEntity)
     entitiesNextFrame_.pushBack(itemEntity);
 }
 
-// updateEntities
 void PlayStage::update(World &world, Layer &layer)
 {
     if (gameOver_)
@@ -211,33 +233,57 @@ void PlayStage::update(World &world, Layer &layer)
     Stage::enterState.justPressed(world.canvas().keyPressed(VK_RETURN));
     world.gameInfo().updateMapInfo(*map_);
 
+    // update entities
+    updateEntities(world, layer);
+
+    // check hero death
+    if (checkHeroDeath(world, layer))
+        return;
+
+    // update chapter progress
+    updateChapterProgress(world, layer);
+}
+
+void PlayStage::updateEntities(World &world, Layer &layer)
+{
     auto &items = gridSystem_->itemsToUpdate();
     // Stop the remaining entities from updating as soon as the hero dies.
     for (int i = 0; i < items.size() && isHeroAlive(); ++i)
         items[i]->update(world, layer);
 
-    if (!isHeroAlive())
-    {
-        // Game Over —— Hero failed, then change to tally stage.
-        finishRun(world, layer, false);
-        return;
-    }
-
     Stage::update(world, layer);
+}
+
+bool PlayStage::checkHeroDeath(World &world, Layer &layer)
+{
+    if (isHeroAlive())
+        return false;
+
+    finishRun(world, layer, false);
+    return true;
+}
+
+void PlayStage::updateChapterProgress(World &world, Layer &layer)
+{
     if (!monsterCleared())
         return;
 
-    // Clear the last chapter to win the game.
-    if (map_->type() == MapType::Chapter2)
+    // Generate key if all monsters are defeated.
+    if (!key_)
     {
-        finishRun(world, layer, true);
-        return;
+        key_ = new Key(*hero_, *map_);
+        pushEntity(key_);
     }
 
-    // In chapter one, reach the exit after clearing the monsters.
-    const auto *exit = map_->exit();
-    if (exit)
-        changeMapFlag_ = AABB(hero_->x(), hero_->y(), hero_->width(), hero_->height()).contains(exit->position);
+    // Check door status
+    if (!door_ || !door_->unlocked())
+        return;
+
+    // To be here, all monsters are defeated and the door is unlocked.
+    if (map_->type() == MapType::Chapter2)
+        finishRun(world, layer, true);
+    else
+        changeMapFlag_ = true;
 }
 
 // renderEntities
@@ -329,6 +375,7 @@ void PlayStage::changeChapterIfNeed(World &world)
     hero_->setPos(entrance.x, entrance.y);
     addEntityToGridSystem(hero_);
     initializeMapMonsters();
+    initializeMapObjects();
 
     // Update related game information after changing the map.
     HeroInfo heroInfo{hero_->x(), hero_->y(), hero_->width(), hero_->height()};

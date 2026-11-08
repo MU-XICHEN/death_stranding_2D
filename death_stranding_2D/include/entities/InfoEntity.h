@@ -16,10 +16,10 @@ public:
 private:
     void refreshText();
 
-    // Observes the grid-owned hero until it becomes inactive.
     const Hero *hero_;
     std::string healthText_;
     std::string manaText_;
     std::string scoreText_;
     std::string killsText_;
+    std::string keyText_;
 };

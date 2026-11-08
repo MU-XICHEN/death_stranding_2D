@@ -19,6 +19,7 @@ void InfoEntity::refreshText()
     manaText_ = "Mana: " + std::to_string(static_cast<int>(std::max(0.0f, state.mana())));
     scoreText_ = "Score: " + std::to_string(static_cast<int>(state.score()));
     killsText_ = "Kills: " + std::to_string(hero_->defeatedMonsterCount());
+    keyText_ = hero_->hasKey() ? "Key: Yes" : "Key: No";
 
     if (!hero_->active())
         hero_ = nullptr;
@@ -37,9 +38,9 @@ void InfoEntity::render(World &world, Layer &layer)
     constexpr int fontWidth = GEB::TextSizeW::TEXT_SIZE_W_MEDIUM;
     constexpr int fontHeight = GEB::TextSizeH::TEXT_SIZE_H_MEDIUM;
 
-    const int textLength = static_cast<int>(std::max({healthText_.size(), manaText_.size(), scoreText_.size(), killsText_.size()}));
+    int textLength = static_cast<int>(std::max({healthText_.size(), manaText_.size(), scoreText_.size(), killsText_.size(), keyText_.size()}));
     width_ = textLength * fontWidth;
-    height_ = fontHeight * 4 + lineGap * 3;
+    height_ = fontHeight * 5 + lineGap * 4;
     x_ = static_cast<float>(std::max(0, static_cast<int>(canvas.getWidth()) - margin - width_));
     y_ = static_cast<float>(margin);
 
@@ -55,5 +56,7 @@ void InfoEntity::render(World &world, Layer &layer)
     textRenderer.drawString(world, scoreText_.c_str(), left, top + (fontHeight + lineGap) * 2,
                             GEB::TextSizeType::TEXT_SIZE_MEDIUM);
     textRenderer.drawString(world, killsText_.c_str(), left, top + (fontHeight + lineGap) * 3,
+                            GEB::TextSizeType::TEXT_SIZE_MEDIUM);
+    textRenderer.drawString(world, keyText_.c_str(), left, top + (fontHeight + lineGap) * 4,
                             GEB::TextSizeType::TEXT_SIZE_MEDIUM);
 }

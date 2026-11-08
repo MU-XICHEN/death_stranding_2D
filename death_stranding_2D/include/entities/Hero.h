@@ -39,6 +39,9 @@ public:
     bool onUsePotion(Potion *potion) override;
 
     int defeatedMonsterCount() const { return defeatedMonsterCount_; }
+    bool hasKey() const { return hasKey_; }
+    void collectKey() { hasKey_ = true; }
+    void useKey() { hasKey_ = false; }
 
 protected:
     AssetId spriteAsset() const override = 0;
@@ -46,4 +49,5 @@ protected:
 private:
     bool checkLockDirection() const;
     int defeatedMonsterCount_ = 0;
+    bool hasKey_ = false;
 };

@@ -96,6 +96,12 @@
     <ClCompile Include="src\entities\MonsterNest.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
+    <ClCompile Include="src\entities\Door.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\entities\Key.cpp">
+      <Filter>Source Files\entities</Filter>
+    </ClCompile>
     <ClCompile Include="src\entities\Beast.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
@@ -216,6 +222,12 @@
       <Filter>Header Files\entities</Filter>
     </ClInclude>
     <ClInclude Include="include\entities\MonsterNest.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\entities\Door.h">
+      <Filter>Header Files\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\entities\Key.h">
       <Filter>Header Files\entities</Filter>
     </ClInclude>
     <ClInclude Include="include\entities\Potion.h">

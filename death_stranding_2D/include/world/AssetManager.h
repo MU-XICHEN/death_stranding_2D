@@ -17,6 +17,8 @@ enum AssetId
     TallyDefeat = 10,
     TallyVictory = 13,
     MonsterNestSprite = 11,
+    DoorSprite = 14,
+    KeySprite = 15,
 };
 
 struct Asset

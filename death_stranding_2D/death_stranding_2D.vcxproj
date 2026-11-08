@@ -158,6 +158,8 @@
     <ClCompile Include="src\entities\InfoEntity.cpp" />
     <ClCompile Include="src\entities\Monster.cpp" />
     <ClCompile Include="src\entities\MonsterNest.cpp" />
+    <ClCompile Include="src\entities\Door.cpp" />
+    <ClCompile Include="src\entities\Key.cpp" />
     <ClCompile Include="src\entities\Beast.cpp" />
     <ClCompile Include="src\entities\Potion.cpp" />
     <ClCompile Include="src\entities\Track.cpp" />
@@ -200,6 +202,8 @@
     <ClInclude Include="include\entities\ManaPotion.h" />
     <ClInclude Include="include\entities\Monster.h" />
     <ClInclude Include="include\entities\MonsterNest.h" />
+    <ClInclude Include="include\entities\Door.h" />
+    <ClInclude Include="include\entities\Key.h" />
     <ClInclude Include="include\entities\Potion.h" />
     <ClInclude Include="include\entities\Track.h" />
     <ClInclude Include="include\skills\State.h" />

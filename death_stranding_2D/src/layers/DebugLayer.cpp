@@ -2,10 +2,10 @@
 #include "layers/DebugLayer.h"
 #include "world/World.h"
 
-class FPSBox : public Entity
+class GameInfoBox : public Entity
 {
 public:
-    ~FPSBox() = default;
+    ~GameInfoBox() = default;
 
     void update(World &world, Layer &layer) override
     {
@@ -33,6 +33,11 @@ public:
     {
         const auto &txtRdr = world.textRenderer();
         txtRdr.drawString(world, fpsText_.c_str(), 20, 20, GEB::TextSizeType::TEXT_SIZE_MEDIUM);
+        txtRdr.drawString(world, "W/S: Up/Down", 20, 52, GEB::TextSizeType::TEXT_SIZE_MEDIUM);
+        txtRdr.drawString(world, "A/D: Left/Right", 20, 84, GEB::TextSizeType::TEXT_SIZE_MEDIUM);
+        txtRdr.drawString(world, "J: Skill", 20, 116, GEB::TextSizeType::TEXT_SIZE_MEDIUM);
+        txtRdr.drawString(world, "K: Magic Skill", 20, 148, GEB::TextSizeType::TEXT_SIZE_MEDIUM);
+        txtRdr.drawString(world, "L: Speed Up", 20, 180, GEB::TextSizeType::TEXT_SIZE_MEDIUM);
     }
 
 private:
@@ -43,5 +48,5 @@ private:
 
 DebugLayer::DebugLayer()
 {
-    pushEntity(new FPSBox());
+    pushEntity(new GameInfoBox());
 }

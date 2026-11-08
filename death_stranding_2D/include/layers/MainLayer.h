@@ -2,7 +2,6 @@
 
 #include "layers/Layer.h"
 #include "stages/Stage.h"
-#include "stages/Intro.h"
 #include "stages/Menu.h"
 #include "stages/Tally.h"
 #include "stages/Play.h"
@@ -11,8 +10,6 @@ using StageCreator = Stage *(*)();
 
 // Only use in this file.
 static const StageCreator stageCreator[] = {
-    []() -> Stage *
-    { return new IntroStage(); },
     []() -> Stage *
     { return new MenuStage(); },
     []() -> Stage *

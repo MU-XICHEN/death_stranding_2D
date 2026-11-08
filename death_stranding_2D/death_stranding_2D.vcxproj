@@ -162,7 +162,6 @@
     <ClCompile Include="src\entities\Potion.cpp" />
     <ClCompile Include="src\entities\Track.cpp" />
     <ClCompile Include="src\entities\Ghost.cpp" />
-    <ClCompile Include="src\stages\Intro.cpp" />
     <ClCompile Include="src\stages\Menu.cpp" />
     <ClCompile Include="src\stages\Play.cpp" />
     <ClCompile Include="src\stages\Stage.cpp" />
@@ -221,7 +220,6 @@
     <ClInclude Include="include\skills\SkillDefenseBoost.h" />
     <ClInclude Include="include\skills\SkillSpeedUp.h" />
     <ClInclude Include="include\stages\Common.h" />
-    <ClInclude Include="include\stages\Intro.h" />
     <ClInclude Include="include\stages\Menu.h" />
     <ClInclude Include="include\stages\Play.h" />
     <ClInclude Include="include\stages\Stage.h" />

@@ -108,9 +108,6 @@
     <ClCompile Include="src\entities\Ghost.cpp">
       <Filter>Source Files\entities</Filter>
     </ClCompile>
-    <ClCompile Include="src\stages\Intro.cpp">
-      <Filter>Source Files\stages</Filter>
-    </ClCompile>
     <ClCompile Include="src\stages\Menu.cpp">
       <Filter>Source Files\stages</Filter>
     </ClCompile>
@@ -279,9 +276,6 @@
       <Filter>Header Files\skills</Filter>
     </ClInclude>
     <ClInclude Include="include\stages\Common.h">
-      <Filter>Header Files\stages</Filter>
-    </ClInclude>
-    <ClInclude Include="include\stages\Intro.h">
       <Filter>Header Files\stages</Filter>
     </ClInclude>
     <ClInclude Include="include\stages\Menu.h">

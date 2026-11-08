@@ -335,12 +335,6 @@ void ItemEntity::initializeState(GEB::Pair<int, float> *newProp,
     state_.initialize(newProp, size);
 }
 
-bool ItemEntity::onUsePotion(Potion *potion)
-{
-    // If entity consumed the potion, return true;
-    return false;
-}
-
 int spriteFrame(GEB::Direction direction)
 {
     switch (direction)

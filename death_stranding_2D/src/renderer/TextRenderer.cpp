@@ -34,7 +34,8 @@ void TextRenderer::drawCharacter(World &world,
                                  unsigned int x,
                                  unsigned int y,
                                  unsigned int row,
-                                 unsigned int col) const
+                                 unsigned int col,
+                                 GEB::Color color) const
 {
     auto &canvas = world.canvas();
     auto &assetManager = world.assetManager();
@@ -72,7 +73,11 @@ void TextRenderer::drawCharacter(World &world,
             auto *pixel = fontImage->at(sourceX, sourceY);
             auto alpha = fontImage->alphaAt(sourceX, sourceY);
             auto *destination = buffer + (targetY * validWidth + targetX) * 3;
-            GEB::Utils::blendPixel(destination, pixel, alpha);
+            const unsigned char tinted[] = {
+                static_cast<unsigned char>(pixel[0] * color.r / 255),
+                static_cast<unsigned char>(pixel[1] * color.g / 255),
+                static_cast<unsigned char>(pixel[2] * color.b / 255)};
+            GEB::Utils::blendPixel(destination, tinted, alpha);
         }
     }
 }
@@ -81,7 +86,8 @@ void TextRenderer::drawString(World &world,
                               const char *text,
                               int x,
                               int y,
-                              GEB::TextSizeType textSize) const
+                              GEB::TextSizeType textSize,
+                              GEB::Color color) const
 {
 
     auto id = translateTextSizeToAssetId(textSize);
@@ -131,7 +137,7 @@ void TextRenderer::drawString(World &world,
         }
 
         if (c != ' ')
-            drawCharacter(world, textSize, x, y, row, col);
+            drawCharacter(world, textSize, x, y, row, col, color);
 
         x += (TEXT_WIDTH[static_cast<int>(textSize)]);
         // Move to the next character

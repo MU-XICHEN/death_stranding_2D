@@ -22,9 +22,9 @@ public:
 
 private:
     int selectedIdx_ = 0;
-    int maxIdx_ = 2;
+    static constexpr int maxIdx_ = 1;
+    bool selectingHero_ = false;
 
     KeyState wKeyState_;
     KeyState sKeyState_;
-    KeyState enterKeyState_;
 };

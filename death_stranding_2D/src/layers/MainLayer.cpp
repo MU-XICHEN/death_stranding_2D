@@ -9,7 +9,7 @@ MainLayer::MainLayer()
     : stageCreator_(stageCreator),
       size_(stageCreatorSize),
       currentIndex_(initialIndex),
-      currentStage_(stageCreator[initialIndex]())
+      currentStage_(stageCreator[initialIndex](selectedHeroType_))
 {
 }
 
@@ -42,12 +42,12 @@ void MainLayer::checkgoToNextStage()
     // create next stage
     if (++currentIndex_ < size_)
     {
-        currentStage_ = stageCreator_[currentIndex_]();
+        currentStage_ = stageCreator_[currentIndex_](selectedHeroType_);
     }
     else
     {
         currentIndex_ = 0;
-        currentStage_ = stageCreator_[currentIndex_]();
+        currentStage_ = stageCreator_[currentIndex_](selectedHeroType_);
     }
 
     nextStageFlag_ = false;

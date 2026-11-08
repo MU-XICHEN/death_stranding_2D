@@ -7,6 +7,14 @@
 
 class World;
 
+struct RunResult
+{
+    bool victory = false;
+    HeroType heroType = HeroType::Swordsman;
+    int kills = 0;
+    int score = 0;
+};
+
 class GameInfo
 {
 public:
@@ -23,9 +31,13 @@ public:
     void updateHeroInfo(const HeroInfo &heroInfo) { heroInfo_ = heroInfo; }
     void updateViewport(const HeroInfo &heroInfo, const MapInfo &map);
     void updateMapInfo(const Map &map) { mapInfo_.setMap(&map); }
+    void setRunResult(const RunResult &result) { runResult_ = result; }
+    const RunResult &runResult() const { return runResult_; }
+    bool victory() const { return runResult_.victory; }
 
 private:
     float dt_;
+    RunResult runResult_;
 
     Viewport viewport_;
     HeroInfo heroInfo_;

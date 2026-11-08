@@ -39,6 +39,8 @@ public:
 
     GEB::Vec2 entrancePosition(int entityWidth, int entityHeight) const;
     const MapExit *exit() const { return hasExit_ ? &exit_ : nullptr; }
+    MapType type() const { return mapType_; }
+    const GEB::Structures::Array<GEB::Vec2> &monsterPositions() const { return monsterPositions_; }
 
     const GEB::Structures::Array<TileBlock> &tileBlocks() const { return tileBlocks_; }
 
@@ -53,6 +55,7 @@ public:
 private:
     void loadChapterMap(MapType type);
     void loadMapSource(MapType type);
+    void loadMonsterPositions(MapType type);
     void cachemap();
     void mergeTiles(const int *ground, int colCnt, int rowCnt);
 
@@ -62,6 +65,7 @@ private:
     bool hasExit_ = false;
     MapSource source_{};
     GEB::Structures::Array<int> ground_;
+    GEB::Structures::Array<GEB::Vec2> monsterPositions_; // Top-left positions loaded from .monsters.txt.
 
     GEB::Structures::Array<unsigned char> mapCache_;
     GEB::Structures::Array<TileBlock> tileBlocks_; // need collision detection

@@ -9,11 +9,10 @@
 #include "map/Map.h"
 #include "layers/MainLayer.h"
 #include "world/World.h"
-#include "skills/SkillCreateMonster.h"
 #include "entities/HealthPotion.h"
 #include "entities/ManaPotion.h"
-#include "entities/Track.h"
-#include "skills/AttackCollision.h"
+#include <algorithm>
+#include <stdexcept>
 
 bool overlaps(const Entity &obstacle, float x, float y, int width, int height);
 
@@ -63,10 +62,61 @@ void PlayStage::initialize()
     addEntityToGridSystem(hero_);
     pushEntity(new InfoEntity(*hero_));
 
-    float nestX = (map_->width() - ROLE_SIZE) / 2.0f;
-    float nestY = (map_->height() - ROLE_SIZE) / 2.0f;
-    auto *nest = new MonsterNest(nestX, nestY);
-    addEntityNextFrame(nest);
+    initializeMapMonsters();
+}
+
+void PlayStage::initializeMapMonsters()
+{
+    const auto &positions = map_->monsterPositions();
+    for (int i = 0; i < positions.size(); ++i)
+    {
+        const auto position = positions[i];
+        ItemEntity *monster = nullptr;
+        if (map_->type() == MapType::Chapter2)
+            monster = new MonsterNest(position.x, position.y);
+        else
+            monster = new Beast(position.x, position.y);
+        if (!canPlaceEntity(*monster, position.x, position.y) || !addEntityToGridSystem(monster))
+        {
+            delete monster;
+            throw std::runtime_error("Cannot place monster at its configured map position");
+        }
+    }
+}
+
+bool PlayStage::isHeroAlive() const
+{
+    return hero_ && hero_->active() && hero_->state().health() > 0.0f;
+}
+
+void PlayStage::finishRun(World &world, Layer &layer, bool victory)
+{
+    gameOver_ = true;
+    changeMapFlag_ = false;
+    // Preserve the final values before the stage and its hero are destroyed.
+    world.gameInfo().setRunResult({victory, heroType_,
+                                   hero_ ? hero_->defeatedMonsterCount() : 0,
+                                   hero_ ? static_cast<int>(hero_->state().score()) : 0});
+    dynamic_cast<MainLayer &>(layer).goToNextStageInNextFrame();
+}
+
+bool PlayStage::monsterCleared() const
+{
+    const auto &items = gridSystem_->itemsToUpdate();
+    for (int i = 0; i < items.size(); ++i)
+    {
+        const auto *monster = dynamic_cast<const Monster *>(items[i]);
+        if (monster && monster->active())
+            return false;
+        const auto *nest = dynamic_cast<const MonsterNest *>(items[i]);
+        if (nest && nest->canGenerateMonsters())
+            return false;
+    }
+    // Consider monsters that appear next frame as well.
+    for (int i = 0; i < entitiesNextFrame_.size(); ++i)
+        if (dynamic_cast<const Monster *>(entitiesNextFrame_[i]))
+            return false;
+    return true;
 }
 
 bool PlayStage::canPlaceEntity(const ItemEntity &item, float x, float y) const
@@ -107,40 +157,21 @@ bool PlayStage::findAvailablePosition(const ItemEntity &item, GEB::Vec2 &positio
         return false;
     if (item.width() > map_->width() || item.height() > map_->height())
         return false;
-    // Start near the entity that requested the spawn, inside the map.
-    float startX = item.x();
-    float startY = item.y();
-    float maxX = static_cast<float>(map_->width() - item.width());
-    float maxY = static_cast<float>(map_->height() - item.height());
-    startX = std::min(std::max(startX, 0.0f), maxX);
-    startY = std::min(std::max(startY, 0.0f), maxY);
+    const float startX = std::clamp(item.x(), 0.0f, static_cast<float>(map_->width() - item.width()));
+    const float startY = std::clamp(item.y(), 0.0f, static_cast<float>(map_->height() - item.height()));
 
-    if (canPlaceEntity(item, startX, startY))
+    // Try the requested position, then the surrounding squares from near to far.
+    for (int radius = 0; radius <= 2; ++radius)
     {
-        position = {startX, startY};
-        return true;
-    }
-
-    // Walk each ring clockwise from its top-left corner, up to three rings.
-    GEB::Vec2 directions[] = {
-        {1, 0}, {0, 1}, {-1, 0}, {0, -1}};
-    float step = ROLE_SIZE;
-    for (int ring = 1; ring <= 2; ++ring)
-    {
-        float distance = ring * step;
-        GEB::Vec2 candidate{startX - distance, startY - distance};
-        for (int side = 0; side < 4; ++side)
+        for (int row = -radius; row <= radius; ++row)
         {
-            for (int i = 0; i < ring * 2; ++i)
+            for (int col = -radius; col <= radius; ++col)
             {
-                if (canPlaceEntity(item, candidate.x, candidate.y))
-                {
-                    position = candidate;
+                if (std::abs(row) != radius && std::abs(col) != radius)
+                    continue;
+                position = {startX + col * ROLE_SIZE, startY + row * ROLE_SIZE};
+                if (canPlaceEntity(item, position.x, position.y))
                     return true;
-                }
-
-                candidate.x += directions[side].x * step;
-                candidate.y += directions[side].y * step;
             }
         }
     }
@@ -175,23 +206,39 @@ void PlayStage::addEntityNextFrame(ItemEntity *itemEntity)
 // updateEntities
 void PlayStage::update(World &world, Layer &layer)
 {
-    if (!gridSystem_ || !map_)
+    if (gameOver_)
         return;
-
+    Stage::enterState.justPressed(world.canvas().keyPressed(VK_RETURN));
     world.gameInfo().updateMapInfo(*map_);
 
-    auto &itemsToUpdate = gridSystem_->itemsToUpdate();
-    int itemCount = itemsToUpdate.size();
-    for (int i = 0; i < itemCount; ++i)
+    auto &items = gridSystem_->itemsToUpdate();
+    // Stop the remaining entities from updating as soon as the hero dies.
+    for (int i = 0; i < items.size() && isHeroAlive(); ++i)
+        items[i]->update(world, layer);
+
+    if (!isHeroAlive())
     {
-        auto *item = itemsToUpdate[i];
-        if (item)
-            item->update(world, layer);
+        // Game Over —— Hero failed, then change to tally stage.
+        finishRun(world, layer, false);
+        return;
     }
 
     Stage::update(world, layer);
+    if (!monsterCleared())
+        return;
 
-    changeMapFlag_ = checkChangeChapter();
+    // After clearing enemies, use the exit or finish the run if there is none.
+    const auto *exit = map_->exit();
+    if (exit)
+    {
+        // Next Chapter —— Check if the hero has reached the exit.
+        changeMapFlag_ = AABB(hero_->x(), hero_->y(), hero_->width(), hero_->height()).contains(exit->position);
+    }
+    else
+    {
+        // Game over —— No exit and clearing all monsters, then change to tally stage.
+        finishRun(world, layer, true);
+    }
 }
 
 // renderEntities
@@ -216,7 +263,7 @@ void PlayStage::render(World &world, Layer &layer)
 
 void PlayStage::renderFinished(World &world, Layer &layer)
 {
-    if (!gridSystem_)
+    if (!gridSystem_ || gameOver_)
         return;
 
     auto &inactiveItems = gridSystem_->inactiveItems();
@@ -248,22 +295,6 @@ void PlayStage::renderFinished(World &world, Layer &layer)
     }
 
     changeChapterIfNeed(world);
-}
-
-bool PlayStage::checkChangeChapter() const
-{
-    if (!map_ || !gridSystem_)
-        return false;
-    if (!hero_ || !hero_->active() || hero_->state().health() <= 0.0f)
-        return false;
-
-    const auto *exit = map_->exit();
-
-    if (!exit)
-        return false;
-
-    const AABB heroBounds(hero_->x(), hero_->y(), hero_->width(), hero_->height());
-    return heroBounds.contains(exit->position);
 }
 
 void PlayStage::changeChapterIfNeed(World &world)
@@ -298,6 +329,7 @@ void PlayStage::changeChapterIfNeed(World &world)
     gridSystem_ = nextGrid;
     hero_->setPos(entrance.x, entrance.y);
     addEntityToGridSystem(hero_);
+    initializeMapMonsters();
 
     // Update related game information after changing the map.
     HeroInfo heroInfo{hero_->x(), hero_->y(), hero_->width(), hero_->height()};

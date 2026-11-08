@@ -22,18 +22,22 @@ public:
 
     GridSystem *gridSystem() { return gridSystem_; }
     Map *map() { return map_; }
+    bool isHeroAlive() const;
 
     void addEntityNextFrame(ItemEntity *itemEntity);
 
 private:
     HeroType heroType_;
+    void initializeMapMonsters();
+    void finishRun(World &world, Layer &layer, bool victory);
+    bool monsterCleared() const;
     bool addEntityToGridSystem(ItemEntity *itemEntity);
     bool findAvailablePosition(const ItemEntity &item, GEB::Vec2 &position) const;
     bool canPlaceEntity(const ItemEntity &item, float x, float y) const;
-    bool checkChangeChapter() const;
     void changeChapterIfNeed(World &world);
 
     bool changeMapFlag_ = false;
+    bool gameOver_ = false;
 
     GridSystem *gridSystem_ = nullptr;
     Map *map_ = nullptr;

@@ -115,6 +115,11 @@ void Monster::handleMovement(World &world, Layer &layer)
 
 void Monster::update(World &world, Layer &layer)
 {
+    auto &mainLayer = dynamic_cast<MainLayer &>(layer);
+    const auto &playStage = dynamic_cast<const PlayStage &>(mainLayer.currentStage());
+    if (!playStage.isHeroAlive())
+        return;
+
     ItemEntity::coreUpdate(world, layer);
     if (!active())
         return;

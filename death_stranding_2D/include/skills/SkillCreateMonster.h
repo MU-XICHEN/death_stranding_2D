@@ -30,7 +30,7 @@ public:
         active_ = true;
         auto center = owner_->center();
         float x = center.x - monsterSize / 2.0f;
-        float y = center.y - monsterSize / 2.0f;
+        float y = owner_->y() + owner_->height();
         playStage.addEntityNextFrame(new MonsterType(x, y, monsterSize, monsterSize));
         if (maxMonsterCount_ >= 0)
             generatedCount++;
@@ -40,6 +40,11 @@ public:
     {
         elapsedTime_ = 0.0f;
         active_ = false;
+    }
+
+    bool finishedGenerating() const
+    {
+        return maxMonsterCount_ >= 0 && generatedCount >= maxMonsterCount_;
     }
 
 private:

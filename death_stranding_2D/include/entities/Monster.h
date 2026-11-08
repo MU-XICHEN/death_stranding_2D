@@ -48,14 +48,7 @@ public:
     Ghost(float x, float y, int width = ROLE_SIZE, int height = ROLE_SIZE);
     AttackInfo createAttackInfo(Attack *attack) override;
 
-    void render(World &world, Layer &layer) override;
-
 protected:
     AssetId spriteAsset() const override { return AssetId::GhostSprite; }
     virtual void checkDangerDistance(World &world, Layer &layer) override;
-
-private:
-    void appear() { visible_ = true; }
-
-    bool visible_ = false;
 };

@@ -239,6 +239,9 @@
     <ClInclude Include="include\renderer\TextRenderer.h">
       <Filter>Header Files\renderer</Filter>
     </ClInclude>
+    <ClInclude Include="include\renderer\ImageRenderer.h">
+      <Filter>Header Files\renderer</Filter>
+    </ClInclude>
     <ClInclude Include="include\renderer\SliceRenderer.h">
       <Filter>Header Files\renderer</Filter>
     </ClInclude>

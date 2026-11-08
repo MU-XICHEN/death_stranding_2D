@@ -2,6 +2,8 @@
 #include "entities/Hero.h"
 #include "entities/Monster.h"
 #include "skills/SkillCreateMonster.h"
+#include "renderer/ImageRenderer.h"
+#include <string>
 
 MonsterNest::MonsterNest(float x, float y, int width, int height)
     : ItemEntity(x, y, width, height)
@@ -11,9 +13,30 @@ MonsterNest::MonsterNest(float x, float y, int width, int height)
         {State::DEFENSE, MONSTER_NEST_DEFENSE},
     };
     initializeState(props, sizeof(props) / sizeof(props[0]));
-    setColor(128, 80, 48);
 
-    addSkill(new SkillCreateMonster<Beast>(3.0f, 10));
+    addSkill(new SkillCreateMonster<Ghost>(6.0f, 10));
+}
+
+bool MonsterNest::canGenerateMonsters() const
+{
+    const auto *generator = static_cast<const SkillCreateMonster<Ghost> *>(skills_[0]);
+    return active() && state_.health() > 0.0f && !generator->finishedGenerating();
+}
+
+void MonsterNest::render(World &world, Layer &layer)
+{
+    if (!active())
+        return;
+    const auto &viewport = world.gameInfo().viewport();
+    // Align the larger gate image with the nest's ground footprint.
+    int left = static_cast<int>(x_ - viewport.x()) - width_ / 2;
+    int top = static_cast<int>(y_ - viewport.y()) - height_;
+    drawImage(world, AssetId::MonsterNestSprite, left, top);
+
+    // Render the health text.
+    const std::string health = "Nest HP: " + std::to_string(static_cast<int>(state_.health()));
+    world.textRenderer().drawString(world, health.c_str(), left + 24, top,
+                                    GEB::TextSizeType::TEXT_SIZE_SMALL);
 }
 
 bool MonsterNest::canAttackTarget(const ItemEntity *target) const
@@ -23,6 +46,5 @@ bool MonsterNest::canAttackTarget(const ItemEntity *target) const
 
 void MonsterNest::update(World &world, Layer &layer)
 {
-    // The shared lifecycle stops skills and removes the nest after destruction.
     ItemEntity::coreUpdate(world, layer);
 }

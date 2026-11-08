@@ -47,15 +47,6 @@ void Ghost::checkDangerDistance(World &world, Layer &layer)
 
     if (dx <= state_.perceptionRange() && dy <= state_.perceptionRange())
     {
-        appear();
         awaken();
     }
-}
-
-void Ghost::render(World &world, Layer &layer)
-{
-    if (!visible_)
-        return;
-
-    ItemEntity::render(world, layer);
 }

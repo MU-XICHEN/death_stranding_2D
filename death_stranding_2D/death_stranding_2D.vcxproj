@@ -207,6 +207,7 @@
     <ClInclude Include="include\layers\MainLayer.h" />
     <ClInclude Include="include\layers\DebugLayer.h" />
     <ClInclude Include="include\renderer\TextRenderer.h" />
+    <ClInclude Include="include\renderer\ImageRenderer.h" />
     <ClInclude Include="include\renderer\SliceRenderer.h" />
     <ClInclude Include="include\skills\Attack.h" />
     <ClInclude Include="include\skills\AttackInfo.h" />

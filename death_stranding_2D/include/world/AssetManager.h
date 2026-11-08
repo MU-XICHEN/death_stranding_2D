@@ -14,6 +14,7 @@ enum AssetId
     ArcherSprite = 6,
     BeastSprite = 8,
     GhostSprite = 9,
+    MonsterNestSprite = 11,
 };
 
 struct Asset

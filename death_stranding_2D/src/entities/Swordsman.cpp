@@ -15,7 +15,7 @@ AttackInfo Swordsman::createAttackInfo(Attack *attack)
     {
         const auto originPoint = getOriginPoint();
         const GEB::Pair<int, float> props[] = {
-            {AttackInfo::Damage, 20.0f},
+            {AttackInfo::Damage, 40.0f},
             {AttackInfo::Duration, 1.0f},
             {AttackInfo::HitStartTime, 0.2f},
             {AttackInfo::HitEndTime, 0.4f},
@@ -24,6 +24,20 @@ AttackInfo Swordsman::createAttackInfo(Attack *attack)
             {AttackInfo::OriginPointX, originPoint.x},
             {AttackInfo::OriginPointY, originPoint.y},
             {AttackInfo::Direction, static_cast<float>(direction())},
+        };
+        return AttackInfo(props, sizeof(props) / sizeof(props[0]));
+    }
+
+    if (dynamic_cast<AttackAutoTargetingMagic *>(attack))
+    {
+        const GEB::Pair<int, float> props[] = {
+            {AttackInfo::Damage, 40.0f},
+            {AttackInfo::Duration, 1.0f},
+            {AttackInfo::HitStartTime, 0.1f},
+            {AttackInfo::HitEndTime, 0.5f},
+            {AttackInfo::AttackRaidus, 200.0f},
+            {AttackInfo::AttackedCount, 3},
+            {AttackInfo::RequiredMana, 10},
         };
         return AttackInfo(props, sizeof(props) / sizeof(props[0]));
     }

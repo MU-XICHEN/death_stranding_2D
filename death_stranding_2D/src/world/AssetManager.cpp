@@ -5,6 +5,8 @@ AssetId initialAssetIds[] = {
     AssetId::TextMedium,
     AssetId::TextLarge,
     AssetId::Cover,
+    AssetId::TallyDefeat,
+    AssetId::TallyVictory,
     AssetId::MonsterNestSprite,
     AssetId::SwordsmanSprite,
     AssetId::ArcherSprite,
@@ -24,6 +26,10 @@ const char *getAssetPath(AssetId id)
         return "assets/font/font_18x36.png";
     case AssetId::Cover:
         return "assets/cover/game_cover.png";
+    case AssetId::TallyDefeat:
+        return "assets/cover/tally_defeat.png";
+    case AssetId::TallyVictory:
+        return "assets/cover/tally_victory.png";
     case AssetId::MonsterNestSprite:
         return "assets/monsters/nest/ghost_gate.png";
     case AssetId::SwordsmanSprite:

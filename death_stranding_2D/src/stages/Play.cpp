@@ -227,18 +227,17 @@ void PlayStage::update(World &world, Layer &layer)
     if (!monsterCleared())
         return;
 
-    // After clearing enemies, use the exit or finish the run if there is none.
+    // Clear the last chapter to win the game.
+    if (map_->type() == MapType::Chapter2)
+    {
+        finishRun(world, layer, true);
+        return;
+    }
+
+    // In chapter one, reach the exit after clearing the monsters.
     const auto *exit = map_->exit();
     if (exit)
-    {
-        // Next Chapter —— Check if the hero has reached the exit.
         changeMapFlag_ = AABB(hero_->x(), hero_->y(), hero_->width(), hero_->height()).contains(exit->position);
-    }
-    else
-    {
-        // Game over —— No exit and clearing all monsters, then change to tally stage.
-        finishRun(world, layer, true);
-    }
 }
 
 // renderEntities

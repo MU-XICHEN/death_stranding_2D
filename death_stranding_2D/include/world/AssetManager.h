@@ -14,6 +14,8 @@ enum AssetId
     ArcherSprite = 6,
     BeastSprite = 8,
     GhostSprite = 9,
+    TallyDefeat = 10,
+    TallyVictory = 13,
     MonsterNestSprite = 11,
 };
 

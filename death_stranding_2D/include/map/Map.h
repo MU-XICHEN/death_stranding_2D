@@ -40,6 +40,7 @@ public:
     GEB::Vec2 entrancePosition(int entityWidth, int entityHeight) const;
     const MapExit *exit() const { return hasExit_ ? &exit_ : nullptr; }
     MapType type() const { return mapType_; }
+    int tileSize() const { return source_.tileSize; }
     const GEB::Structures::Array<GEB::Vec2> &monsterPositions() const { return monsterPositions_; }
 
     const GEB::Structures::Array<TileBlock> &tileBlocks() const { return tileBlocks_; }

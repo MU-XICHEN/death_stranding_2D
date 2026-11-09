@@ -10,10 +10,7 @@ class ItemEntity;
 class World;
 class Layer;
 
-/**
- * Base class for all attacks.
- * Attackers are responsible for creating AttackInfo, eg. damage, duration...
- */
+// Shared attack timing and hit tracking. The owner provides the attack values.
 class Attack
 {
 public:

@@ -63,11 +63,13 @@ void Hero::handleMovement(World &world, Layer &layer)
     if (!gridSystem || !stageMap)
         return;
 
+    // Keep facing the same way while an attack locks the direction.
     bool lockDirection = checkLockDirection();
 
     if (!lockDirection)
         direction_ = GEB::Utils::translateEventsToDirection(canvas, direction_);
 
+    // Keep diagonal movement at the same speed as straight movement.
     auto distanceVec = GEB::Math::normalize(GEB::Utils::translateEventsToDirectionVec2(canvas)) * distance;
 
     // get candidate items for collision detection
@@ -122,6 +124,7 @@ void Hero::onUsePotion(Potion *potion)
 {
     if (!active() || state_.health() <= 0)
         return;
+    // Apply the potion, then keep health and mana within their limits.
     state_.apply(potion->effectState());
     state_.setHealth(std::min(state_.health(), HERO_HP));
     state_.setMana(std::min(state_.mana(), HERO_MANA));

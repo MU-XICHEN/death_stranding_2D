@@ -29,8 +29,7 @@ void SliceRenderer::loadSlices(
 
         if (image->channels != 3)
         {
-            // make sure the image has 3 channels (RGB)
-            // used to memcpy the image data to the canvas buffer directly
+            // The canvas needs RGB pixels for a direct copy.
             delete image;
             continue;
         }
@@ -44,6 +43,7 @@ void SliceRenderer::playSlices(World &world)
     if (slices_.size() == 0)
         return;
 
+    // Change the image after its duration, then loop back at the end.
     elapsedTime_ += world.gameInfo().dt();
     if (elapsedTime_ >= sliceDuration_)
     {

@@ -17,7 +17,7 @@ void getRotatedHitBoxPoints(const AttackInfo &attackInfo,
                                attackInfo.hitBoxHeight(),
                                hitBoxPoints);
 
-    // calcuate progress
+    // Turn the hit time into progress for a half-circle swing.
     const float hitDuration = attackInfo.hitEndTime() - attackInfo.hitStartTime();
     float progress = 0;
     if (hitDuration > 0.0f)
@@ -76,7 +76,7 @@ void AttackHalfCircleSlash::tryHit(World &world, Layer &layer)
         return;
 
     AABB attackContainer = getAttackContainer(world, layer);
-    // pointers in list do not need to be owned, just references to existing entities, like 'this'.
+    // Find nearby entities using a box around the swing.
     GEB::Structures::Array<Entity *> candidateItemList;
     gridSystem->getCandidateListByAABB(owner_, attackContainer, candidateItemList);
 
@@ -101,7 +101,7 @@ void AttackHalfCircleSlash::tryHit(World &world, Layer &layer)
         GEB::Vec2 points[4];
         getRotatedHitBoxPoints(atkInfo, elapsedTime_, points);
 
-        // SAT
+        // Check the rotated sword box against the target body.
         GEB::Vec2 rectA[4] = {points[0], points[1], points[2], points[3]};
         GEB::Vec2 rectB[4] = {
             GEB::Vec2{entity->x(), entity->y()},

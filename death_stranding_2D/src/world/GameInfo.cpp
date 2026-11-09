@@ -6,6 +6,7 @@ void GameInfo::updateViewport(const HeroInfo &hero, const MapInfo &map)
     const float halfHeight = VIEWPORT_HEIGHT / 2.0f;
     GEB::Vec2 heroCenter = hero.center();
 
+    // Follow the hero, but keep the camera inside the map.
     float viewportIdealX = heroCenter.x - halfWidth;
     float viewportIdealY = heroCenter.y - halfHeight;
 

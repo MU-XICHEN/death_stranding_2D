@@ -12,14 +12,14 @@ public:
     virtual ~Monster() = default;
 
     virtual void update(World &world, Layer &layer) override;
-    virtual void handleMovement(World &world, Layer &layer) override;
+    virtual void handleMovement(World &w, Layer &layer) override;
     bool canAttackTarget(const ItemEntity *target) const override;
 
 protected:
     AssetId spriteAsset() const override = 0;
 
     static GEB::Direction transDirVecToDiretion(const GEB::Vec2 &dirVec, GEB::Direction prevDirection);
-    static inline GEB::Vec2 calculateDirVecToHero(GEB::Vec2 monsterCenter, GEB::Vec2 heroCenter)
+    static inline GEB::Vec2 toHero(GEB::Vec2 monsterCenter, GEB::Vec2 heroCenter)
     {
         float dx = heroCenter.x - monsterCenter.x;
         float dy = heroCenter.y - monsterCenter.y;

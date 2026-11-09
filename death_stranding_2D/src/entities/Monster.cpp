@@ -26,6 +26,7 @@ GEB::Direction Monster::transDirVecToDiretion(const GEB::Vec2 &dirVec, GEB::Dire
     if (dirVec.x == 0 && dirVec.y == 0)
         return prevDirection;
 
+    // Choose the closest of the eight facing directions.
     auto normalizedDirVec = GEB::Math::normalize(dirVec);
 
     float maxDot = 0;
@@ -66,6 +67,7 @@ void Monster::checkDangerDistance(World &world, Layer &layer)
 {
     if (awakened_)
         return;
+    // Wake up when the hero enters the detection range.
     GEB::Vec2 heroCenter = world.gameInfo().heroInfo().center();
     float dx = GEB::Math::abs(heroCenter.x - center().x);
     float dy = GEB::Math::abs(heroCenter.y - center().y);
@@ -76,15 +78,15 @@ void Monster::checkDangerDistance(World &world, Layer &layer)
     }
 }
 
-void Monster::handleMovement(World &world, Layer &layer)
+void Monster::handleMovement(World &w, Layer &layer)
 {
     if (!awakened_)
         return;
 
-    const MapInfo &map = world.gameInfo().mapInfo();
-    auto &canvas = world.canvas();
-    float dt = world.gameInfo().dt();
-    float distance = dt * state_.speed();
+    const MapInfo &map = w.gameInfo().mapInfo();
+    auto &canvas = w.canvas();
+    float dt = w.gameInfo().dt();
+    float step = dt * state_.speed();
 
     auto &mainLayer = dynamic_cast<MainLayer &>(layer);
 
@@ -94,20 +96,20 @@ void Monster::handleMovement(World &world, Layer &layer)
     if (!gridSystem || !stageMap)
         return;
 
-    // get candidate items for collision detection
+    // Move toward the hero and collect nearby obstacles.
     auto oldCenter = center();
-    auto distanceVec = GEB::Math::normalize(Monster::calculateDirVecToHero(center(), world.gameInfo().heroInfo().center())) * distance;
-    direction_ = transDirVecToDiretion(distanceVec, direction_);
+    auto delta = GEB::Math::normalize(Monster::toHero(center(), w.gameInfo().heroInfo().center())) * step;
+    direction_ = transDirVecToDiretion(delta, direction_);
 
     GEB::Structures::Array<Entity *> candidateItemList;
-    gridSystem->getCandidateListByItem(this, distanceVec, candidateItemList);
+    gridSystem->getCandidateListByItem(this, delta, candidateItemList);
 
-    // add map tiles which may collide with the hero to the candidate list
+    // Include map walls in the collision check.
     stageMap->addCollisionTileToCandiListByDisVec(this,
-                                                  distanceVec,
+                                                  delta,
                                                   candidateItemList);
 
-    moveWithCollision(distanceVec, map, candidateItemList.head(), candidateItemList.size());
+    moveWithCollision(delta, map, candidateItemList.head(), candidateItemList.size());
 
     gridSystem->updateEntityGridIfNeed(oldCenter, this);
     return;

@@ -5,6 +5,7 @@
 Swordsman::Swordsman(float x, float y, int width, int height)
     : Hero(x, y, width, height)
 {
+    // J swings the sword. K uses magic.
     addAttack(new AttackHalfCircleSlash('J', true));
     addAttack(new AttackAutoTargetingMagic('K'));
 }

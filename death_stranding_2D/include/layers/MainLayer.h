@@ -8,7 +8,7 @@
 
 using StageCreator = Stage *(*)(HeroType);
 
-// Only use in this file.
+// Stage order: menu, gameplay, then results.
 static const StageCreator stageCreator[] = {
     [](HeroType) -> Stage *
     { return new MenuStage(); },

@@ -18,6 +18,7 @@ namespace GamesEngineeringBase::Structures
         {
             static_assert(BucketCount > 0);
 
+            // Use the hash to choose a bucket for this value.
             return static_cast<int>(
                 std::hash<T>{}(value) % BucketCount);
         }
@@ -56,6 +57,7 @@ namespace GamesEngineeringBase::Structures
             if (!array)
                 return false;
 
+            // Values can share a bucket, but duplicates are not added.
             for (int i = 0; i < array->size(); i++)
             {
                 if ((*array)[i] == value)

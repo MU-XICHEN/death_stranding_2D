@@ -28,7 +28,7 @@ void AttackRemoteMulti::end()
 
 void AttackRemoteMulti::tryHit(World &world, Layer &layer)
 {
-    // check valid attack
+    // Update each arrow and remove it when its attack ends.
     auto *head = bullets_.front();
     while (head != nullptr)
     {
@@ -54,6 +54,7 @@ void AttackRemoteMulti::tryBegin(World &world, Layer &layer)
 
     if (!owner_)
         return;
+    // Wait between shots, even when the attack key is held down.
     if (shotElapsedTime_ < timeInterval_)
         return;
     if (triggerKey_ < 0 || !world.canvas().keyPressed(triggerKey_))

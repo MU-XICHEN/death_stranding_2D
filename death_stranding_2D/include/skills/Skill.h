@@ -6,9 +6,7 @@ class ItemEntity;
 class World;
 class Layer;
 
-/**
- * Skill is used to add sideEffect to character's state, not for damaging.
- */
+// Skills change character stats for a short time.
 class Skill
 {
 public:
@@ -37,6 +35,7 @@ public:
     {
         elapsedTime_ = 0.0f;
         active_ = false;
+        // Remove the bonus when the skill ends.
         targetState.unDo(sideEffectState_);
     }
 

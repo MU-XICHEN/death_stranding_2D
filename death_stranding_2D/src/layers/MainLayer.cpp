@@ -24,6 +24,7 @@ MainLayer::~MainLayer()
 
 void MainLayer::goToNextStageInNextFrame()
 {
+    // Wait for the next frame before deleting the current stage.
     nextStageFlag_ = true;
 }
 
@@ -39,7 +40,7 @@ void MainLayer::checkgoToNextStage()
         currentStage_ = nullptr;
     }
 
-    // create next stage
+    // Open the next stage, or return to the menu after the results.
     if (++currentIndex_ < size_)
     {
         currentStage_ = stageCreator_[currentIndex_](selectedHeroType_);

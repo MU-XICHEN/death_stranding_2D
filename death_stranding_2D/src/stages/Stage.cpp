@@ -22,7 +22,7 @@ void Stage::pushEntity(Entity *entity)
     entityList_.pushBack(entity);
 }
 
-// Iterate over the list in insertion order, which means the entity added first is updated first.
+// Update entities in the order they were added.
 void Stage::update(World &world, Layer &layer)
 {
     if (entityList_.size() == 0)
@@ -35,7 +35,7 @@ void Stage::update(World &world, Layer &layer)
     }
 }
 
-// Iterate over the list in reverse order, which means the entity pushed last is rendered first.
+// Draw in reverse order, so earlier entities appear on top.
 void Stage::render(World &world, Layer &layer)
 {
     if (entityList_.size() == 0)

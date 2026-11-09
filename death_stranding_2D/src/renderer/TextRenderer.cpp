@@ -57,6 +57,7 @@ void TextRenderer::drawCharacter(World &world,
     const int validWidth = world.canvas().getWidth();
     const int validHeight = world.canvas().getHeight();
 
+    // Copy the letter pixels with the chosen color and transparency.
     for (int pixelY = 0; pixelY < fontHeight; pixelY++)
     {
         for (int pixelX = 0; pixelX < fontWidth; pixelX++)
@@ -104,7 +105,7 @@ void TextRenderer::drawString(World &world,
     char c = *text;
     while (c != '\0')
     {
-        // Determine the position of the character in the font image
+        // Find this letter in the font image.
         int row = 0, col = 0;
         // 0 - 9: (1, 0) ~ (1, 9)
         if (c >= '0' && c <= '9')

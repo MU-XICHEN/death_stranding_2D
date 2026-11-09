@@ -14,6 +14,7 @@ MonsterNest::MonsterNest(float x, float y, int width, int height)
     };
     initializeState(props, sizeof(props) / sizeof(props[0]));
 
+    // Create up to ten ghosts, with six seconds between spawns.
     addSkill(new SkillCreateMonster<Ghost>(6.0f, 10));
 }
 

@@ -40,6 +40,7 @@ void Ghost::checkDangerDistance(World &world, Layer &layer)
     if (awakened_)
         return;
 
+    // Measure the gap between bodies, instead of their centers.
     auto &hero = world.gameInfo().heroInfo();
     auto heroCenter = hero.center();
     float dx = GEB::Math::abs(heroCenter.x - center().x) - (width_ + hero.width) / 2.0f;

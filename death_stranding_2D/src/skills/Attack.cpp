@@ -11,6 +11,7 @@ void Attack::hitTarget(ItemEntity &target, const AttackInfo &attackInfo)
 
     target.onAttacked(this, attackInfo);
 
+    // Give the owner the kill reward if this hit defeats the target.
     if (target.state().health() <= 0.0f && owner_)
         owner_->onTargetDefeated(target);
 }
@@ -38,6 +39,7 @@ bool Attack::preTryHit(World &world, Layer &layer)
         return false;
     }
 
+    // Damage is allowed only during the hit time window.
     if (elapsedTime() < atkInfo.hitStartTime() || elapsedTime() >= atkInfo.hitEndTime())
         return false;
 
@@ -69,6 +71,7 @@ void Attack::end()
 {
     if (!active_)
         return;
+    // Allow these targets to be hit again by the next attack.
     hitTargets_.clear();
     active_ = false;
     elapsedTime_ = 0.0f;

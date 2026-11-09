@@ -23,6 +23,7 @@ public:
     {
         if (!host_)
             return;
+        // Sort targets from low health to high health.
         auto *head = host_->itemsWithMaxHealth_.front();
         while (head)
         {
@@ -45,6 +46,7 @@ public:
             host_->itemsWithMaxHealth_.insertBefore(head, item);
         }
 
+        // Drop the lowest health targets when the list is full.
         while (host_->itemsWithMaxHealth_.size() > atkInfo.attackedCount())
         {
             host_->itemsWithMaxHealth_.removeFirst();
@@ -104,6 +106,7 @@ void AttackAutoTargetingMagic::tryHit(World &world, Layer &layer)
     if (!preTryHit(world, layer))
         return;
 
+    // Spend mana and apply damage only once per cast.
     if (triggerOnce_)
         return;
     triggerOnce_ = true;
@@ -137,6 +140,7 @@ void AttackAutoTargetingMagic::tryHit(World &world, Layer &layer)
 
         auto distanceSquared = offsetVec.x * offsetVec.x + offsetVec.y * offsetVec.y;
 
+        // Check the circle range after the nearby grid search.
         if (distanceSquared > attackInfo().attackRadius() * attackInfo().attackRadius())
             continue;
 
@@ -189,7 +193,7 @@ void AttackAutoTargetingMagic::render(World &world, Layer &layer)
         int top = std::max(0, GEB::Math::floorToInt(targetY - borderWidth));
         int bottom = std::min(visibleHeight, GEB::Math::ceilToInt(targetBottom + borderWidth));
 
-        // Keep the orange border outside the body so later entity draws do not cover it.
+        // Draw the border outside the body so it stays visible.
         for (int y = top; y < bottom; ++y)
         {
             for (int x = left; x < right; ++x)

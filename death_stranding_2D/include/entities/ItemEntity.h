@@ -25,6 +25,7 @@ public:
 
     GEB::Vec2 getOriginPoint() const
     {
+        // Start the attack in front of the entity.
         auto unitDirVec2 = GEB::Utils::transDirToUnitVec2(direction_);
         auto centerX = center().x;
         auto centerY = center().y;
@@ -59,9 +60,9 @@ public:
     void moveRight(float distance, float rightBoundary);
 
     virtual void moveWithCollision(
-        GEB::Vec2 distanceVec,
+        GEB::Vec2 delta,
         const MapInfo &map,
-        Entity **candidateItemHead,
+        Entity **items,
         int size);
 
     // relevant to skills
@@ -85,7 +86,7 @@ public:
     virtual AttackInfo createAttackInfo(Attack *attack) { return AttackInfo{}; };
 
     void coreUpdate(World &world, Layer &layer);
-    // ❗Note: make sure that derived classed call coreUpdate first in their update method
+    // Call coreUpdate first in each child class update.
     virtual void update(World &world, Layer &layer) = 0;
     virtual void render(World &world, Layer &layer) override;
 

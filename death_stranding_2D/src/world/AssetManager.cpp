@@ -66,6 +66,7 @@ AssetManager::~AssetManager()
 
 void AssetManager::loadImages()
 {
+    // Load each shared image once and keep it for later drawing.
     for (int i = 0; i < sizeof(initialAssetIds) / sizeof(initialAssetIds[0]); ++i)
     {
         AssetId id = initialAssetIds[i];

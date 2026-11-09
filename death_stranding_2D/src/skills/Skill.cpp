@@ -13,6 +13,7 @@ void Skill::tryActivate(World &world, Layer &layer, State &targetState)
     if (!canvas.keyPressed(triggerKey_))
         return;
 
+    // Apply the stat bonus once when the skill starts.
     active_ = true;
     targetState.apply(sideEffectState_);
 }

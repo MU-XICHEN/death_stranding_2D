@@ -27,6 +27,7 @@ public:
         auto &mainLayer = dynamic_cast<MainLayer &>(layer);
         auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
 
+        // Queue a monster below the nest and start the spawn timer.
         active_ = true;
         auto center = owner_->center();
         float x = center.x - monsterSize / 2.0f;

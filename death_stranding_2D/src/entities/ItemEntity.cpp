@@ -33,13 +33,14 @@ void ItemEntity::coreUpdate(World &world, Layer &layer)
     if (deactivateIfNeeded(layer))
         return;
 
-    processSkill(world, layer);   // update items' skill states of this frame
-    handleMovement(world, layer); // handle movement of this frame
-    processAttack(world, layer);  // update items' attack states of this frame
+    // Update active skills, movement, and attacks for this frame.
+    processSkill(world, layer);
+    handleMovement(world, layer);
+    processAttack(world, layer);
 
-    // attack start this frame, so elapsedTime in Attack should be calculated next frame
-    tryTriggerAttacks(world, layer); // trigger skill for next frame
-    tryTriggerSkills(world, layer);  // trigger skills for next frame
+    // Start new actions last. Their timers begin updating next frame.
+    tryTriggerAttacks(world, layer);
+    tryTriggerSkills(world, layer);
 }
 
 void ItemEntity::render(World &world, Layer &layer)
@@ -200,6 +201,7 @@ void ItemEntity::calculateBoundaryImpl(GEB::Boundary &boundary, const Entity *ba
 
 GEB::Boundary ItemEntity::calculateBoundary(const MapInfo &map, GEB::Direction diretion, Entity **candidateItemHead, int size)
 {
+    // Start with map edges, then limit movement using nearby obstacles.
     GEB::Boundary boundary{
         .top = map.topBoundary(),
         .bottom = map.bottomBoundary(),
@@ -217,28 +219,28 @@ GEB::Boundary ItemEntity::calculateBoundary(const MapInfo &map, GEB::Direction d
 }
 
 void ItemEntity::moveWithCollision(
-    GEB::Vec2 distanceVec,
+    GEB::Vec2 delta,
     const MapInfo &map,
-    Entity **candidateItemHead,
+    Entity **items,
     int size)
 {
-    // calculate boundaries horizontally and vertically, respectively, in case of diagonal movement
-    if (distanceVec.y < 0)
-        moveUp(-distanceVec.y, calculateBoundary(map, GEB::Direction::Up, candidateItemHead, size).top);
-    else if (distanceVec.y > 0)
-        moveDown(distanceVec.y, calculateBoundary(map, GEB::Direction::Down, candidateItemHead, size).bottom);
+    // Move on each axis separately, so the entity can slide along walls.
+    if (delta.y < 0)
+        moveUp(-delta.y, calculateBoundary(map, GEB::Direction::Up, items, size).top);
+    else if (delta.y > 0)
+        moveDown(delta.y, calculateBoundary(map, GEB::Direction::Down, items, size).bottom);
 
-    if (distanceVec.x < 0)
-        moveLeft(-distanceVec.x, calculateBoundary(map, GEB::Direction::Left, candidateItemHead, size).left);
-    else if (distanceVec.x > 0)
-        moveRight(distanceVec.x, calculateBoundary(map, GEB::Direction::Right, candidateItemHead, size).right);
+    if (delta.x < 0)
+        moveLeft(-delta.x, calculateBoundary(map, GEB::Direction::Left, items, size).left);
+    else if (delta.x > 0)
+        moveRight(delta.x, calculateBoundary(map, GEB::Direction::Right, items, size).right);
 }
 
 bool ItemEntity::deactivateIfNeeded(Layer &layer)
 {
     if (!active_)
     {
-        // inactive
+        // Queue removal instead of changing the list during updates.
         auto &mainLayer = dynamic_cast<MainLayer &>(layer);
         auto &playStage = dynamic_cast<PlayStage &>(mainLayer.currentStage());
         auto *gridSystem = playStage.gridSystem();
@@ -308,6 +310,7 @@ void ItemEntity::handleMovement(World &world, Layer &layer) {}
 
 void ItemEntity::onAttacked(const Attack *atk, const AttackInfo &attackInfo)
 {
+    // Defense reduces damage, but damage cannot go below zero.
     int realDamage = static_cast<int>(attackInfo.damage() - state_.defense());
     if (realDamage < 0)
         realDamage = 0;

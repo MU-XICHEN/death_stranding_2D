@@ -13,6 +13,7 @@ void Door::update(World &world, Layer &layer)
     if (!active() || !hero_.active() || hero_.state().health() <= 0)
         return;
 
+    // Open the door when the hero touches it with a key.
     if (hero_.hasKey() && AABB(x_, y_, width_, height_).intersects(hero_))
         unlocked_ = true;
 }

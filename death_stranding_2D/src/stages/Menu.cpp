@@ -17,14 +17,13 @@ void MenuStage::moveSelection(int direction)
 
 void MenuStage::update(World &world, Layer &layer)
 {
-    // Handle menu logic:
-    // enter to continue
-    // move selection with up/down keys
+    // Read each key press once, so holding a key does not skip choices.
     const auto &canvas = world.canvas();
     const bool upPressed = wKeyState_.justPressed(canvas.keyPressed('W') || canvas.keyPressed(VK_UP));
     const bool downPressed = sKeyState_.justPressed(canvas.keyPressed('S') || canvas.keyPressed(VK_DOWN));
     if (Stage::enterState.justPressed(canvas.keyPressed(VK_RETURN)))
     {
+        // First Enter opens hero selection. The next Enter starts the game.
         if (!selectingHero_)
         {
             selectingHero_ = true;

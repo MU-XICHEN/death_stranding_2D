@@ -6,6 +6,7 @@
 Archer::Archer(float x, float y, int width, int height)
     : Hero(x, y, width, height)
 {
+    // J fires arrows. K uses magic.
     addAttack(new AttackRemoteMulti('J', 0.5f));
     addAttack(new AttackAutoTargetingMagic('K'));
 }

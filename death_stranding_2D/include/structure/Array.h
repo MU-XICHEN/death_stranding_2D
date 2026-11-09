@@ -5,20 +5,18 @@ static const int DEFAULT_CAPACITY = 10;
 namespace GamesEngineeringBase::Structures
 {
 
-    // Variable-Length Array
-    // Users need to manage the memory of the elements themselves if they are pointers.
+    // A growing array. If it stores pointers, delete the objects separately.
     template <typename T>
     class Array
     {
     public:
-        // default constructor means that users do no konw the actual size, and might be expaned in the future.
+        // Start empty with some space ready to use.
         Array()
             : size_(0),
               capacity_(DEFAULT_CAPACITY),
               data_(new T[capacity_]{}) {}
 
-        // if argument size is gived, which means uses prefer a fix size
-        // then, no need to expand it.
+        // Start with this many elements. The array can still grow later.
         Array(int size)
             : size_(size),
               capacity_(size ? size : DEFAULT_CAPACITY),
@@ -39,6 +37,7 @@ namespace GamesEngineeringBase::Structures
 
         void resize(int newSize)
         {
+            // Grow the storage and keep the old values.
             if (newSize > capacity_)
             {
                 int newCapacity = capacity_ == 0 ? 1 : capacity_ * 2;
@@ -78,6 +77,7 @@ namespace GamesEngineeringBase::Structures
             if (index < 0 || index >= size_)
                 return;
 
+            // Shift later elements left to fill the gap.
             for (int i = index; i < size_ - 1; ++i)
                 data_[i] = data_[i + 1];
 

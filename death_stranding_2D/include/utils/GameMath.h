@@ -16,6 +16,7 @@ namespace GamesEngineeringBase::Math
     inline Vec2 normalize(const Vec2 &v)
     {
         Vec2 result;
+        // Scale down first to avoid very large numbers when squaring.
         float scale = std::max(abs(v.x), abs(v.y));
         if (scale == 0.0f)
             return Vec2{0.0f, 0.0f};

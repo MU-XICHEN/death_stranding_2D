@@ -5,9 +5,7 @@
 
 class AttackAutoTargetingMagicImpl;
 
-/**
- * Required properties:
- */
+// Pick targets in range with the highest health.
 
 class AttackAutoTargetingMagic : public Attack
 {

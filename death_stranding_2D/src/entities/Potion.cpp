@@ -13,6 +13,7 @@ void Potion::update(World &world, Layer &layer)
     if (!active() || !hero_.active() || hero_.state().health() <= 0)
         return;
 
+    // Use the potion once when the hero touches it.
     if (AABB(x_, y_, width_, height_).intersects(hero_))
     {
         hero_.onUsePotion(this);

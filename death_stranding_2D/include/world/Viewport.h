@@ -1,7 +1,6 @@
 #pragma once
 
-// function as viewport for the game world
-// render viewport while updating the viewport
+// Store the part of the game world visible on screen.
 class Viewport
 {
 public:

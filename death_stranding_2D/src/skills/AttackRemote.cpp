@@ -17,6 +17,7 @@ void AttackRemote::tryBegin(World &world, Layer &layer)
     {
         Attack::begin();
 
+        // Keep the launch direction even if the hero turns later.
         direction_ = attackInfo_.direction();
         startPos_ = attackInfo_.originPoint();
         desPos_ = attackInfo_.originPoint();
@@ -57,10 +58,10 @@ void AttackRemote::tryHit(World &world, Layer &layer)
     }
 
     AABB attackContainer = getAttackContainer(world, layer);
-    // pointers in list do not need to be owned, just references to existing entities, like 'this'.
+    // Find nearby entities along this frame's arrow path.
     GEB::Structures::Array<Entity *> candidateItemList;
     gridSystem->getCandidateListByAABB(owner_, attackContainer, candidateItemList);
-    // add map tiles which may collide with the hero to the candidate list
+    // Walls can also stop the arrow.
     stageMap->addCollisionTileToCandiListByAABB(owner_,
                                                 attackContainer,
                                                 candidateItemList);
@@ -74,7 +75,7 @@ void AttackRemote::tryHit(World &world, Layer &layer)
     if ((candidateItemList.size() == 0))
         return;
 
-    // try hit
+    // Check the full path so a fast arrow does not skip a target.
     GEB::Structures::Array<Entity *> hitEntities;
     for (int j = 0; j < candidateItemList.size(); ++j)
     {
@@ -94,6 +95,7 @@ void AttackRemote::tryHit(World &world, Layer &layer)
     if (hitEntities.size() == 0)
         return;
 
+    // Use the nearest hit so the arrow stops at the first obstacle.
     int targetIndex = -1;
     float squaredDist = std::numeric_limits<float>::max();
     for (int i = 0; i < hitEntities.size(); ++i)
@@ -109,11 +111,7 @@ void AttackRemote::tryHit(World &world, Layer &layer)
         int count = GEB::Utils::getIntersectionPoints(startPos_, desPos_ - startPos_, aabb, ips);
         if (count > 0)
         {
-            /**
-             * [bugfix]: consider two points
-             *  It could fail if startPos was already inside the AABB, while only checking one point.
-             *  So, select the nearest intersection point to the start position.
-             */
+            // Check both points, as the arrow may already be inside the box.
             auto vector1 = (ips[0] - startPos_);
             float newSquaredDist = vector1.x * vector1.x + vector1.y * vector1.y;
 

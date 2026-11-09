@@ -42,22 +42,18 @@ GEB::Pair<int, int> GridSystem::getGridIdxPair(const GEB::Vec2 &center)
 }
 
 void GridSystem::getCandidateGridsByAABB(
-    const AABB &aabb,
+    const AABB &box,
     GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids)
 {
-    /**
-     * [bugfix]:
-     * extend one more grid in all directions
-     * to account for items which belong to neighboring grids.
-     */
-    int startRow = std::max(0, GEB::Math::floorToInt(aabb.y() / gridSize_) - 1);
-    int startCol = std::max(0, GEB::Math::floorToInt(aabb.x() / gridSize_) - 1);
-    int endRow = std::min(rowCount_ - 1, GEB::Math::floorToInt((aabb.y() + aabb.height()) / gridSize_) + 1);
-    int endCol = std::min(colCount_ - 1, GEB::Math::floorToInt((aabb.x() + aabb.width()) / gridSize_) + 1);
+    // Include nearby cells because an entity can cross a cell edge.
+    int rStart = std::max(0, GEB::Math::floorToInt(box.y() / gridSize_) - 1);
+    int cStart = std::max(0, GEB::Math::floorToInt(box.x() / gridSize_) - 1);
+    int rEnd = std::min(rowCount_ - 1, GEB::Math::floorToInt((box.y() + box.height()) / gridSize_) + 1);
+    int cEnd = std::min(colCount_ - 1, GEB::Math::floorToInt((box.x() + box.width()) / gridSize_) + 1);
 
-    for (int row = startRow; row <= endRow; row++)
+    for (int row = rStart; row <= rEnd; row++)
     {
-        for (int col = startCol; col <= endCol; col++)
+        for (int col = cStart; col <= cEnd; col++)
         {
             candidateGrids.pushBack({row, col});
         }
@@ -84,6 +80,7 @@ void GridSystem::getCandidateListByGrids(
     const GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids,
     GEB::Structures::Array<Entity *> &candidateItemList)
 {
+    // Collect nearby entities before checking the actual collision.
     int candidateGridSize = candidateGrids.size();
     for (int i = 0; i < candidateGridSize; i++)
     {
@@ -167,7 +164,7 @@ void GridSystem::addEntity(int rowIdx, int colIdx, Entity *item)
     if (targetGrid && item)
     {
         targetGrid->addEntity(item);
-        addEntityToUpdateList(item); // sysc the updated items
+        addEntityToUpdateList(item); // Also update this entity each frame.
     }
 }
 

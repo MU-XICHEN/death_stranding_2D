@@ -54,6 +54,7 @@ void AttackCollision::tryHit(World &world, Layer &layer)
         if (!aabb.intersects(*targetItem))
             continue;
 
+        // Hit each target only once during this contact attack.
         auto targetId = reinterpret_cast<std::uintptr_t>(targetItem);
         if (hitTargets_.contains(targetId))
             continue;

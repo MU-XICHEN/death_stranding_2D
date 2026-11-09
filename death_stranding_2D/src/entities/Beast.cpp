@@ -4,6 +4,7 @@
 Beast::Beast(float x, float y, int width, int height)
     : Monster(x, y, width, height)
 {
+    // Set beast stats and add its contact attack.
     GEB::Pair<int, float> props[] = {
         {State::HEALTH, M_BEAST_HP},
         {State::SCORE, M_BEAST_SCORE},
@@ -21,7 +22,7 @@ AttackInfo Beast::createAttackInfo(Attack *attack)
 
     GEB::Pair<int, float> props[] = {
         {AttackInfo::Damage, M_BEAST_COLLITION_DAMAGE},
-        {AttackInfo::Duration, 2.0f},
+        {AttackInfo::Duration, 1.5f},
         {AttackInfo::HitStartTime, 0.0f},
         {AttackInfo::HitEndTime, 0.5f},
         {AttackInfo::HitBoxWidth, static_cast<float>(width_)},

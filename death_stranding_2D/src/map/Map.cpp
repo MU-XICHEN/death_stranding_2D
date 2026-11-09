@@ -94,6 +94,7 @@ void Map::loadMapSource(MapType type)
     if (!file || source_.rowCnt <= 0 || source_.colCnt <= 0)
         throw std::runtime_error("Invalid ground dimensions");
 
+    // Check sizes before multiplying them or making the image cache.
     const auto maxSize = (std::numeric_limits<int>::max)();
     if (source_.colCnt > maxSize / source_.tileSize ||
         source_.rowCnt > maxSize / source_.tileSize ||
@@ -212,12 +213,14 @@ void Map::cachemap()
 
     width_ = source_.pixelWidth;
     height_ = source_.pixelHeight;
+    // Keep the map pixels in memory for drawing each frame.
     mapCache_.resize(width_ * height_ * 3);
     std::memcpy(mapCache_.head(), image.data, mapCache_.size());
 }
 
 void Map::mergeTiles(const int *ground, int colCnt, int rowCnt)
 {
+    // Join blocked tiles into larger boxes to reduce collision checks.
     tileBlocks_.resize(0);
     if (!ground || colCnt <= 0 || rowCnt <= 0)
         return;
@@ -261,6 +264,7 @@ void Map::render(World &world, Layer &layer)
     const int viewportWidth = viewport.width();
     const int viewportHeight = viewport.height();
 
+    // Draw only the part of the map inside the camera view.
     const int mapStartX = std::max(static_cast<int>(viewport.x()), 0);
     const int mapStartY = std::max(static_cast<int>(viewport.y()), 0);
 
@@ -348,7 +352,7 @@ int expandTileRectSizeImpl(int direction, int tileIndexX, int tileIndexY,
     const int step = direction == 1 ? 1 : -1;
     for (int x = tileIndexX; rowWidth < maxColCnt && x >= 0 && x < colCnt; x += step)
     {
-        // if current tile does not need collision detection or has been processed, then stop.
+        // Stop at an open tile or a tile already added to another block.
         if (ground[tileIndexY * colCnt + x] == 0 ||
             tileProcessed(x, tileIndexY, tileSize, tileRects).first)
             break;
@@ -361,7 +365,7 @@ int expandTileRectSize(TileBlock &tileRect, int tileIndexX, int tileIndexY,
                        const int *ground, int colCnt, int rowCnt, int tileSize,
                        const GEB::Structures::Array<TileBlock> &tileRects)
 {
-    // calculate the malColCnt first
+    // Find the width of the first blocked row.
     const int maxColCnt = expandTileRectSizeImpl(
         1, tileIndexX, tileIndexY, colCnt - tileIndexX, ground, colCnt, tileSize, tileRects);
 
@@ -369,7 +373,7 @@ int expandTileRectSize(TileBlock &tileRect, int tileIndexX, int tileIndexY,
     // the first row went right; the next row goes left.
     int direction = 0;
 
-    // jump to next row, use maxColCnt as new argument.
+    // Grow the box downward while each row has the same blocked width.
     for (int y = tileIndexY + 1; y < rowCnt; ++y)
     {
         const int startX = direction == 1 ? tileIndexX : tileIndexX + maxColCnt - 1;

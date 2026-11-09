@@ -1,12 +1,7 @@
 #pragma once
 #include <stdexcept>
 
-/**
- * DoublyLinkedList
- * Note:
- *      ListNode<T> will be recycled automatically,
- *      but Users are responsible for recycling memory of nodes' data.
- */
+// The list deletes its nodes. Delete any objects stored as pointers separately.
 
 // Todo: change to arr, without jumping
 namespace GamesEngineeringBase::Structures
@@ -32,7 +27,7 @@ namespace GamesEngineeringBase::Structures
             clear();
         }
 
-        // Avoid different lists' head_ or tail_ points to same memory.
+        // Disable copying so two lists cannot share the same nodes.
         DoublyLinkedList(const DoublyLinkedList &) = delete;
         DoublyLinkedList &operator=(const DoublyLinkedList &) = delete;
 
@@ -140,6 +135,7 @@ namespace GamesEngineeringBase::Structures
         {
             if (!item)
                 return;
+            // Link the neighbors together before deleting this node.
             if (item->prev)
             {
                 item->prev->next = item->next;

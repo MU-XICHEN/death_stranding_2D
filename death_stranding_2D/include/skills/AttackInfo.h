@@ -3,18 +3,11 @@
 #include "core/GameBase.h"
 #include "structure/Array.h"
 
-/**
- * Note:
- * Properties in AttackInfo are preferred to be passed by users.
- * For example, different characters use this attack with different values.
- * Otherwise, if this property has little changes, then set it in Attack Class itself.
- */
+// Each character provides its own damage, timing, and attack size.
 class AttackInfo final
 {
 public:
-    // update three sections when adding/removing properties:
-    // 1. PropertyIndex enum
-    // 3. Getter and setter methods
+    // Add new properties before _END_FLAG_ and add their getters and setters.
     enum PropertyIndex
     {
         Damage = 0,

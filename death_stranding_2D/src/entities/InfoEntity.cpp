@@ -38,6 +38,7 @@ void InfoEntity::render(World &world, Layer &layer)
     constexpr int fontWidth = GEB::TextSizeW::TEXT_SIZE_W_MEDIUM;
     constexpr int fontHeight = GEB::TextSizeH::TEXT_SIZE_H_MEDIUM;
 
+    // Keep the info panel at the top right, using the longest text width.
     int textLength = static_cast<int>(std::max({healthText_.size(), manaText_.size(), scoreText_.size(), killsText_.size(), keyText_.size()}));
     width_ = textLength * fontWidth;
     height_ = fontHeight * 5 + lineGap * 4;

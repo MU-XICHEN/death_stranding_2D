@@ -15,10 +15,10 @@ World::World()
     canvas_.create(static_cast<unsigned int>(WINDOW_WIDTH),
                    static_cast<unsigned int>(WINDOW_HEIGHT), "Tiles");
 
-    // initialize text renderer
+    // Load images before the game starts.
     assetManager_.loadImages();
 
-    // Main Layer which handle main game process: Intro - Menu - Gameplay - Tally - Then, again!
+    // Set up the game layer and the debug text layer.
     initLayers();
 
     gameLoop();
@@ -46,7 +46,7 @@ void World::refreshTimer()
 {
     if (canvas_.consumeMoveResizeFinished())
     {
-        // Discard time spent in the native move/resize event.
+        // Skip the time spent moving or resizing the window.
         timer_.reset();
         gameInfo_.updateDt(0.0f);
         return;
@@ -70,8 +70,7 @@ void World::frameStart()
 
 void World::frameDraw()
 {
-    // render layers from bottom to top
-    // which means layers pushed in last will be the last to render
+    // Draw layers in order. Later layers appear on top.
     if (layerList_.size() == 0)
         return;
 
@@ -96,8 +95,7 @@ bool World::frameFinished()
     if (layerList_.size() == 0)
         return result;
 
-    // handle updates for some things that shouldn't be updated in frameDraw()
-    // eg. itemEntities' removal from the list
+    // Remove old entities and change maps after drawing.
     for (int i = 0; i < layerList_.size(); ++i)
     {
         auto *layer = layerList_[i];

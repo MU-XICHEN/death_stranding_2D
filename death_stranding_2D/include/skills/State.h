@@ -2,14 +2,11 @@
 #include "structure/Array.h"
 #include "core/GameBase.h"
 
-// update three sections when adding/removing properties:
-// 1. PropertyIndex enum
-// 2. propCount
-// 3. Getter and setter methods
+// Store character stats and the changes from skills or potions.
 class State final
 {
 public:
-    // update the property count while adding/removing properties.
+    // Add new stats before _END_FLAG_ and add their getters and setters.
     enum PropertyIndex
     {
         HEALTH = 0,
@@ -55,6 +52,7 @@ public:
         }
         return *this;
     }
+    // Add the effect values to the current stats.
     void apply(const State &sideEffectState)
     {
         const int size = properties_.size();
@@ -68,6 +66,7 @@ public:
             properties_[i] += newProperties[i];
         }
     }
+    // Subtract the same values when a temporary effect ends.
     void unDo(const State &sideEffectState)
     {
         const int size = properties_.size();

@@ -15,6 +15,7 @@ AABB AABB::createAABB(
     if (!item)
         return AABB(0, 0, 0, 0);
 
+    // Cover the whole movement path, from the old position to the new one.
     auto targetX = item->x() + offset.x;
     auto targetY = item->y() + offset.y;
 
@@ -24,7 +25,7 @@ AABB AABB::createAABB(
     auto endX = std::max(item->x() + item->width(), targetX + item->width());
     auto endY = std::max(item->y() + item->height(), targetY + item->height());
 
-    // [bugfix]: use ceilToInt to ensure the AABB fully covers the movement path.
+    // Round up so the box does not miss part of the path.
     return AABB(startX, startY,
                 GEB::Math::ceilToInt(endX - startX),
                 GEB::Math::ceilToInt(endY - startY));

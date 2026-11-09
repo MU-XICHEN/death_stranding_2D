@@ -4,7 +4,7 @@
 #include "utils/Utils.h"
 #include <algorithm>
 
-// Draw a whole image at screen coordinates, keeping its original size and transparency.
+// Draw the image at its original size, with transparency.
 inline void drawImage(World &world, AssetId asset, int left, int top)
 {
     const auto *image = world.assetManager().getImage(asset);
@@ -13,6 +13,7 @@ inline void drawImage(World &world, AssetId asset, int left, int top)
 
     auto &canvas = world.canvas();
     auto *buffer = canvas.getBackBuffer();
+    // Draw only pixels inside the window.
     int right = std::min(left + static_cast<int>(image->width), static_cast<int>(canvas.getWidth()));
     int bottom = std::min(top + static_cast<int>(image->height), static_cast<int>(canvas.getHeight()));
     for (int y = std::max(0, top); y < bottom; ++y)

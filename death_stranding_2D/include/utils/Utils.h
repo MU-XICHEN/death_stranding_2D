@@ -166,8 +166,7 @@ namespace GamesEngineeringBase::Utils
         return vertex.x * unitAxis.x + vertex.y * unitAxis.y;
     }
 
-    // get projection interval of a rectangle onto a unit axis
-    // make unitAxis is unit vector, which make result from project(dot product) is right.
+    // Find the smallest and largest values along this axis.
     static GEB::Pair<float, float> projectRect(const GEB::Vec2 *vertices,
                                                const GEB::Vec2 &unitAxis)
     {
@@ -209,12 +208,7 @@ namespace GamesEngineeringBase::Utils
         return interval;
     }
 
-    /**
-     * Make SAT rectangle for SAT collision detection
-     * After returning, users can calculate the axies of the rectangle using:
-     * rectA[1] - rectA[0],
-     * rectA[2] - rectA[0],
-     */
+    // Put the opposite corner last, so points 1 and 2 give the two edges.
     static void adaptForSAT(
         GEB::Vec2 (&rect)[4])
     {
@@ -247,7 +241,7 @@ namespace GamesEngineeringBase::Utils
         }
     }
 
-    // detect whehter rectA and rectB is collided
+    // Check if two rotated rectangles overlap.
     static bool SAT(const GEB::Vec2 *rectA, const GEB::Vec2 *rectB)
     {
         // Get two edges from each rectangle to form the axes for SAT
@@ -264,8 +258,7 @@ namespace GamesEngineeringBase::Utils
             if (edges[i].x == 0.0f && edges[i].y == 0.0f)
                 return false;
 
-            // use perpendicular vector as the axis for SAT
-            // as if there is a gap between the rectangles along this axis, their projections on normal will not overlap.
+            // Check for gaps along an axis at right angles to this edge.
             axes[i] = GEB::Vec2{-edges[i].y, edges[i].x};
         }
 
@@ -287,7 +280,7 @@ namespace GamesEngineeringBase::Utils
         return true;
     }
 
-    // detect whether a line(origin to destination) and box(rect) is collided.
+    // Check if the line segment crosses the box.
     static bool SATLineBox(const GEB::Vec2 &origin,
                            const GEB::Vec2 &destination,
                            const GEB::Vec2 *rect)
@@ -305,8 +298,7 @@ namespace GamesEngineeringBase::Utils
             if (edges[i].x == 0.0f && edges[i].y == 0.0f)
                 return false;
 
-            // use perpendicular vector as the axis for SAT
-            // as if there is a gap between the rectangles along this axis, their projections on normal will not overlap.
+            // Check for gaps along an axis at right angles to this edge.
             axes[i] = GEB::Vec2{-edges[i].y, edges[i].x};
         }
 
@@ -383,10 +375,7 @@ namespace GamesEngineeringBase::Utils
     {
         if (!ips || (dir.x == 0.0f && dir.y == 0.0f))
             return 0;
-        /**
-         * Calculate the line equation using the point and direction vector.
-         * For example, point -> (x, y) and dir -> (a, b), we can get offset by 'ay = bx + offset'.
-         */
+        // Build the line equation to find where it crosses the box edges.
         float offset = dir.x * point.y - dir.y * point.x;
         auto yFunc = [&](float x)
         {
@@ -433,8 +422,7 @@ namespace GamesEngineeringBase::Utils
         if (count != 2)
             return count;
 
-        // two points, make sure the first is nearest.
-        // make sure that the first is nearest.
+        // Order the two points along the line direction.
         GEB::Vec2 firstToSecond = ips[1] - ips[0];
         bool needsSwap = GEB::Math::dotProduct(firstToSecond, dir) < 0.0f;
         if (needsSwap)

@@ -49,6 +49,7 @@ void PlayStage::initialize()
     if (!gridSystem_ || !map_)
         return;
 
+    // Create the selected hero at the map entrance.
     const auto entrance = map_->entrancePosition(ROLE_SIZE, ROLE_SIZE);
     switch (heroType_)
     {
@@ -107,6 +108,7 @@ void PlayStage::initializeMapPotions()
 
 void PlayStage::initializeMapMonsters()
 {
+    // Chapter 1 uses beasts. Chapter 2 uses nests that create ghosts.
     const auto &positions = map_->monsterPositions();
     for (int i = 0; i < positions.size(); ++i)
     {
@@ -133,7 +135,7 @@ void PlayStage::finishRun(World &world, Layer &layer, bool victory)
 {
     gameOver_ = true;
     changeMapFlag_ = false;
-    // Preserve the final values before the stage and its hero are destroyed.
+    // Save the final score before deleting the hero and this stage.
     world.gameInfo().setRunResult({victory, heroType_,
                                    hero_ ? hero_->defeatedMonsterCount() : 0,
                                    hero_ ? static_cast<int>(hero_->state().score()) : 0});
@@ -240,6 +242,7 @@ void PlayStage::addEntityNextFrame(ItemEntity *itemEntity)
     if (!itemEntity)
         return;
 
+    // Add new monsters later, after the current update loop finishes.
     entitiesNextFrame_.pushBack(itemEntity);
 }
 
@@ -263,10 +266,28 @@ void PlayStage::update(World &world, Layer &layer)
 
 void PlayStage::updateEntities(World &world, Layer &layer)
 {
+    if (!gridSystem_ || !isHeroAlive())
+        return;
+
+    // Update the hero and camera before checking which other entities are visible.
+    hero_->update(world, layer);
+
     auto &items = gridSystem_->itemsToUpdate();
-    // Stop the remaining entities from updating as soon as the hero dies.
-    for (int i = 0; i < items.size() && isHeroAlive(); ++i)
-        items[i]->update(world, layer);
+    const auto &viewport = world.gameInfo().viewport();
+
+    for (int i = 0; i < items.size(); ++i)
+    {
+        auto *item = items[i];
+        if (!item || item == hero_)
+            continue;
+
+        // Skip items outside the viewport.
+        if (!overlaps(*item, viewport.x(), viewport.y(),
+                      viewport.width(), viewport.height()))
+            continue;
+
+        item->update(world, layer);
+    }
 
     Stage::update(world, layer);
 }
@@ -328,6 +349,7 @@ void PlayStage::renderFinished(World &world, Layer &layer)
     if (!gridSystem_ || gameOver_)
         return;
 
+    // Remove inactive entities from the grid after this frame is drawn.
     auto &inactiveItems = gridSystem_->inactiveItems();
     int inactiveItemCount = inactiveItems.size();
     for (int i = 0; i < inactiveItemCount; ++i)
@@ -371,6 +393,7 @@ void PlayStage::changeChapterIfNeed(World &world)
         GRID_SIZE);
     const auto entrance = nextMap->entrancePosition(hero_->width(), hero_->height());
 
+    // Stop old attacks before entering the next map.
     for (int i = 0; i < hero_->attacks().size(); ++i)
     {
         if (auto *attack = hero_->attacks()[i])
@@ -382,6 +405,7 @@ void PlayStage::changeChapterIfNeed(World &world)
         delete entitiesNextFrame_[i];
     entitiesNextFrame_.clear();
 
+    // Take the hero out first, so deleting the old grid keeps the hero alive.
     const auto [row, col] = gridSystem_->getGridIdxPair(hero_->center());
     gridSystem_->removeEntity(row, col, hero_);
     delete gridSystem_;

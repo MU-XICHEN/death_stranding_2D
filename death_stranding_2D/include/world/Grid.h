@@ -57,10 +57,10 @@ public:
     inline void clearInactiveItems() { inactiveItems_.clear(); }
 
 private:
-    // todo: be careful when updating the itemsToUpdate_ in the game loop to avoid modifying elements while iterating.
+    // Change the update list only after the entity update loop finishes.
     void addEntityToUpdateList(Entity *item);
     void removeEntityFromUpdateList(Entity *item);
-    // This method just moves the item from one grid to another without updating the update list.
+    // Move between cells while keeping the same update list entry.
     void changeEntityGrid(Entity *item, GEB::Vec2 oldCenter, GEB::Vec2 newCenter);
 
     int gridSize_;
@@ -68,20 +68,13 @@ private:
     int colCount_;
 
     GEB::Structures::Array<Grid> gridMap_;
-    /**
-     * just a copy of the items.
-     * Used to update in a loop.
-     * the memory of items that Entity * points to is managed by the Grid.
-     */
+    // References for the update loop. The grids own these entities.
     GEB::Structures::Array<Entity *> itemsToUpdate_;
 
-    /**
-     * items that will be removed after iteration
-     * also, a copy of items which were already in GridMap_
-     */
+    // Entities to remove from the grid after this frame.
     GEB::Structures::Array<Entity *> inactiveItems_;
 
-    void getCandidateGridsByAABB(const AABB &aabb,
+    void getCandidateGridsByAABB(const AABB &box,
                                  GEB::Structures::Array<GEB::Pair<int, int>> &candidateGrids);
 
     void getCandidateGridsByDisVec2(
